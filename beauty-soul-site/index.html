@@ -2,6 +2,12 @@
 <html lang="ru">
   <head>
     <meta charset="UTF-8" />
+    <script>
+      document.documentElement.classList.add("js");
+      setTimeout(function () {
+        if (!window.__bsReady) document.documentElement.classList.remove("js");
+      }, 3000);
+    </script>
     <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
     <title>Beauty Soul KZ — салон красоты в Алматы</title>
     <meta

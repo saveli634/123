@@ -1,7 +1,7 @@
 import manifest from "@/content/images.generated.json";
 import type { ImageName } from "@/content/site";
 import { cn } from "@/lib/utils";
-import { inlineImages, singleFile } from "@/content/imgsrc";
+import { singleFile } from "@/content/imgsrc";
 
 type Manifest = Record<string, { w: number; h: number; widths: number[]; color: string }>;
 const images = manifest as Manifest;
@@ -41,18 +41,19 @@ export function Img({
     meta.widths.map((w) => `${src(name, w, ext)} ${w}w`).join(", ");
 
   if (singleFile) {
+    const contain = imgClassName?.includes("object-contain");
     return (
       <picture className={cn("block overflow-hidden", className)} style={placeholder ? { backgroundColor: meta.color } : undefined}>
-        <img
-          src={inlineImages[name]}
-          alt={alt}
-          width={meta.w}
-          height={meta.h}
-          loading={priority ? "eager" : "lazy"}
-          decoding="async"
-          draggable={false}
-          className={cn("h-full w-full object-cover", imgClassName)}
-          style={{ objectPosition: position }}
+        <span
+          role="img"
+          aria-label={alt || undefined}
+          aria-hidden={alt ? undefined : true}
+          className={cn(
+            "bs-img block h-full w-full bg-no-repeat",
+            contain ? "bg-contain" : "bg-cover",
+            `bsimg-${name}`,
+          )}
+          style={{ backgroundPosition: contain ? "50% 50%" : position }}
         />
       </picture>
     );
@@ -72,7 +73,7 @@ export function Img({
         decoding={priority ? "sync" : "async"}
         fetchPriority={priority ? "high" : "auto"}
         draggable={false}
-        className={cn("h-full w-full object-cover", imgClassName)}
+        className={cn("bs-img h-full w-full object-cover", imgClassName)}
         style={{ objectPosition: position }}
       />
     </picture>

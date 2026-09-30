@@ -5,10 +5,10 @@
   "type": "module",
   "scripts": {
     "dev": "vite",
-    "build": "tsc -p tsconfig.json && vite build",
+    "build": "tsc -p tsconfig.json && vite build && vite build --ssr src/entry-server.tsx --outDir dist-ssr && node scripts/prerender.mjs dist dist-ssr",
     "preview": "vite preview",
     "images": "python3 scripts/optimize_images.py",
-    "build:single": "python3 scripts/make_single_images.py && vite build --mode single"
+    "build:single": "python3 scripts/make_single_images.py && vite build --mode single && vite build --mode single --ssr src/entry-server.tsx --outDir dist-ssr-single && node scripts/prerender.mjs dist-single dist-ssr-single"
   },
   "dependencies": {
     "@fontsource-variable/manrope": "^5.3.0",

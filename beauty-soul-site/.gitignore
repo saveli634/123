@@ -2,3 +2,5 @@ node_modules/
 dist/
 dist-single/
 single-img/
+dist-ssr/
+dist-ssr-single/

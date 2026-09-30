@@ -1,10 +1,17 @@
 import { StrictMode } from "react";
-import { createRoot } from "react-dom/client";
+import { createRoot, hydrateRoot } from "react-dom/client";
 import "./index.css";
 import App from "./App";
 
-createRoot(document.getElementById("root")!).render(
+const root = document.getElementById("root")!;
+const app = (
   <StrictMode>
     <App />
-  </StrictMode>,
+  </StrictMode>
 );
+
+// Если разметка уже отрисована заранее (пререндер) — «оживляем» её, иначе рендерим с нуля.
+if (root.hasChildNodes()) hydrateRoot(root, app);
+else createRoot(root).render(app);
+
+(window as unknown as { __bsReady?: boolean }).__bsReady = true;

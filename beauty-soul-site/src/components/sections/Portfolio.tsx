@@ -19,12 +19,12 @@ export const categoryLabel = Object.fromEntries(
 ) as Record<Filter, string>;
 
 function useColumns() {
-  const get = () =>
-    typeof window === "undefined" ? 3 : window.matchMedia("(min-width: 1024px)").matches ? 3 : 2;
-  const [cols, setCols] = useState(get);
+  const get = () => (window.matchMedia("(min-width: 1024px)").matches ? 3 : 2);
+  const [cols, setCols] = useState(3);
   useEffect(() => {
     const mq = window.matchMedia("(min-width: 1024px)");
     const on = () => setCols(get());
+    on();
     mq.addEventListener("change", on);
     return () => mq.removeEventListener("change", on);
   }, []);
@@ -114,11 +114,11 @@ export function Portfolio() {
                       className={aspect[item.layout]}
                       position="50% 35%"
                     />
-                    <span className="mt-3 flex items-center justify-between text-[0.7rem] font-semibold tracking-[0.18em] text-mocha uppercase">
+                    <span className="mt-3 flex min-w-0 items-center justify-between gap-2 text-[0.7rem] font-semibold tracking-[0.18em] text-mocha uppercase">
                       {categoryLabel[item.category]}
                       <span
                         aria-hidden="true"
-                        className="opacity-0 transition-opacity duration-300 group-hover:opacity-100 group-focus-visible:opacity-100"
+                        className="hidden opacity-0 transition-opacity duration-300 group-hover:opacity-100 group-focus-visible:opacity-100 lg:inline"
                       >
                         Смотреть
                       </span>

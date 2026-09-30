@@ -1,6 +1,7 @@
 import manifest from "@/content/images.generated.json";
 import type { ImageName } from "@/content/site";
 import { cn } from "@/lib/utils";
+import { inlineImages, singleFile } from "@/content/imgsrc";
 
 type Manifest = Record<string, { w: number; h: number; widths: number[]; color: string }>;
 const images = manifest as Manifest;
@@ -38,6 +39,24 @@ export function Img({
   const fallbackW = meta.widths.find((w) => w >= 800) ?? largest;
   const set = (ext: "webp" | "jpg") =>
     meta.widths.map((w) => `${src(name, w, ext)} ${w}w`).join(", ");
+
+  if (singleFile) {
+    return (
+      <picture className={cn("block overflow-hidden", className)} style={placeholder ? { backgroundColor: meta.color } : undefined}>
+        <img
+          src={inlineImages[name]}
+          alt={alt}
+          width={meta.w}
+          height={meta.h}
+          loading={priority ? "eager" : "lazy"}
+          decoding="async"
+          draggable={false}
+          className={cn("h-full w-full object-cover", imgClassName)}
+          style={{ objectPosition: position }}
+        />
+      </picture>
+    );
+  }
 
   return (
     <picture className={cn("block overflow-hidden", className)} style={placeholder ? { backgroundColor: meta.color } : undefined}>

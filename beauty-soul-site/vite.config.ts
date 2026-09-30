@@ -1,12 +1,38 @@
-import { defineConfig } from "vite";
+import { defineConfig, type Plugin } from "vite";
 import react from "@vitejs/plugin-react";
 import tailwindcss from "@tailwindcss/vite";
+import { viteSingleFile } from "vite-plugin-singlefile";
 import { fileURLToPath } from "node:url";
+import { readFileSync } from "node:fs";
 
-export default defineConfig({
-  base: "./",
-  plugins: [react(), tailwindcss()],
-  resolve: {
-    alias: { "@": fileURLToPath(new URL("./src", import.meta.url)) },
-  },
+const src = (p: string) => fileURLToPath(new URL(p, import.meta.url));
+
+/** В однофайловой версии внешних файлов нет: убираем preload героя, favicon встраиваем. */
+const dropPreload = (): Plugin => ({
+  name: "drop-hero-preload",
+  transformIndexHtml: (html) =>
+    html
+      .replace(/<link\s+rel="preload"[\s\S]*?\/>/, "")
+      .replace(
+        'href="./favicon.svg"',
+        `href="data:image/svg+xml,${encodeURIComponent(readFileSync(src("./public/favicon.svg"), "utf8"))}"`,
+      ),
+});
+
+export default defineConfig(({ mode }) => {
+  const single = mode === "single";
+  return {
+    base: "./",
+    publicDir: single ? false : "public",
+    plugins: [react(), tailwindcss(), ...(single ? [viteSingleFile(), dropPreload()] : [])],
+    resolve: {
+      alias: {
+        "@/content/imgsrc": src(single ? "./src/content/imgsrc/single.ts" : "./src/content/imgsrc/web.ts"),
+        "@": src("./src"),
+      },
+    },
+    build: single
+      ? { outDir: "dist-single", assetsInlineLimit: Number.MAX_SAFE_INTEGER }
+      : undefined,
+  };
 });

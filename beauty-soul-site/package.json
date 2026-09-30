@@ -7,7 +7,8 @@
     "dev": "vite",
     "build": "tsc -p tsconfig.json && vite build",
     "preview": "vite preview",
-    "images": "python3 scripts/optimize_images.py"
+    "images": "python3 scripts/optimize_images.py",
+    "build:single": "python3 scripts/make_single_images.py && vite build --mode single"
   },
   "dependencies": {
     "@fontsource-variable/manrope": "^5.3.0",
@@ -28,6 +29,7 @@
     "@vitejs/plugin-react": "^6.1.1",
     "tailwindcss": "^4.3.3",
     "typescript": "^7.0.2",
-    "vite": "^8.3.1"
+    "vite": "^8.3.1",
+    "vite-plugin-singlefile": "^2.3.3"
   }
 }

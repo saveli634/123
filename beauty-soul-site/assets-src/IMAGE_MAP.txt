@@ -1,0 +1,28 @@
+BEAUTY SOUL KZ — SELECTED WEBSITE ASSETS
+
+Use these curated images for the first website concept. They were selected from the supplied Beauty Soul Instagram archive.
+
+01_hero.jpg — Hero — сильный портрет / первый экран — source: browser_media/005_DWrTYWCAmoy/01_image.jpg
+02_master_makeup.jpg — Макияж / портрет модели — source: browser_media/003_DSQbzIXjNTP/01_image.jpg
+03_nails_white.jpg — Маникюр — светлый минималистичный результат — source: browser_media/011_DX1JUHLEUu-/01_image.jpg
+04_hair_waves.jpg — Волосы — объёмные волны — source: browser_media/015_DXRMZqdAp7T/01_image.jpg
+05_hair_long.jpg — Волосы / портрет — длинные волосы — source: browser_media/041_DZpYj82ArBs/01_image.jpg
+06_hair_back.jpg — Волосы — вид сзади / результат — source: browser_media/043_DZzrveZAshP/01_image.jpg
+07_makeup_updo.jpg — Макияж + укладка — source: browser_media/047_Da-NsnjAu4f/01_image.jpg
+08_makeup_profile.jpg — Макияж — профиль / beauty portrait — source: browser_media/051_DaAeswCAqq1/01_image.jpg
+09_nails_red.jpg — Маникюр — красный акцент — source: browser_media/039_DZey102AgtY/01_image.jpg
+10_nails_detail.jpg — Маникюр — дополнительный результат — source: browser_media/063_DaiDh3KgjeE/01_image.jpg
+11_pedicure.jpg — Педикюр — близкий план — source: browser_media/832_DbGDqDECpkR/01_image.jpg
+12_lashes.jpg — Ресницы / глаза — beauty close-up — source: browser_media/740_DLvPG1lTZPB/01_image.jpg
+13_interior.jpg — Интерьер салона — source: browser_media/800_DZxFzrbCfxJ/01_image.jpg
+14_interior_nails.jpg — Интерьер / рабочая зона — source: browser_media/840_Dbk8t7RiRif/01_image.jpg
+15_master_aruzhan.jpg — Master Aruzhan — актуальный материал — source: browser_media/071_DdgeKpeDTS6/01_image.jpg
+16_master_gulzhan.jpg — Master Gulzhan / hair portrait — source: browser_media/041_DZpYj82ArBs/01_image.jpg
+
+Important:
+- Keep the original images; do not replace them with stock photos.
+- For the hero, start with 01_hero.jpg.
+- Use the service-specific images in Services/Portfolio sections.
+- Use 13_interior.jpg and 14_interior_nails.jpg for atmosphere/location sections.
+- Verify master attribution against the archive before displaying names.
+- Do not invent current prices.

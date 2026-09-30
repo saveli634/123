@@ -1,0 +1,74 @@
+<!doctype html>
+<html lang="ru">
+  <head>
+    <meta charset="UTF-8" />
+    <script>
+      document.documentElement.classList.add("js");
+      setTimeout(function () {
+        if (!window.__slReady) document.documentElement.classList.remove("js");
+      }, 3000);
+    </script>
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+    <title>Soft Line — диваны в Алматы · шоурум в ТЦ ADEM 1</title>
+    <meta
+      name="description"
+      content="Современные диваны Prado, Minotti, Mondi, Oscar, Polo, Etno и другие модели. Шоурум в ТЦ ADEM 1 (3 этаж, оранжевый сектор), доставка по Казахстану, рассрочка Kaspi."
+    />
+    <meta name="theme-color" content="#1d1b19" />
+    <meta name="color-scheme" content="light" />
+    <meta name="format-detection" content="telephone=no" />
+
+    <meta property="og:type" content="website" />
+    <meta property="og:locale" content="ru_RU" />
+    <meta property="og:site_name" content="Soft Line" />
+    <meta property="og:title" content="Soft Line — диваны в Алматы" />
+    <meta
+      property="og:description"
+      content="Шоурум в ТЦ ADEM 1, 3 этаж, оранжевый сектор. Доставка по Казахстану, рассрочка Kaspi."
+    />
+    <meta property="og:image" content="./og-image.jpg" />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <!-- После подключения домена: <link rel="canonical" href="https://ВАШ-ДОМЕН/" /> -->
+
+    <link rel="icon" href="./favicon.svg" type="image/svg+xml" />
+    <link
+      rel="preload"
+      as="image"
+      type="image/webp"
+      href="./images/01_hero_prado-800.webp"
+      imagesrcset="./images/01_hero_prado-480.webp 480w, ./images/01_hero_prado-800.webp 800w, ./images/01_hero_prado-960.webp 960w"
+      imagesizes="(min-width: 1024px) 44vw, 100vw"
+      fetchpriority="high"
+    />
+
+    <script type="application/ld+json">
+      {
+        "@context": "https://schema.org",
+        "@type": "FurnitureStore",
+        "name": "Soft Line",
+        "description": "Шоурум современных диванов в Алматы.",
+        "image": "og-image.jpg",
+        "telephone": ["+77075596070", "+77759913682"],
+        "address": {
+          "@type": "PostalAddress",
+          "streetAddress": "ТЦ ADEM 1, 3 этаж, оранжевый сектор",
+          "addressLocality": "Алматы",
+          "addressCountry": "KZ"
+        },
+        "sameAs": ["https://www.instagram.com/softlinekz/"]
+      }
+    </script>
+  </head>
+  <body>
+    <div id="root"></div>
+    <noscript>
+      <p style="padding:24px;font-family:sans-serif">
+        Soft Line — диваны, шоурум в ТЦ ADEM 1, 3 этаж, оранжевый сектор.
+        <a href="tel:+77075596070">+7 (707) 559-60-70</a>
+      </p>
+    </noscript>
+    <script type="module" src="/src/main.tsx"></script>
+  </body>
+</html>

@@ -39,5 +39,5 @@ if ($need) {
 }
 
 Write-Host ""
-Write-Host "Запускаю v11.0 TURBO SPLIT..." -ForegroundColor Green
+Write-Host "Запускаю v11.1 TURBO SPLIT + FAST SCROLL..." -ForegroundColor Green
 & $py ".\parser.py"

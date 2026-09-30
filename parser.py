@@ -380,6 +380,71 @@ def infer_media_count(driver) -> int | None:
     return None
 
 
+def extract_links_fast(driver) -> set[str]:
+    """v11.1 FAST SCROLL: только ссылки из DOM через JS, без тяжёлого page_source."""
+    found: set[str] = set()
+    try:
+        values = driver.execute_script("""
+            const out = [];
+            for (const el of document.querySelectorAll('a[href*="/p/"], a[href*="/reel/"]')) {
+                const v = el.getAttribute('href');
+                if (v) out.push(v);
+            }
+            return out;
+        """) or []
+        for value in values:
+            u = normalize_found_url(str(value))
+            if u:
+                found.add(u)
+    except Exception:
+        pass
+    return found
+
+
+# v11.1 FAST SCROLL: настройки скорости скролла.
+SCROLL_STEP_VIEWPORTS = 1.0     # на сколько экранов крутить за шаг
+SCROLL_RENDER_PAUSE = 0.12      # пауза, если контент уже есть на странице
+SCROLL_LOAD_TIMEOUT = 2.0       # сколько ждать подгрузки, когда упёрлись в низ
+SCROLL_POLL = 0.15              # как часто проверять подгрузку
+SCROLL_FULL_EXTRACT_EVERY = 15  # полный поиск ссылок (page_source) раз в N шагов
+SCROLL_STALL_LIMIT = 4          # сколько раз подряд низ не подгрузился -> конец
+
+
+def _scroll_state(driver) -> tuple[int, int, int]:
+    try:
+        y, view, height = driver.execute_script("""
+            const h = Math.max(document.body.scrollHeight, document.documentElement.scrollHeight);
+            return [Math.round(window.scrollY), Math.round(window.innerHeight), Math.round(h)];
+        """)
+        return int(y), int(view), int(height)
+    except Exception:
+        return 0, 0, 0
+
+
+def _at_bottom(driver) -> bool:
+    y, view, height = _scroll_state(driver)
+    return height > 0 and y + view >= height - 60
+
+
+def _wait_for_more(driver, old_height: int, old_links: int) -> bool:
+    """Ждёт, пока Instagram догрузит ленту. True — что-то подгрузилось."""
+    deadline = time.time() + SCROLL_LOAD_TIMEOUT
+    while time.time() < deadline:
+        time.sleep(SCROLL_POLL)
+        _, _, height = _scroll_state(driver)
+        if height > old_height:
+            return True
+        try:
+            links = driver.execute_script(
+                "return document.querySelectorAll('a[href*=\"/p/\"], a[href*=\"/reel/\"]').length;"
+            ) or 0
+        except Exception:
+            links = 0
+        if links > old_links:
+            return True
+    return False
+
+
 def deep_scroll_collect(
     driver,
     url: str,
@@ -389,30 +454,42 @@ def deep_scroll_collect(
     done_urls: set[str] | None = None,
     target_new_count: int | None = None,
 ) -> set[str]:
-    print(f"\n=== DEEP SCAN: {label} ===")
+    """
+    v11.1 FAST SCROLL:
+    - ссылки берутся лёгким JS-запросом, полный page_source — только раз в N шагов;
+    - нет фиксированных пауз: если контент уже на странице — крутим сразу дальше,
+      ждём только когда упёрлись в низ и Instagram подгружает новые посты;
+    - конец ленты определяется, когда низ несколько раз подряд не подгрузился.
+    """
+    print(f"\n=== DEEP SCAN (FAST): {label} ===")
     driver.get(url)
-    time.sleep(1.8)
+    time.sleep(1.2)
     dismiss_popups(driver)
 
     found: set[str] = set()
     done_urls = set(done_urls or set())
-    no_growth = 0
-    last_count = -1
-    last_height = 0
+    stalls = 0
+    started = time.time()
+    # Шагов теперь больше, но каждый намного короче — поэтому запас по количеству.
+    max_steps = max_rounds * 4
 
-    for step in range(1, max_rounds + 1):
-        found |= extract_links_every_way(driver)
+    found |= extract_links_every_way(driver)
 
-        if step == 1 or step % 5 == 0:
+    for step in range(1, max_steps + 1):
+        if step % SCROLL_FULL_EXTRACT_EVERY == 0:
+            found |= extract_links_every_way(driver)
+        else:
+            found |= extract_links_fast(driver)
+
+        if step == 1 or step % 10 == 0:
             target_text = f"/{target_count}" if target_count else ""
             new_now = len(found - done_urls)
-            if target_new_count:
-                print(
-                    f"[deep {label}] найдено уникальных: {len(found)}{target_text} | "
-                    f"НОВЫХ: {new_now}/{target_new_count}"
-                )
-            else:
-                print(f"[deep {label}] найдено уникальных: {len(found)}{target_text}")
+            speed = len(found) / max(0.1, time.time() - started)
+            extra = f" | НОВЫХ: {new_now}/{target_new_count}" if target_new_count else ""
+            print(
+                f"[deep {label}] найдено уникальных: {len(found)}{target_text}{extra} "
+                f"| {speed:.1f} URL/сек"
+            )
 
         if target_new_count and len(found - done_urls) >= target_new_count:
             print(
@@ -425,47 +502,49 @@ def deep_scroll_collect(
             print(f"[deep {label}] достигнут заявленный count: {target_count}")
             break
 
-        try:
-            current_height = driver.execute_script(
-                "return Math.max(document.body.scrollHeight, document.documentElement.scrollHeight);"
-            ) or 0
-        except Exception:
-            current_height = 0
+        _, _, old_height = _scroll_state(driver)
+        old_links = len(found)
 
-        # Alternate between incremental scrolling and hard jump to bottom.
         try:
-            if step % 4 == 0:
-                driver.execute_script(
-                    "window.scrollTo(0, Math.max(document.body.scrollHeight, document.documentElement.scrollHeight));"
-                )
-            else:
-                driver.execute_script(
-                    "window.scrollBy(0, Math.max(window.innerHeight * 0.92, 760));"
-                )
+            driver.execute_script(
+                "window.scrollBy(0, Math.max(window.innerHeight * arguments[0], 700));",
+                SCROLL_STEP_VIEWPORTS,
+            )
         except Exception:
             pass
 
-        # Longer pauses every few rounds to let Instagram append older rows.
-        if step % 8 == 0:
-            time.sleep(1.4)
-        else:
-            time.sleep(0.5)
+        if not _at_bottom(driver):
+            # Контент уже есть — даём только отрисоваться.
+            time.sleep(SCROLL_RENDER_PAUSE)
+            stalls = 0
+            continue
 
-        if len(found) == last_count and current_height == last_height:
-            no_growth += 1
-        else:
-            no_growth = 0
+        # Упёрлись в низ — ждём подгрузку ровно столько, сколько нужно.
+        if _wait_for_more(driver, old_height, old_links):
+            stalls = 0
+            continue
 
-        last_count = len(found)
-        last_height = current_height
-
-        # Deep mode intentionally waits much longer than FAST before giving up.
-        if no_growth >= 20:
-            print(f"[deep {label}] новых элементов давно нет — завершаю этот проход.")
+        stalls += 1
+        if stalls >= SCROLL_STALL_LIMIT:
+            print(f"[deep {label}] лента больше не подгружается — завершаю этот проход.")
             break
 
-    # One final read after the last scroll.
+        # "Встряска": чуть вверх и снова вниз — помогает Instagram запустить загрузчик.
+        try:
+            driver.execute_script("window.scrollBy(0, -Math.round(window.innerHeight * 1.5));")
+            time.sleep(0.2)
+            driver.execute_script(
+                "window.scrollTo(0, Math.max(document.body.scrollHeight, document.documentElement.scrollHeight));"
+            )
+        except Exception:
+            pass
+        dismiss_popups(driver)
+
+    # Финальный полный проход после последнего скролла.
     found |= extract_links_every_way(driver)
+    print(
+        f"[deep {label}] итог: {len(found)} URL за {time.time() - started:.1f} сек."
+    )
     return found
 
 
@@ -1750,11 +1829,11 @@ def maybe_import_old_progress(username: str, target: Path):
 
 def main():
     print("=" * 78)
-    print(" INSTAGRAM PARSER v11.0 TURBO SPLIT — PERCENT SCAN + DOWNLOAD")
+    print(" INSTAGRAM PARSER v11.1 TURBO SPLIT + FAST SCROLL — PERCENT SCAN + DOWNLOAD")
     print("=" * 78)
     print()
     print("Запускай ПОСЛЕ v9 FAST, не одновременно.")
-    print("v11.0 TURBO SPLIT:")
+    print("v11.1 TURBO SPLIT + FAST SCROLL:")
     print("- делает длинный скролл профиля;")
     print("- отдельно проходит вкладку Reels;")
     print("- при необходимости кликает по плиткам;")
@@ -1767,6 +1846,7 @@ def main():
     print("- карусели скачиваются до 3 файлов одновременно.")
     print("- ДО сканирования можно выбрать 15%, 35%, 50% или 100%; процент ограничивает и ПОИСК, и СКАЧИВАНИЕ.")
     print("- SELF-HEAL: пропавшие downloads/profile/browser_media папки создаются заново.")
+    print("- FAST SCROLL: скролл без фиксированных пауз, ждёт только подгрузку ленты.")
     print(f"- SPLIT: медиа автоматически раскладывается по папкам part_001, part_002... до {PART_LIMIT_MB} МБ каждая.")
 
     firefox_cookies = []

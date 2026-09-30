@@ -1226,7 +1226,200 @@ def click_next_carousel(driver) -> bool:
     return False
 
 
-def scrape_post(driver, session, url: str, folder: Path, number: int) -> dict:
+# ---------------------------------------------------------------------------
+# v11.0 SPLIT: browser_media автоматически делится на части по PART_LIMIT_MB.
+#
+#   browser_media/
+#       part_001/  (<= 400 МБ)
+#           001_ABC/ 01_image.jpg, caption.txt, source_url.txt
+#           002_DEF/ ...
+#       part_002/  (<= 400 МБ)
+#           ...
+#
+# Публикация никогда не разрывается между частями. Если после скачивания
+# публикация не влезает в текущую часть — её папка переносится в новую часть.
+# Если одна публикация сама больше лимита (длинное видео), она лежит в
+# отдельной части одна.
+# ---------------------------------------------------------------------------
+PART_LIMIT_MB = 400
+PART_LIMIT_BYTES = PART_LIMIT_MB * 1024 * 1024
+PART_DIR_RE = re.compile(r"^part_(\d{3,})$")
+
+
+def dir_size(path: Path) -> int:
+    total = 0
+    try:
+        for p in path.rglob("*"):
+            try:
+                if p.is_file():
+                    total += p.stat().st_size
+            except OSError:
+                pass
+    except OSError:
+        pass
+    return total
+
+
+def format_mb(size: int) -> str:
+    return f"{size / (1024 * 1024):.1f} МБ"
+
+
+class MediaSplitter:
+    """Раскладывает папки публикаций по частям part_001, part_002, ..."""
+
+    def __init__(self, media_root: Path, limit_bytes: int = PART_LIMIT_BYTES):
+        self.media_root = media_root
+        self.limit = limit_bytes
+        self.media_root.mkdir(parents=True, exist_ok=True)
+        parts = self.existing_parts()
+        self.current = parts[-1] if parts else self._part_path(1)
+
+    @staticmethod
+    def _part_index(path: Path) -> int:
+        m = PART_DIR_RE.match(path.name)
+        return int(m.group(1)) if m else 0
+
+    def _part_path(self, index: int) -> Path:
+        return self.media_root / f"part_{index:03d}"
+
+    def existing_parts(self) -> list[Path]:
+        try:
+            parts = [
+                p for p in self.media_root.iterdir()
+                if p.is_dir() and PART_DIR_RE.match(p.name)
+            ]
+        except OSError:
+            parts = []
+        return sorted(parts, key=self._part_index)
+
+    def _next_part(self) -> Path:
+        parts = self.existing_parts()
+        last = max([self._part_index(p) for p in parts] + [self._part_index(self.current)])
+        self.current = self._part_path(last + 1)
+        self.current.mkdir(parents=True, exist_ok=True)
+        print(f"    [split] Новая часть: {self.current.name} (лимит {format_mb(self.limit)})")
+        return self.current
+
+    def part_for_next_post(self) -> Path:
+        """Папка, куда качать следующую публикацию."""
+        self.current.mkdir(parents=True, exist_ok=True)
+        if dir_size(self.current) >= self.limit:
+            return self._next_part()
+        return self.current
+
+    def place(self, item: Path) -> Path:
+        """
+        Вызывается после скачивания публикации в текущую часть.
+        Если часть переполнилась — переносит публикацию в новую часть.
+        Возвращает итоговый путь папки публикации.
+        """
+        if not item.exists():
+            return item
+        item_size = dir_size(item)
+        part_size = dir_size(item.parent)
+        if part_size <= self.limit or part_size - item_size <= 0:
+            return item
+
+        new_part = self._next_part()
+        dest = new_part / item.name
+        shutil.move(str(item), str(dest))
+        return dest
+
+    def migrate_flat_layout(self) -> dict[str, str]:
+        """
+        Переносит папки публикаций старых версий (лежащие прямо в browser_media)
+        в части по лимиту. Возвращает {старое_имя_папки: "part_xxx/старое_имя"}.
+        """
+        try:
+            legacy = sorted(
+                p for p in self.media_root.iterdir()
+                if p.is_dir() and not PART_DIR_RE.match(p.name)
+            )
+        except OSError:
+            return {}
+        if not legacy:
+            return {}
+
+        print(
+            f"\n[split] Найдено {len(legacy)} папок публикаций без разбивки. "
+            f"Раскладываю по частям до {format_mb(self.limit)}..."
+        )
+        mapping: dict[str, str] = {}
+        self.current.mkdir(parents=True, exist_ok=True)
+        part_size = dir_size(self.current)
+
+        for item in legacy:
+            size = dir_size(item)
+            if part_size > 0 and part_size + size > self.limit:
+                self._next_part()
+                part_size = 0
+            dest = self.current / item.name
+            if dest.exists():
+                print(f"    [split] Пропускаю {item.name}: {dest} уже существует")
+                continue
+            shutil.move(str(item), str(dest))
+            mapping[item.name] = f"{self.current.name}/{item.name}"
+            part_size += size
+
+        print(f"[split] Перенесено папок: {len(mapping)}")
+        return mapping
+
+    def print_summary(self):
+        parts = self.existing_parts()
+        if not parts:
+            return
+        print(f"\n[split] Части browser_media (лимит {format_mb(self.limit)}):")
+        for p in parts:
+            try:
+                posts = sum(1 for x in p.iterdir() if x.is_dir())
+            except OSError:
+                posts = 0
+            print(f"    {p.name}: {format_mb(dir_size(p))}, публикаций: {posts}")
+
+
+def remap_progress_after_migration(progress_file: Path, mapping: dict[str, str]):
+    """Обновляет пути files в progress.json после переноса папок в части."""
+    if not mapping or not progress_file.exists():
+        return
+    try:
+        progress = json.loads(progress_file.read_text(encoding="utf-8"))
+    except Exception:
+        return
+
+    for rec in progress.get("records", []):
+        if not isinstance(rec, dict):
+            continue
+        new_files = []
+        for rel in rec.get("files") or []:
+            rel = str(rel).replace("\\", "/")
+            head, _, rest = rel.partition("/")
+            if head in mapping and rest:
+                rel = f"{mapping[head]}/{rest}"
+            new_files.append(rel)
+        rec["files"] = new_files
+
+    tmp = progress_file.with_suffix(progress_file.suffix + ".tmp")
+    tmp.write_text(json.dumps(progress, ensure_ascii=False, indent=2), encoding="utf-8")
+    tmp.replace(progress_file)
+
+
+def relocate_record(rec: dict, media_root: Path, new_item: Path) -> dict:
+    """Переписывает пути files записи на новую папку публикации."""
+    new_rel_dir = new_item.relative_to(media_root).as_posix()
+    rec["files"] = [
+        f"{new_rel_dir}/{Path(str(rel)).name}" for rel in rec.get("files") or []
+    ]
+    return rec
+
+
+def scrape_post(
+    driver,
+    session,
+    url: str,
+    folder: Path,
+    number: int,
+    part_dir: Path | None = None,
+) -> dict:
     """
     v10.9 TURBO:
     1) СНАЧАЛА пробует media-info API без открытия поста в Firefox.
@@ -1238,7 +1431,8 @@ def scrape_post(driver, session, url: str, folder: Path, number: int) -> dict:
     shortcode = safe_windows_name(shortcode, fallback=f"post_{number:03d}")
     # v10.7: корневая media-папка могла исчезнуть между публикациями.
     folder.mkdir(parents=True, exist_ok=True)
-    item = folder / f"{number:03d}_{shortcode}"
+    # v11.0: публикация кладётся в текущую часть (part_XXX), пути files — относительно folder.
+    item = (part_dir or folder) / f"{number:03d}_{shortcode}"
     item.mkdir(parents=True, exist_ok=True)
 
     # -------- TURBO PATH: без открытия страницы в браузере --------
@@ -1410,7 +1604,8 @@ def _recover_record_from_disk(target: Path, url: str) -> dict | None:
         return None
 
     media_root = target / "browser_media"
-    for item in media_root.glob(f"*_{shortcode}"):
+    candidates = list(media_root.glob(f"part_*/*_{shortcode}")) + list(media_root.glob(f"*_{shortcode}"))
+    for item in candidates:
         if not item.is_dir():
             continue
         files = []
@@ -1555,11 +1750,11 @@ def maybe_import_old_progress(username: str, target: Path):
 
 def main():
     print("=" * 78)
-    print(" INSTAGRAM PARSER v10.9 TURBO — PERCENT SCAN + DOWNLOAD")
+    print(" INSTAGRAM PARSER v11.0 TURBO SPLIT — PERCENT SCAN + DOWNLOAD")
     print("=" * 78)
     print()
     print("Запускай ПОСЛЕ v9 FAST, не одновременно.")
-    print("v10.9 TURBO:")
+    print("v11.0 TURBO SPLIT:")
     print("- делает длинный скролл профиля;")
     print("- отдельно проходит вкладку Reels;")
     print("- при необходимости кликает по плиткам;")
@@ -1572,6 +1767,7 @@ def main():
     print("- карусели скачиваются до 3 файлов одновременно.")
     print("- ДО сканирования можно выбрать 15%, 35%, 50% или 100%; процент ограничивает и ПОИСК, и СКАЧИВАНИЕ.")
     print("- SELF-HEAL: пропавшие downloads/profile/browser_media папки создаются заново.")
+    print(f"- SPLIT: медиа автоматически раскладывается по папкам part_001, part_002... до {PART_LIMIT_MB} МБ каждая.")
 
     firefox_cookies = []
 
@@ -1612,7 +1808,21 @@ def main():
         input("\nEnter для выхода...")
         return
 
+    # v11.0 SPLIT: старые папки без разбивки раскладываем по частям до PART_LIMIT_MB.
+    try:
+        splitter = MediaSplitter(media_dir)
+        migrated = splitter.migrate_flat_layout()
+        remap_progress_after_migration(target / "progress.json", migrated)
+    except OSError as e:
+        print("\n[ОШИБКА РАЗБИВКИ ПАПОК]")
+        print(e)
+        input("\nEnter для выхода...")
+        return
+
     progress_file, done, by_url, recovered_empty = load_progress(target)
+    if migrated:
+        save_progress(progress_file, done, by_url)
+        save_exports(target, by_url)
     print(f"[resume] Реально скачано раньше: {len(done)}")
     if recovered_empty:
         print(
@@ -1826,11 +2036,18 @@ def main():
                     url,
                     media_dir,
                     number=base_number + i,
+                    part_dir=splitter.part_for_next_post(),
                 )
 
                 # Критический FIX: done только ПОСЛЕ реального скачивания.
                 if not rec.get("files"):
                     raise RuntimeError("публикация не содержит скачанных файлов")
+
+                # v11.0 SPLIT: если часть переполнилась — переносим публикацию в новую часть.
+                item_dir = media_dir / Path(rec["files"][0]).parent
+                placed = splitter.place(item_dir)
+                if placed != item_dir:
+                    relocate_record(rec, media_dir, placed)
 
                 by_url[url] = rec
                 done.add(url)
@@ -1886,6 +2103,8 @@ def main():
                 (target / "failed_urls.txt").unlink(missing_ok=True)
             except Exception:
                 pass
+
+        splitter.print_summary()
 
         print("\n" + "=" * 78)
         print("DEEP SCAN ГОТОВ")

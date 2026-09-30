@@ -6,8 +6,8 @@
   "scripts": {
     "dev": "vite",
     "images": "python3 scripts/optimize_images.py",
-    "build": "tsc -p tsconfig.json && vite build && vite build --ssr src/entry-server.tsx --outDir dist-ssr && node scripts/prerender.mjs dist dist-ssr",
-    "build:single": "python3 scripts/make_single_images.py && vite build --mode single && vite build --mode single --ssr src/entry-server.tsx --outDir dist-ssr-single && node scripts/prerender.mjs dist-single dist-ssr-single",
+    "build": "tsc -p tsconfig.json && vite build && vite build --ssr src/entry-server.tsx --outDir dist-ssr && node scripts/prerender.mjs dist dist-ssr && node scripts/compat.mjs dist/assets",
+    "build:single": "python3 scripts/make_single_images.py && vite build --mode single && vite build --mode single --ssr src/entry-server.tsx --outDir dist-ssr-single && node scripts/prerender.mjs dist-single dist-ssr-single && node scripts/compat.mjs dist-single/index.html",
     "preview": "vite preview"
   },
   "dependencies": {
@@ -24,10 +24,13 @@
     "tailwind-merge": "^3.7.0"
   },
   "devDependencies": {
+    "@csstools/postcss-cascade-layers": "^6.0.1",
     "@tailwindcss/vite": "^4.3.3",
     "@types/react": "^19.3.0",
     "@types/react-dom": "^19.3.0",
     "@vitejs/plugin-react": "^6.1.1",
+    "lightningcss": "^1.33.0",
+    "postcss": "^8.5.28",
     "tailwindcss": "^4.3.3",
     "typescript": "^7.0.2",
     "vite": "^8.3.1",

@@ -31,8 +31,10 @@ export default defineConfig(({ mode }) => {
         "@": src("./src"),
       },
     },
-    build: single
-      ? { outDir: "dist-single", assetsInlineLimit: Number.MAX_SAFE_INTEGER }
-      : undefined,
+    // Скрипты — в синтаксисе, который понимают и не самые свежие браузеры.
+    build: {
+      target: ["es2017", "chrome70", "edge79", "firefox68", "safari12"],
+      ...(single ? { outDir: "dist-single", assetsInlineLimit: Number.MAX_SAFE_INTEGER } : {}),
+    },
   };
 });

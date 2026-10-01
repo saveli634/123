@@ -23,9 +23,9 @@ const made = ["Силовые бамперы, с лебёдкой", "Порог�
 
 /**
  * Силовой обвес под заказ: галерея + что делаем + контакт мастера.
- * Компьютер с разрешённым движением: галерея закрепляется и едет вбок при прокрутке,
+ * При разрешённом движении (телефон и компьютер): галерея закрепляется и едет вбок при прокрутке,
  * кадры поворачиваются «каруселью» — центральный смотрит прямо, боковые уходят в глубину.
- * Телефон / reduced motion / без JS — обычная сетка.
+ * Reduced motion / без JS — обычная сетка.
  */
 export function Fabrication() {
   const { openLightbox, openLead } = useUi();
@@ -39,13 +39,9 @@ export function Fabrication() {
   const geo = useRef({ over: 0, vw: 1, centers: [] as number[] });
   const [live, setLive] = useState(false);
 
+  // Карусель — на любом экране, если движение разрешено (телефон, планшет, компьютер)
   useEffect(() => {
-    if (!motionAllowed()) return;
-    const mq = window.matchMedia("(min-width: 1024px)");
-    const check = () => setLive(mq.matches);
-    check();
-    window.addEventListener("resize", check);
-    return () => window.removeEventListener("resize", check);
+    if (motionAllowed()) setLive(true);
   }, []);
 
   useEffect(() => {
@@ -54,11 +50,16 @@ export function Fabrication() {
     const st = stage.current!;
     const t = track.current!;
     const items = () => Array.from(t.children) as HTMLElement[];
+    let lastW = -1;
     const measure = () => {
       const vw = st.clientWidth;
+      // На телефоне адресная строка меняет высоту окна при прокрутке — пересчитываем только при смене ширины
+      if (vw === lastW && geo.current.over) return;
+      lastW = vw;
       const over = Math.max(0, t.offsetWidth - vw);
       geo.current = { vw, over, centers: items().map((el) => el.offsetLeft + el.offsetWidth / 2) };
       pinEl.style.height = `${Math.round(window.innerHeight + over * 0.75)}px`;
+      pinEl.style.height = `calc(100svh + ${Math.round(over * 0.75)}px)`;
       requestTick();
     };
     measure();
@@ -139,6 +140,9 @@ export function Fabrication() {
               <PhotoFrame key={p.name} photo={p} ratio={p.name === "obves-prado120-front" ? "4/3" : "4/5"} sizes="(min-width: 1024px) 32vw, 50vw" onOpen={() => openLightbox(gallery, i + 3)} onFocus={() => focusItem(i + 3)} className="fab-item reveal lg:col-span-4" />
             ))}
           </div>
+          <p aria-hidden="true" className="fab-title eyebrow container-x text-muted">
+            <span className="text-accent">07 — </span>Силовой обвес · наши работы
+          </p>
           <div aria-hidden="true" className="fab-hud container-x">
             <span className="mono text-sm">
               <span ref={count} className="text-accent">01</span> / {String(gallery.length).padStart(2, "0")}

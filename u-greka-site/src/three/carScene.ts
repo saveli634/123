@@ -60,7 +60,8 @@ export function createCarScene(canvas: HTMLCanvasElement, onFrame: (f: FrameInfo
   } catch {
     return null;
   }
-  renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, opts.mobile ? 1.5 : 1.75));
+  let dpr = Math.min(window.devicePixelRatio || 1, opts.mobile ? 1.5 : 1.75);
+  renderer.setPixelRatio(dpr);
   renderer.toneMapping = THREE.ACESFilmicToneMapping;
   renderer.toneMappingExposure = 1.05;
   renderer.shadowMap.enabled = true;
@@ -252,8 +253,25 @@ export function createCarScene(canvas: HTMLCanvasElement, onFrame: (f: FrameInfo
     return { x: (tmp.x * 0.5 + 0.5) * width, y: (-tmp.y * 0.5 + 0.5) * height };
   }
 
+  // Слабый телефон: если кадры медленные, снижаем чёткость, чтобы прокрутка оставалась плавной
+  let slow = 0;
+  let sampled = 0;
+  function adapt(rawDt: number) {
+    if (dpr <= 1 || sampled > 240) return;
+    sampled++;
+    slow = rawDt > 0.034 ? slow + 1 : Math.max(0, slow - 1);
+    if (slow > 24) {
+      dpr = Math.max(1, dpr - 0.5);
+      renderer.setPixelRatio(dpr);
+      renderer.setSize(width, height, false);
+      slow = 0;
+    }
+  }
+
   function frame(now: number) {
-    const dt = Math.min(0.05, (now - last) / 1000);
+    const rawDt = (now - last) / 1000;
+    adapt(rawDt);
+    const dt = Math.min(0.05, rawDt);
     last = now;
     const k = 1 - Math.exp(-dt * 7);
     cur += (target - cur) * k;

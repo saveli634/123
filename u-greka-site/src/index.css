@@ -527,8 +527,16 @@ html.lenis body {
 }
 
 /* ---------- Силовой обвес: закреплённая галерея-«карусель» (компьютер) ---------- */
-.fab-hud {
+.fab-hud,
+.fab-title {
   display: none;
+}
+.fab-live .fab-title {
+  display: block;
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: calc(var(--header-h) + 3vh);
 }
 .fab-live .fab-stage {
   position: sticky;
@@ -576,7 +584,24 @@ html.lenis body {
   position: absolute;
   left: 0;
   right: 0;
-  bottom: max(1.5rem, 5vh);
+}
+@media (max-width: 1023px) {
+  .fab-live .fab-stage {
+    perspective: 900px;
+  }
+  .fab-live .fab-track {
+    --fab-h: min(52vh, 66vw);
+    gap: 1rem;
+  }
+  .fab-live .fab-hud {
+    bottom: calc(56px + 1.25rem + env(safe-area-inset-bottom));
+    gap: 1rem;
+  }
+}
+@media (min-width: 1024px) {
+  .fab-live .fab-hud {
+    bottom: max(1.5rem, 5vh);
+  }
 }
 .fab-bar {
   position: relative;
@@ -835,5 +860,41 @@ html.lenis body {
   }
   .car-hotspot-tag {
     display: none;
+  }
+}
+
+/* Телефон, повёрнутый горизонтально: низкий экран + нижняя панель кнопок */
+@media (max-width: 1023px) and (max-height: 520px) and (orientation: landscape) {
+  .car-live .car-intro {
+    top: calc(var(--header-h) + 1rem);
+  }
+  .car-live .car-card {
+    top: calc(50% + var(--header-h) / 2 - 28px);
+    width: min(22rem, 40vw);
+  }
+  .car-live .car-card-body {
+    padding: 0.85rem 1rem;
+  }
+  .car-live .car-card-body ul {
+    font-size: 0.85rem;
+  }
+  .car-live .car-final {
+    bottom: calc(56px + 0.75rem + env(safe-area-inset-bottom));
+  }
+  .car-live .car-final .display {
+    font-size: 1.6rem;
+  }
+  .car-live .car-final .mt-6 {
+    margin-top: 0.75rem;
+  }
+  .car-live .car-rail {
+    top: calc(var(--header-h) + 0.5rem);
+    bottom: calc(56px + 1rem);
+  }
+  .fab-live .fab-track {
+    --fab-h: min(52vh, 40vw);
+  }
+  .fab-live .fab-title {
+    top: calc(var(--header-h) + 0.25rem);
   }
 }

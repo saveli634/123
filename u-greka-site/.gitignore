@@ -6,3 +6,5 @@ dist-ssr-single/
 single-img/
 # Исходные фото с неразмытыми госномерами — не публикуем в git
 source-media/
+car-lab.html
+src/carLab.ts

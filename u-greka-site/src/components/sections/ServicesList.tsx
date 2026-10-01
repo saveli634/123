@@ -33,7 +33,7 @@ function ServiceRow({ service: s, flip }: { service: Service; flip: boolean }) {
       <div className={cn("lg:col-span-7", flip && "lg:order-2 lg:col-start-6")}>
         <div className="no-scrollbar -mx-(--gutter) flex snap-x snap-mandatory gap-3 overflow-x-auto px-(--gutter) lg:mx-0 lg:grid lg:grid-cols-3 lg:gap-4 lg:overflow-visible lg:px-0">
           <div className="w-[82%] shrink-0 snap-start lg:col-span-2 lg:row-span-2 lg:w-auto">
-            <PhotoFrame photo={main} ratio="4/5" sizes="(min-width: 1024px) 38vw, 82vw" onOpen={() => openLightbox(s.photos, 0)} className="reveal lg:h-full lg:[&>.frame-media]:h-full" />
+            <PhotoFrame photo={main} ratio="4/5" sizes="(min-width: 1024px) 38vw, 82vw" onOpen={() => openLightbox(s.photos, 0)} parallax className="reveal lg:h-full lg:[&>.frame-media]:h-full" />
           </div>
           {rest.map((p, i) => (
             <div key={p.name} className="w-[82%] shrink-0 snap-start lg:w-auto">

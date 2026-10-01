@@ -5,6 +5,7 @@ import { nav, site, whatsapp } from "@/data/site.config";
 import { Button } from "@/components/ui/button";
 import { Wordmark } from "@/components/shared/Wordmark";
 import { WhatsAppIcon } from "@/components/shared/icons";
+import { scrollToEl } from "@/lib/smoothScroll";
 
 /** Мобильное меню на всю высоту: крупный шрифт, две кнопки закреплены внизу. */
 export function MobileSheet() {
@@ -31,7 +32,7 @@ export function MobileSheet() {
             if (!el || !href) return;
             e.preventDefault();
             history.pushState(null, "", href);
-            el.scrollIntoView({ behavior: "smooth", block: "start" });
+            scrollToEl(el);
             el.focus({ preventScroll: true });
           }}
           className="fixed inset-0 z-50 flex flex-col bg-bg outline-none data-[state=closed]:animate-[fade-out_180ms] data-[state=open]:animate-[fade-in_220ms_var(--ease-out)]"

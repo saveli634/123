@@ -1,6 +1,6 @@
 import { useEffect } from "react";
 
-const SELECTOR = ".reveal, .img-reveal, .line-mask";
+const SELECTOR = ".reveal, .reveal-3d, .img-reveal, .line-mask";
 
 /**
  * Один наблюдатель на всю страницу: каждому элементу с классом анимации

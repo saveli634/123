@@ -16,19 +16,33 @@ import { Contact } from "@/components/sections/Contact";
 import { Lightbox } from "@/components/shared/Lightbox";
 import { LeadDrawer } from "@/components/shared/LeadDrawer";
 import { UiProvider } from "@/components/shared/UiContext";
+import { CarShowcase } from "@/components/sections/CarShowcase";
+import { HazardTape } from "@/components/sections/HazardTape";
+import { ScrollProgress } from "@/components/shared/ScrollProgress";
 import { useRevealObserver } from "@/lib/useReveal";
+import { useSmoothScroll } from "@/lib/smoothScroll";
+import { motionAllowed } from "@/lib/scrollFx";
+import { useEffect } from "react";
 
 export default function App() {
   useRevealObserver();
+  useSmoothScroll();
+  // Класс .motion включает закреплённые сцены и эффекты прокрутки; без него — статика
+  useEffect(() => {
+    if (motionAllowed()) document.documentElement.classList.add("motion");
+  }, []);
   return (
     <UiProvider>
       <a href="#main" className="fixed top-2 left-2 z-[60] -translate-y-24 rounded-[3px] bg-accent px-4 py-3 text-accent-ink transition-transform focus:translate-y-0">
         Перейти к содержимому
       </a>
+      <ScrollProgress />
       <Header />
       <main id="main">
         <Hero />
         <ServiceStrip />
+        <CarShowcase />
+        <HazardTape />
         <ServicesList />
         <AcSection />
         <HeaterResults />

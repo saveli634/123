@@ -61,7 +61,7 @@ export function AcSection() {
       </div>
 
       <div className="container-x mt-14 grid gap-8 lg:grid-cols-12 lg:items-center">
-        <PhotoFrame photo={{ name: "ac-freon-boxes", alt: "Коробки фреона Frio+ 134a", tag: "Frio+ 134a" }} ratio="4/3" sizes="(min-width: 1024px) 40vw, 100vw" className="reveal lg:col-span-5" />
+        <PhotoFrame photo={{ name: "ac-freon-boxes", alt: "Коробки фреона Frio+ 134a", tag: "Frio+ 134a" }} ratio="4/3" sizes="(min-width: 1024px) 40vw, 100vw" parallax className="reveal lg:col-span-5" />
         <div className="reveal lg:col-span-6 lg:col-start-7">
           <p className="eyebrow text-accent">Фреон</p>
           <h3 className="display mt-3 text-[clamp(1.9rem,3.4vw,2.8rem)]">Frio+, Бельгия</h3>

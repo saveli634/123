@@ -5,7 +5,7 @@ import { useUi } from "@/components/shared/UiContext";
 import { cn } from "@/lib/utils";
 import { SectionHead } from "./SectionHead";
 
-/** Работы: фильтр-чипы по категориям и «кладка» из реальных фото. */
+/** Работы: фильтр-чипы по категориям и «кладка» из реальных фото; кадры «встают» в 3D при прокрутке. */
 export function Works() {
   const [filter, setFilter] = useState<"all" | WorkCategory>("all");
   const { openLightbox } = useUi();
@@ -34,7 +34,9 @@ export function Works() {
         <ul key={filter} className="mt-8 columns-2 gap-3 lg:columns-3 lg:gap-4">
           {items.map((w, i) => (
             <li key={w.name} className="animate-fade-up mb-3 break-inside-avoid lg:mb-4" style={{ ["--delay" as string]: `${Math.min(i, 8) * 40}ms` }}>
-              <PhotoFrame photo={w} ratio={w.ratio} sizes="(min-width: 1024px) 30vw, 48vw" onOpen={() => openLightbox(items, i)} />
+              <div className="reveal-3d" style={{ ["--delay" as string]: `${(i % 3) * 80}ms` }}>
+                <PhotoFrame photo={w} ratio={w.ratio} sizes="(min-width: 1024px) 30vw, 48vw" onOpen={() => openLightbox(items, i)} tilt />
+              </div>
             </li>
           ))}
         </ul>

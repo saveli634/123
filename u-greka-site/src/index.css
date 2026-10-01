@@ -1,0 +1,308 @@
+@import "tailwindcss";
+@import "./fonts.css";
+
+/* ------------------------------------------------------------------
+   «Рабочий бокс, ночная смена»: графит + сигнальный жёлтый.
+   Синий оборудования — только для мелких второстепенных деталей.
+------------------------------------------------------------------ */
+@theme {
+  --color-bg: #0f0f10;
+  --color-surface: #17181a;
+  --color-surface-2: #1f2124;
+  --color-line: #2b2e32;
+  --color-text: #f2f1ed;
+  --color-muted: #a5a7ab;
+  --color-accent: #f6b400;
+  --color-accent-ink: #121212;
+  --color-steel: #2f6bff;
+  --color-paper: #edebe4;
+  --color-paper-ink: #121212;
+  --color-paper-muted: #55575b;
+
+  --font-display: "Oswald Variable", "Arial Narrow", sans-serif;
+  --font-sans: "Inter Variable", "Segoe UI", system-ui, sans-serif;
+  --font-mono: "JetBrains Mono Variable", ui-monospace, monospace;
+
+  --radius-sm: 2px;
+  --radius: 3px;
+  --radius-md: 4px;
+
+  --ease-out: cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+:root {
+  --gutter: clamp(1rem, 4vw, 3rem);
+  --section: clamp(4.5rem, 9vw, 8.5rem);
+  --header-h: 4.25rem;
+}
+
+html {
+  scroll-behavior: smooth;
+  scroll-padding-top: var(--header-h);
+  -webkit-text-size-adjust: 100%;
+  color-scheme: dark;
+}
+body {
+  overflow-x: clip;
+  background: var(--color-bg);
+  color: var(--color-text);
+  font-family: var(--font-sans);
+  font-size: 1rem;
+  line-height: 1.55;
+  -webkit-font-smoothing: antialiased;
+  -webkit-tap-highlight-color: transparent;
+}
+@media (min-width: 1024px) {
+  body {
+    font-size: 1.0625rem;
+  }
+}
+::selection {
+  background: var(--color-accent);
+  color: var(--color-accent-ink);
+}
+a,
+button {
+  touch-action: manipulation;
+}
+h1,
+h2,
+h3 {
+  text-wrap: balance;
+}
+p {
+  text-wrap: pretty;
+}
+:focus-visible {
+  outline: 2px solid var(--color-accent);
+  outline-offset: 2px;
+  border-radius: 2px;
+}
+[tabindex="-1"]:focus {
+  outline: none;
+}
+
+@utility container-x {
+  width: 100%;
+  max-width: 90rem;
+  margin-inline: auto;
+  padding-inline: var(--gutter);
+}
+@utility section-y {
+  padding-block: var(--section);
+}
+@utility display {
+  font-family: var(--font-display);
+  font-weight: 650;
+  text-transform: uppercase;
+  letter-spacing: -0.005em;
+  line-height: 0.98;
+}
+@utility eyebrow {
+  font-family: var(--font-mono);
+  font-size: 0.75rem;
+  font-weight: 500;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+@utility mono {
+  font-family: var(--font-mono);
+  font-variant-numeric: tabular-nums;
+}
+
+/* Светлые «бумажные» секции для ритма */
+.paper {
+  background: var(--color-paper);
+  color: var(--color-paper-ink);
+  color-scheme: light;
+}
+.paper :focus-visible {
+  outline-color: var(--color-paper-ink);
+}
+
+/* Жёлтые уголки-метки, как на технической разметке */
+/* position задаётся утилитами (relative/absolute) на самом элементе */
+.corner-marks::before,
+.corner-marks::after {
+  content: "";
+  position: absolute;
+  width: 22px;
+  height: 22px;
+  border: 2px solid var(--color-accent);
+  pointer-events: none;
+  z-index: 2;
+}
+.corner-marks::before {
+  top: 10px;
+  left: 10px;
+  border-right: 0;
+  border-bottom: 0;
+}
+.corner-marks::after {
+  bottom: 10px;
+  right: 10px;
+  border-left: 0;
+  border-top: 0;
+}
+
+/* ---------- Motion: только появление + ховер фото; скрытые состояния — лишь при JS ---------- */
+.js .reveal {
+  opacity: 0;
+  transform: translate3d(0, 14px, 0);
+  transition:
+    opacity 0.6s var(--ease-out),
+    transform 0.7s var(--ease-out);
+  transition-delay: var(--delay, 0ms);
+}
+.js .reveal.is-in {
+  opacity: 1;
+  transform: none;
+}
+.line-mask {
+  display: block;
+  overflow: hidden;
+  padding-bottom: 0.06em;
+  margin-bottom: -0.06em;
+}
+.line-mask > span {
+  display: block;
+}
+.js .line-mask > span {
+  transform: translate3d(0, 105%, 0);
+  transition: transform 0.7s var(--ease-out);
+  transition-delay: var(--delay, 0ms);
+}
+.js .line-mask.is-in > span {
+  transform: none;
+}
+
+/* Ховер фото (только мышь): 1.03 за 400 мс + выезд подписи */
+.photo-frame .photo {
+  transition: transform 0.4s var(--ease-out);
+}
+.photo-frame .caption-tag {
+  transition: transform 0.28s var(--ease-out);
+}
+@media (hover: hover) and (pointer: fine) {
+  .photo-frame:hover .photo {
+    transform: scale(1.03);
+  }
+  .photo-frame:hover .caption-tag {
+    transform: translate3d(0, -4px, 0);
+  }
+}
+
+/* Герой: медленный «наезд» 1.04 → 1 при загрузке */
+@keyframes hero-settle {
+  from {
+    transform: scale(1.04);
+  }
+  to {
+    transform: scale(1);
+  }
+}
+.js .hero-img .photo {
+  animation: hero-settle 1.6s var(--ease-out) both;
+}
+
+@keyframes fade-in {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+@keyframes fade-out {
+  from {
+    opacity: 1;
+  }
+  to {
+    opacity: 0;
+  }
+}
+@keyframes sheet-in {
+  from {
+    transform: translate3d(0, 100%, 0);
+  }
+  to {
+    transform: none;
+  }
+}
+@keyframes sheet-out {
+  from {
+    transform: none;
+  }
+  to {
+    transform: translate3d(0, 100%, 0);
+  }
+}
+@keyframes drawer-in {
+  from {
+    transform: translate3d(100%, 0, 0);
+  }
+  to {
+    transform: none;
+  }
+}
+@keyframes drawer-out {
+  from {
+    transform: none;
+  }
+  to {
+    transform: translate3d(100%, 0, 0);
+  }
+}
+@keyframes fade-up {
+  from {
+    opacity: 0;
+    transform: translate3d(0, 12px, 0);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+.animate-fade-up {
+  animation: fade-up 0.5s var(--ease-out) both;
+  animation-delay: var(--delay, 0ms);
+}
+
+/* Скрытие полосы прокрутки у горизонтальных лент */
+.no-scrollbar {
+  scrollbar-width: none;
+}
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    transition-delay: 0ms !important;
+  }
+  .reveal,
+  .line-mask > span {
+    opacity: 1 !important;
+    transform: none !important;
+  }
+}
+
+/* Кадрирование героя по брейкпоинтам: бампер всегда в кадре */
+.hero-img .photo {
+  object-position: 55% 70%;
+  background-position: 55% 70% !important;
+}
+@media (min-width: 1024px) {
+  .hero-img .photo {
+    object-position: 50% 62%;
+    background-position: 50% 62% !important;
+  }
+}

@@ -1,0 +1,74 @@
+<!doctype html>
+<html lang="ru">
+  <head>
+    <meta charset="UTF-8" />
+    <script>
+      document.documentElement.classList.add("js");
+      setTimeout(function () {
+        if (!window.__ugReady) document.documentElement.classList.remove("js");
+      }, 3000);
+    </script>
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+    <title>Автосервис «У Грека» в Алматы — кондиционеры, автопечки, ремонт, силовой обвес</title>
+    <meta
+      name="description"
+      content="Автосервис и автомагазин на Рыскулова, 174А в Алматы: заправка и ремонт кондиционеров, промывка печек, двигатель, ходовая, геометрия, силовые бамперы и багажники."
+    />
+    <meta name="theme-color" content="#0f0f10" />
+    <meta name="format-detection" content="telephone=no" />
+    <meta property="og:type" content="website" />
+    <meta property="og:locale" content="ru_KZ" />
+    <meta property="og:site_name" content="Автосервис «У Грека»" />
+    <meta property="og:title" content="Автосервис «У Грека» в Алматы" />
+    <meta property="og:description" content="Кондиционеры, автопечки, двигатель, ходовая и силовой обвес. Автомагазин — здесь же. Рыскулова, 174А." />
+    <meta property="og:image" content="./og/og-image.jpg" />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <!-- После подключения домена: <link rel="canonical" href="https://ДОМЕН/" /> и абсолютный og:image -->
+    <link rel="icon" href="./favicon.svg" type="image/svg+xml" />
+    <link
+      rel="preload"
+      as="image"
+      type="image/webp"
+      href="./images/hero-main-1200.webp"
+      imagesrcset="./images/hero-main-480.webp 480w, ./images/hero-main-800.webp 800w, ./images/hero-main-1200.webp 1200w, ./images/hero-main-1440.webp 1440w"
+      imagesizes="100vw"
+      fetchpriority="high"
+    />
+    <script type="application/ld+json">
+      {
+        "@context": "https://schema.org",
+        "@type": "AutoRepair",
+        "name": "Автосервис «У Грека»",
+        "description": "Автосервис и автомагазин: кондиционеры, автопечки, двигатель, ходовая, геометрия, силовой обвес под заказ.",
+        "image": "og/og-image.jpg",
+        "telephone": "+77075010020",
+        "address": {
+          "@type": "PostalAddress",
+          "streetAddress": "проспект Рыскулова, 174А",
+          "addressLocality": "Алматы",
+          "addressCountry": "KZ"
+        },
+        "areaServed": "Алматы",
+        "makesOffer": [
+          { "@type": "Offer", "itemOffered": { "@type": "Service", "name": "Диагностика, ремонт и заправка автокондиционеров" } },
+          { "@type": "Offer", "itemOffered": { "@type": "Service", "name": "Промывка автопечки и системы охлаждения" } },
+          { "@type": "Offer", "itemOffered": { "@type": "Service", "name": "Ремонт двигателя и чистка форсунок" } },
+          { "@type": "Offer", "itemOffered": { "@type": "Service", "name": "Ремонт ходовой, тормоза, геометрия колёс" } },
+          { "@type": "Offer", "itemOffered": { "@type": "Service", "name": "Силовой обвес для внедорожников под заказ" } }
+        ]
+      }
+    </script>
+  </head>
+  <body>
+    <div id="root"></div>
+    <noscript>
+      <p style="padding:24px;font-family:sans-serif;color:#f2f1ed;background:#0f0f10">
+        Автосервис «У Грека», Алматы, проспект Рыскулова, 174А.
+        <a style="color:#f6b400" href="tel:+77075010020">+7 707 501 0020</a>
+      </p>
+    </noscript>
+    <script type="module" src="/src/main.tsx"></script>
+  </body>
+</html>

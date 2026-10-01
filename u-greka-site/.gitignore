@@ -1,0 +1,8 @@
+node_modules/
+dist/
+dist-ssr/
+dist-single/
+dist-ssr-single/
+single-img/
+# Исходные фото с неразмытыми госномерами — не публикуем в git
+source-media/

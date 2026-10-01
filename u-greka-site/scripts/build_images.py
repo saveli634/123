@@ -33,7 +33,7 @@ for name, (rel, crop, blurs) in IMAGES.items():
     avg = im.resize((1, 1), Image.LANCZOS).getpixel((0, 0))
     manifest[name] = {"w": w, "h": h, "widths": widths, "color": "#%02x%02x%02x" % avg}
     # однофайловая версия: одна копия не шире 1100 px
-    tw = min(w, 960 if name == "hero-main" else 720 if name.startswith("obves") else 600)
+    tw = min(w, 960 if name in ("hero-main", "car-render") else 720 if name.startswith(("obves", "car-render")) else 600)
     s = im.resize((tw, round(h * tw / w)), Image.LANCZOS)
     p = SINGLE / f"{name}.webp"; s.save(p, "WEBP", quality=60 if name == "hero-main" else 56, method=6)
     css.append(f'.img-{name}{{background-image:url("data:image/webp;base64,{base64.b64encode(p.read_bytes()).decode()}")}}')

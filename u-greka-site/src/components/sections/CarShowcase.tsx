@@ -1,7 +1,6 @@
 import { useEffect, useRef, useState } from "react";
 import { ArrowDown, Phone } from "lucide-react";
 import { site } from "@/data/site.config";
-import type { ImageName } from "@/data/types";
 import type { StageId } from "@/three/buildCar";
 import type { CarScene, FrameInfo } from "@/three/carScene";
 import { Img } from "@/components/shared/Img";
@@ -14,20 +13,22 @@ import { cn } from "@/lib/utils";
 /**
  * «Каждый узел — наша работа»: 3D-внедорожник разбирается по мере прокрутки.
  * Этапы = направления сервиса; факты — только из services.ts.
- * Без WebGL / при reduced motion / без JS — обычная сетка карточек с фото.
+ * Без WebGL 2 / при reduced motion / без JS (предпросмотр на телефоне) — готовые рендеры
+ * этой же модели: общий вид и по рендеру на каждый узел.
  */
-const cards: { id: StageId; slug: string; number: string; title: string; facts: string[]; tag: string; photo: ImageName; alt: string; center: number }[] = [
-  { id: "obves", slug: "silovoy-obves", number: "07", title: "Силовой обвес", facts: ["Силовые бамперы, в том числе с лебёдкой", "Пороги, калитки, багажники, шноркели"], tag: "Бампер, лебёдка, багажник", photo: "obves-lc70-bumper", alt: "Силовой бампер с лебёдкой на Land Cruiser 70", center: 0.185 },
-  { id: "ac", slug: "kondicionery", number: "01", title: "Кондиционеры", facts: ["Заправка фреоном Frio+ (Бельгия)", "Замена компрессора и радиаторов"], tag: "Конденсатор и компрессор", photo: "ac-gwagen", alt: "Заправка кондиционера на Mercedes G-класса", center: 0.355 },
-  { id: "engine", slug: "dvigatel", number: "03", title: "Двигатель", facts: ["Чистка форсунок на стенде", "Капитальный ремонт — бензин и дизель"], tag: "Двигатель", photo: "engine-2kd", alt: "Двигатель 2KD на ремонте", center: 0.525 },
-  { id: "heater", slug: "avtopechki", number: "02", title: "Автопечка", facts: ["Промывка без снятия, на аппарате", "Оплата по результату"], tag: "Радиатор печки", photo: "heater-flush-unit", alt: "Аппарат промывки «Радиатор 5.0»", center: 0.695 },
-  { id: "chassis", slug: "hodovaya-geometriya", number: "05", title: "Ходовая и тормоза", facts: ["Ремонт ходовой и амортизаторов", "Проточка тормозных дисков, геометрия"], tag: "Подвеска и тормоза", photo: "chassis-offroad-alignment", alt: "Развал-схождение на внедорожнике", center: 0.855 },
+const cards: { id: StageId; slug: string; number: string; title: string; facts: string[]; tag: string; center: number }[] = [
+  { id: "obves", slug: "silovoy-obves", number: "07", title: "Силовой обвес", facts: ["Силовые бамперы, в том числе с лебёдкой", "Пороги, калитки, багажники, шноркели"], tag: "Бампер, лебёдка, багажник", center: 0.185 },
+  { id: "ac", slug: "kondicionery", number: "01", title: "Кондиционеры", facts: ["Заправка фреоном Frio+ (Бельгия)", "Замена компрессора и радиаторов"], tag: "Конденсатор и компрессор", center: 0.355 },
+  { id: "engine", slug: "dvigatel", number: "03", title: "Двигатель", facts: ["Чистка форсунок на стенде", "Капитальный ремонт — бензин и дизель"], tag: "Двигатель", center: 0.525 },
+  { id: "heater", slug: "avtopechki", number: "02", title: "Автопечка", facts: ["Промывка без снятия, на аппарате", "Оплата по результату"], tag: "Радиатор печки", center: 0.695 },
+  { id: "chassis", slug: "hodovaya-geometriya", number: "05", title: "Ходовая и тормоза", facts: ["Ремонт ходовой и амортизаторов", "Проточка тормозных дисков, геометрия"], tag: "Подвеска и тормоза", center: 0.855 },
 ];
 
 function hasWebGL() {
   try {
     const c = document.createElement("canvas");
-    return !!(c.getContext("webgl2") || c.getContext("webgl"));
+    // Three.js требует WebGL 2 — на старых телефонах без него показываем рендеры
+    return !!c.getContext("webgl2");
   } catch {
     return false;
   }
@@ -199,11 +200,17 @@ export function CarShowcase() {
           </p>
         </div>
 
+        <div className="car-still">
+          <div className="car-still-media">
+            <Img name="car-render" alt="3D-модель белого внедорожника с силовым бампером, шноркелем и багажником" sizes="(min-width: 1024px) 90vw, 100vw" />
+          </div>
+        </div>
+
         <ol className="car-cards">
           {cards.map((c, i) => (
             <li key={c.id} ref={(el) => { cardEls.current[i] = el; }} className="car-card">
               <div className="car-card-photo">
-                <Img name={c.photo} alt={c.alt} sizes="(min-width: 1024px) 18vw, 90vw" />
+                <Img name={`car-render-${c.id}`} alt={`3D-модель внедорожника: ${c.tag.toLowerCase()}`} sizes="(min-width: 1024px) 30vw, 90vw" />
               </div>
               <div className="car-card-body">
                 <p className="mono text-sm text-accent">{c.number} — услуга</p>

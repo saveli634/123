@@ -639,6 +639,19 @@ html.lenis body {
   grid-template-columns: repeat(auto-fit, minmax(15.5rem, 1fr));
   list-style: none;
 }
+.car-still {
+  max-width: 90rem;
+  margin: 2rem auto 0;
+  padding-inline: var(--gutter);
+}
+.car-still-media {
+  aspect-ratio: 2190 / 1210;
+  overflow: hidden;
+  border-radius: 3px;
+}
+.car-live .car-still {
+  display: none;
+}
 .car-card {
   border: 1px solid var(--color-line);
   border-radius: 3px;

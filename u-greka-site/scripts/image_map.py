@@ -8,6 +8,13 @@ blur  — список зон (left, top, right, bottom) в долях ИСХО�
 """
 
 IMAGES = {
+    # --- Рендеры 3D-модели (для телефонов без 3D / предпросмотра без скриптов) ---
+    "car-render": ("../renders/car-full.jpg", None, []),
+    "car-render-obves": ("../renders/car-obves.jpg", None, []),
+    "car-render-ac": ("../renders/car-ac.jpg", None, []),
+    "car-render-engine": ("../renders/car-engine.jpg", None, []),
+    "car-render-heater": ("../renders/car-heater.jpg", None, []),
+    "car-render-chassis": ("../renders/car-chassis.jpg", None, []),
     # --- Первый экран и силовой обвес ---
     "hero-main": ("01_hero/hero-main.jpg", None, [(0.12, 0.38, 0.42, 0.53)]),
     "obves-pickup-rollbar-1": ("01_hero/hero-backup-pickup.jpg", None, []),

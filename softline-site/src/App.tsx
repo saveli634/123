@@ -10,10 +10,20 @@ import { Delivery } from "@/components/sections/Delivery";
 import { ContactCta } from "@/components/sections/ContactCta";
 import { Footer } from "@/components/sections/Footer";
 import { MobileCta } from "@/components/sections/MobileCta";
+import { Marquee } from "@/components/sections/Marquee";
+import { ShowroomWalk } from "@/components/sections/ShowroomWalk";
 import { useRevealObserver } from "@/lib/useReveal";
+import { useSmoothScroll } from "@/lib/smoothScroll";
+import { motionAllowed } from "@/lib/scrollFx";
+import { useEffect } from "react";
 
 export default function App() {
   useRevealObserver();
+  useSmoothScroll();
+  // Класс .motion включает закреплённые 3D-сцены; без него — статичные раскладки.
+  useEffect(() => {
+    if (motionAllowed()) document.documentElement.classList.add("motion");
+  }, []);
   return (
     <>
       <a
@@ -26,8 +36,10 @@ export default function App() {
       <main id="main">
         <Hero />
         <TrustStrip />
+        <Marquee />
         <Catalog />
         <Editorial />
+        <ShowroomWalk />
         <Details />
         <Showroom />
         <ClientInterior />

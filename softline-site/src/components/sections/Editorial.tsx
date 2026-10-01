@@ -1,13 +1,21 @@
+import { useRef } from "react";
 import { Img } from "@/components/Img";
+import { useScrollFx } from "@/lib/scrollFx";
 import { typo } from "@/lib/utils";
 
 /** «О компании»: асимметричный разворот вокруг Minotti, Mondi и Prado. */
 export function Editorial() {
+  // Крупный кадр Minotti «отъезжает»: входит с приближением и плавно встаёт на место.
+  const zoom = useRef<HTMLDivElement>(null);
+  useScrollFx(zoom, (p, el) => {
+    const t = Math.min(1, p / 0.55);
+    el.style.setProperty("--s", (1.28 - t * 0.28).toFixed(4));
+  });
   return (
     <section id="about" tabIndex={-1} aria-labelledby="about-title" className="section-y overflow-hidden bg-ivory">
       <div className="container-x grid gap-14 lg:grid-cols-12 lg:gap-8">
         <figure className="lg:col-span-6">
-          <div className="img-hover img-reveal">
+          <div ref={zoom} className="zoom-media img-reveal overflow-hidden">
             <Img
               name="03_minotti_hero"
               alt="Диван Minotti в шоуруме на фоне оранжевой стены"

@@ -1,9 +1,10 @@
-import { useMemo, useState } from "react";
+import { useMemo, useRef, useState } from "react";
 import { ArrowUpRight, Plus } from "lucide-react";
 import { priceMessage, products, productTypes, whatsapp, type Product, type ProductType } from "@/content/catalog";
 import { Img } from "@/components/Img";
 import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group";
 import { cn } from "@/lib/utils";
+import { useScrollVar, useTilt } from "@/lib/scrollFx";
 import { ProductDrawer } from "./ProductDrawer";
 
 type Filter = "all" | ProductType;
@@ -111,21 +112,29 @@ function ProductCard({
   onOpen: () => void;
 }) {
   const cover = product.images[0];
+  const tilt = useRef<HTMLButtonElement>(null);
+  const media = useRef<HTMLDivElement>(null);
+  useTilt(tilt, 5);
+  useScrollVar(media);
   return (
     <article aria-labelledby={`p-${product.id}`} className="group">
       <button
+        ref={tilt}
         type="button"
         onClick={onOpen}
-        className="img-hover relative block w-full text-left"
+        className="tilt img-hover relative block w-full text-left"
         aria-label={`Открыть модель ${product.name}`}
       >
-        <Img
-          name={cover.name}
-          alt={cover.alt}
-          sizes="(min-width: 1024px) 50vw, 92vw"
-          position={cover.position}
-          className={aspect}
-        />
+        <div ref={media} className={cn("card-media overflow-hidden", aspect)}>
+          <Img
+            name={cover.name}
+            alt={cover.alt}
+            sizes="(min-width: 1024px) 50vw, 92vw"
+            position={cover.position}
+            className="h-full"
+          />
+        </div>
+        <span aria-hidden="true" className="tilt-glare" />
         <span
           aria-hidden="true"
           className="absolute right-4 bottom-4 inline-flex h-10 items-center gap-2 bg-ivory px-4 text-[0.7rem] font-medium tracking-[0.16em] text-graphite uppercase opacity-100 transition-[opacity,transform] duration-400 ease-(--ease-out-soft) lg:translate-y-2 lg:opacity-0 lg:group-hover:translate-y-0 lg:group-hover:opacity-100 lg:group-focus-within:translate-y-0 lg:group-focus-within:opacity-100"

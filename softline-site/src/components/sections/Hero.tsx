@@ -3,48 +3,59 @@ import { ArrowRight } from "lucide-react";
 import { brand, whatsapp } from "@/content/catalog";
 import { Img } from "@/components/Img";
 import { Button, nudge } from "@/components/ui/button";
-import { prefersReducedMotion } from "@/lib/useScrollY";
+import { motionAllowed, useScrollVar } from "@/lib/scrollFx";
 import { typo } from "@/lib/utils";
 
 /**
- * Первый экран — тёмный, кинематографичный. Фото Prado высокой колонкой уходит
- * в правый край и под шапку, огромный заголовок наезжает на снимок.
- * На телефоне — фото во всю ширину, заголовок поверх нижней части кадра.
+ * Первый экран — тёмный, кинематографичный.
+ * Прокрутка (--p): строки заголовка разъезжаются в разные стороны, фото уходит вниз
+ * и приближается, сверху ложится тёмная вуаль. Курсор (--mx/--my): слои смещаются
+ * с разной глубиной — фото и текст двигаются навстречу друг другу.
  */
 export function Hero() {
-  const parallax = useRef<HTMLDivElement>(null);
+  const section = useRef<HTMLElement>(null);
+  useScrollVar(section, "exit");
 
+  // Параллакс за курсором: фото и текст — разные «глубины».
   useEffect(() => {
-    const el = parallax.current;
-    if (!el || prefersReducedMotion()) return;
-    let frame = 0;
-    const update = () => {
-      frame = 0;
-      const y = Math.min(window.scrollY, window.innerHeight);
-      el.style.transform = `translate3d(0, ${y * 0.12}px, 0) scale(1.04)`;
+    const el = section.current;
+    if (!el || !motionAllowed() || !window.matchMedia("(hover: hover) and (pointer: fine)").matches) return;
+    let f = 0;
+    let tx = 0;
+    let ty = 0;
+    let cx = 0;
+    let cy = 0;
+    const loop = () => {
+      cx += (tx - cx) * 0.08;
+      cy += (ty - cy) * 0.08;
+      el.style.setProperty("--mx", cx.toFixed(4));
+      el.style.setProperty("--my", cy.toFixed(4));
+      f = Math.abs(tx - cx) + Math.abs(ty - cy) > 0.0005 ? requestAnimationFrame(loop) : 0;
     };
-    const onScroll = () => {
-      if (!frame) frame = requestAnimationFrame(update);
+    const move = (e: PointerEvent) => {
+      tx = e.clientX / window.innerWidth - 0.5;
+      ty = e.clientY / window.innerHeight - 0.5;
+      if (!f) f = requestAnimationFrame(loop);
     };
-    update();
-    window.addEventListener("scroll", onScroll, { passive: true });
+    el.addEventListener("pointermove", move);
     return () => {
-      window.removeEventListener("scroll", onScroll);
-      if (frame) cancelAnimationFrame(frame);
+      el.removeEventListener("pointermove", move);
+      if (f) cancelAnimationFrame(f);
     };
   }, []);
 
   return (
     <section
+      ref={section}
       id="top"
       tabIndex={-1}
       aria-labelledby="hero-title"
-      className="on-dark relative isolate overflow-hidden bg-graphite text-ivory lg:min-h-[max(46rem,100svh)]"
+      className="hero on-dark relative isolate overflow-hidden bg-graphite text-ivory lg:min-h-[max(46rem,100svh)]"
     >
       {/* Фото */}
       <div className="img-reveal relative h-[68svh] min-h-[26rem] lg:absolute lg:inset-y-0 lg:right-0 lg:h-auto lg:w-[46vw]">
         <div className="h-full w-full overflow-hidden">
-          <div ref={parallax} className="h-full w-full will-change-transform">
+          <div className="hero-media h-full w-full will-change-transform">
             <Img
               name="01_hero_prado"
               alt="Светлый диван Prado у панорамного окна в шоуруме"
@@ -55,30 +66,30 @@ export function Hero() {
             />
           </div>
         </div>
-        {/* Затемнения, чтобы заголовок читался поверх фото */}
         <div
           aria-hidden="true"
           className="pointer-events-none absolute inset-0 bg-[linear-gradient(to_top,var(--color-graphite)_2%,rgb(29_27_25/0.55)_30%,transparent_60%)] lg:bg-[linear-gradient(to_right,var(--color-graphite)_0%,rgb(29_27_25/0.35)_28%,transparent_55%)]"
         />
+        <div aria-hidden="true" className="hero-veil pointer-events-none absolute inset-0 bg-graphite" />
         <p className="eyebrow reveal absolute right-(--gutter) bottom-6 hidden text-ivory/70 lg:block" style={{ ["--delay" as string]: "1100ms" }}>
           На фото — Prado
         </p>
       </div>
 
       {/* Текст */}
-      <div className="container-x relative z-10 -mt-40 pb-14 lg:mt-0 lg:flex lg:min-h-[max(46rem,100svh)] lg:flex-col lg:justify-between lg:pt-[calc(var(--header-h)+9vh)] lg:pb-12">
+      <div className="hero-copy container-x relative z-10 -mt-40 pb-14 lg:mt-0 lg:flex lg:min-h-[max(46rem,100svh)] lg:flex-col lg:justify-between lg:pt-[calc(var(--header-h)+9vh)] lg:pb-12">
         <div>
           <p className="eyebrow reveal mb-6 text-ivory/65 lg:mb-10" style={{ ["--delay" as string]: "150ms" }}>
             Шоурум диванов · {brand.city}
           </p>
-          <h1 id="hero-title" className="display text-[clamp(3rem,8.2vw,9.2rem)] lg:max-w-[74vw]">
-            <span className="line-mask">
+          <h1 id="hero-title" className="hero-title display text-[clamp(3rem,8.2vw,9.2rem)] lg:max-w-[74vw]">
+            <span className="line-mask hero-line" style={{ ["--dir" as string]: "-1.4" }}>
               <span style={{ ["--delay" as string]: "220ms" }}>Диван,</span>
             </span>
-            <span className="line-mask">
+            <span className="line-mask hero-line" style={{ ["--dir" as string]: "1" }}>
               <span style={{ ["--delay" as string]: "320ms" }}>вокруг которого</span>
             </span>
-            <span className="line-mask">
+            <span className="line-mask hero-line" style={{ ["--dir" as string]: "-0.6" }}>
               <span style={{ ["--delay" as string]: "420ms" }}>
                 собирается <span className="serif">дом</span>
                 <span className="text-ember">.</span>
@@ -87,7 +98,7 @@ export function Hero() {
           </h1>
         </div>
 
-        <div className="mt-10 lg:mt-12">
+        <div className="hero-fade mt-10 lg:mt-12">
           <div className="reveal" style={{ ["--delay" as string]: "650ms" }}>
             <p className="max-w-[26rem] text-[1.02rem] leading-relaxed text-ivory/75">
               {typo("Современные диваны для гостиной: Prado, Minotti, Mondi и другие модели. Смотрите вживую в ТЦ ADEM 1.")}

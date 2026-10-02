@@ -1,0 +1,88 @@
+<!doctype html>
+<html lang="ru">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+    <script>
+      // До первой отрисовки: классы режима, прелоадер, запасной таймер.
+      (function () {
+        var d = document.documentElement,
+          w = window,
+          c = " js";
+        var reduce = !!(w.matchMedia && w.matchMedia("(prefers-reduced-motion: reduce)").matches);
+        if (!reduce && "IntersectionObserver" in w) c += " motion";
+        var seen = false;
+        try {
+          seen = w.localStorage.getItem("mc-visit") === "1";
+          w.localStorage.setItem("mc-visit", "1");
+        } catch (e) {}
+        if (!reduce) c += seen ? " hero-pending" : " is-preloading";
+        d.className += c;
+        // Если скрипты сайта не запустились за 2 с — показываем всё как есть
+        setTimeout(function () {
+          if (!w.__siteReady) d.className = d.className.replace(/\b(js|motion|is-preloading|hero-pending)\b/g, "");
+        }, 2000);
+      })();
+    </script>
+    <!--seo-->
+    <meta name="theme-color" content="#0a0b0d" />
+    <meta name="color-scheme" content="dark" />
+    <meta name="format-detection" content="telephone=no" />
+    <link rel="icon" href="./favicon.svg" type="image/svg+xml" />
+    <!--preload-->
+  </head>
+  <body>
+    <div class="pl" id="pl" aria-hidden="true">
+      <span class="pl-cyl"><span class="pl-piston"></span></span>
+      <span class="pl-code">1VD&#8209;FTV</span>
+      <span class="pl-num" id="pl-num">000</span>
+      <span class="pl-line" id="pl-line"></span>
+    </div>
+    <script>
+      // Прелоадер: счётчик 000→100 и красная линия, всё вместе не дольше 1,2 с.
+      (function () {
+        var d = document.documentElement;
+        if (d.className.indexOf("is-preloading") < 0) return;
+        var el = document.getElementById("pl"),
+          num = document.getElementById("pl-num"),
+          line = document.getElementById("pl-line"),
+          t0 = Date.now(),
+          dur = 780,
+          ended = false;
+        function fire() {
+          var ev;
+          try {
+            ev = new Event("preload:done");
+          } catch (e) {
+            ev = document.createEvent("Event");
+            ev.initEvent("preload:done", true, true);
+          }
+          window.dispatchEvent(ev);
+        }
+        function end() {
+          if (ended) return;
+          ended = true;
+          num.textContent = "100";
+          el.className += " pl-out";
+          fire();
+          setTimeout(function () {
+            d.className = d.className.replace(/\bis-preloading\b/, "");
+          }, 420);
+        }
+        function frame() {
+          var p = Math.min(1, (Date.now() - t0) / dur),
+            e = 1 - Math.pow(1 - p, 3),
+            v = Math.round(e * 100);
+          num.textContent = (v < 10 ? "00" : v < 100 ? "0" : "") + v;
+          line.style.transform = "scaleX(" + e + ")";
+          if (p < 1) (window.requestAnimationFrame || setTimeout)(frame, 16);
+          else end();
+        }
+        frame();
+        setTimeout(end, 800);
+      })();
+    </script>
+    <div id="root"></div>
+    <script type="module" src="/src/main.tsx"></script>
+  </body>
+</html>

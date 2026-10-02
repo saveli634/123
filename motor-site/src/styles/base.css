@@ -1,0 +1,335 @@
+/* ------------------------------------------------------------------
+   Фирменный стиль: «ночной цех». Чёрный, сталь, один красный — красный
+   подъёмника (#D3202B), не больше 8 % площади экрана.
+------------------------------------------------------------------ */
+:root {
+  --bg: #0a0b0d;
+  --surface: #16181c;
+  --surface-2: #1c1f24;
+  --red: #d3202b;
+  --red-deep: #9e1520;
+  --text: #ede9e1;
+  --steel: #868d98;
+  --line: rgba(134, 141, 152, 0.22);
+  --line-2: rgba(134, 141, 152, 0.42);
+
+  /* Токены shadcn/ui → фирменные цвета */
+  --background: var(--bg);
+  --foreground: var(--text);
+  --card: var(--surface);
+  --card-foreground: var(--text);
+  --primary: var(--red);
+  --primary-foreground: #ffffff;
+  --muted: #111316;
+  --muted-foreground: var(--steel);
+  --border: var(--line);
+  --input: var(--line-2);
+  --ring: var(--red);
+  --destructive: #ff6b73;
+  --radius: 2px;
+
+  --ease: cubic-bezier(0.2, 0.8, 0.2, 1);
+  --ease-io: cubic-bezier(0.77, 0, 0.175, 1);
+  --gutter: clamp(16px, 4vw, 72px);
+  --section: clamp(88px, 16vh, 200px);
+  --header-h: 64px;
+  --bar-h: 0px;
+  --display: "Oswald", "Arial Narrow", "Roboto Condensed", sans-serif;
+  --sans: "Manrope", "Segoe UI", system-ui, -apple-system, sans-serif;
+  --num: "Motor Digits", "Oswald", "Arial Narrow", sans-serif;
+  --grain: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix values='1 0 0 0 0 1 0 0 0 0 1 0 0 0 0 0 0 0 0 1'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+}
+
+@media (min-width: 1024px) {
+  :root {
+    --header-h: 76px;
+  }
+}
+
+@media (max-width: 767px) {
+  :root {
+    --bar-h: calc(64px + env(safe-area-inset-bottom, 0px));
+  }
+}
+
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-card: var(--card);
+  --color-card-foreground: var(--card-foreground);
+  --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-border: var(--border);
+  --color-input: var(--input);
+  --color-ring: var(--ring);
+  --color-destructive: var(--destructive);
+  --color-steel: var(--steel);
+  --color-red: var(--red);
+  --font-display: var(--display);
+  --font-sans: var(--sans);
+  --font-num: var(--num);
+}
+
+html {
+  color-scheme: dark;
+  background: var(--bg);
+  -webkit-text-size-adjust: 100%;
+  text-size-adjust: 100%;
+  scroll-padding-top: var(--header-h);
+}
+body {
+  margin: 0;
+  min-height: 100vh;
+  background: var(--bg);
+  color: var(--text);
+  font-family: var(--sans);
+  font-size: 16px;
+  line-height: 1.6;
+  font-weight: 400;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  -webkit-tap-highlight-color: transparent;
+  overflow-x: hidden;
+  overflow-x: clip;
+  padding-bottom: var(--bar-h);
+}
+@media (min-width: 1024px) {
+  body {
+    font-size: 17px;
+  }
+}
+a,
+button,
+[role="button"] {
+  touch-action: manipulation;
+}
+a {
+  color: inherit;
+  text-decoration: none;
+}
+h1,
+h2,
+h3 {
+  text-wrap: balance;
+}
+p {
+  text-wrap: pretty;
+  -webkit-hyphens: auto;
+  hyphens: auto;
+}
+::selection {
+  background: var(--red);
+  color: #fff;
+}
+img {
+  max-width: 100%;
+}
+
+/* Фокус с клавиатуры — красная обводка */
+:focus {
+  outline: 2px solid var(--red);
+  outline-offset: 3px;
+}
+:focus:not(:focus-visible) {
+  outline: none;
+}
+:focus-visible {
+  outline: 2px solid var(--red);
+  outline-offset: 3px;
+}
+
+.skip {
+  position: fixed;
+  left: 12px;
+  top: 12px;
+  z-index: 120;
+  padding: 12px 18px;
+  background: var(--red);
+  color: #fff;
+  font: 600 14px/1 var(--sans);
+  transform: translateY(-160%);
+  transition: transform 0.2s var(--ease);
+}
+.skip:focus {
+  transform: none;
+}
+
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+/* ---------- Сетка и ритм ---------- */
+.wrap {
+  width: 100%;
+  max-width: 1680px;
+  margin-left: auto;
+  margin-right: auto;
+  padding-left: var(--gutter);
+  padding-right: var(--gutter);
+}
+@supports (padding: max(0px)) {
+  .wrap {
+    padding-left: max(var(--gutter), env(safe-area-inset-left, 0px));
+    padding-right: max(var(--gutter), env(safe-area-inset-right, 0px));
+  }
+}
+.g12 {
+  display: grid;
+  grid-template-columns: repeat(12, minmax(0, 1fr));
+  grid-column-gap: clamp(12px, 1.6vw, 28px);
+  column-gap: clamp(12px, 1.6vw, 28px);
+}
+.sec {
+  position: relative;
+  padding-top: var(--section);
+  padding-bottom: var(--section);
+  background: var(--bg);
+  z-index: 2;
+}
+
+/* ---------- Типографика ---------- */
+.display {
+  font-family: var(--display);
+  font-weight: 700;
+  text-transform: uppercase;
+  line-height: 0.86;
+  letter-spacing: -0.012em;
+  font-kerning: normal;
+}
+.h-sec {
+  font-size: clamp(52px, 13.2vw, 92px);
+}
+@media (min-width: 1024px) {
+  .h-sec {
+    font-size: clamp(96px, 10vw, 200px);
+  }
+}
+.num {
+  font-family: var(--num);
+  font-variant-numeric: tabular-nums;
+  font-feature-settings: "tnum" 1;
+}
+.label {
+  font-family: var(--sans);
+  font-weight: 600;
+  font-size: 12px;
+  line-height: 1.25;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--steel);
+}
+.lead {
+  font-size: clamp(17px, 1.35vw, 21px);
+  line-height: 1.55;
+  max-width: 34ch;
+  color: var(--text);
+}
+.muted {
+  color: var(--steel);
+}
+.nw {
+  white-space: nowrap;
+}
+
+/* Метка раздела «02 / 09 — Цех» */
+.sec-label {
+  display: flex;
+  align-items: center;
+  margin: 0 0 clamp(28px, 4vh, 48px);
+  font: 600 12px/1 var(--sans);
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--steel);
+}
+.sec-label > * + * {
+  margin-left: 10px;
+}
+.sec-label .num {
+  font-size: 15px;
+  letter-spacing: 0.04em;
+  color: var(--text);
+}
+.sec-cross {
+  width: 11px;
+  height: 11px;
+  stroke: var(--red);
+  stroke-width: 1.5;
+  fill: none;
+}
+.sec-sl {
+  color: var(--steel);
+}
+.sec-rule {
+  display: inline-block;
+  width: clamp(28px, 5vw, 72px);
+  height: 1px;
+  background: var(--line-2);
+}
+
+/* ---------- Подчёркивание-линия у ссылок ---------- */
+.uline {
+  position: relative;
+  display: inline-block;
+}
+.uline::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: -3px;
+  height: 1px;
+  background: currentColor;
+  transform: scaleX(0);
+  transform-origin: right center;
+  transition: transform 0.45s var(--ease);
+}
+@media (hover: hover) and (pointer: fine) {
+  .uline:hover::after {
+    transform: scaleX(1);
+    transform-origin: left center;
+  }
+}
+.uline:focus-visible::after {
+  transform: scaleX(1);
+}
+
+/* ---------- Зерно поверх всей страницы (3 %) ---------- */
+.grain {
+  position: fixed;
+  top: -50%;
+  left: -50%;
+  width: 200%;
+  height: 200%;
+  z-index: 95;
+  pointer-events: none;
+  background-image: var(--grain);
+  background-size: 160px 160px;
+  opacity: 0.03;
+}
+
+/* ---------- Плашка демо-режима ---------- */
+.fill {
+  display: inline-flex;
+  align-items: baseline;
+  padding: 6px 10px;
+  border: 1px dashed rgba(211, 32, 43, 0.85);
+  color: #ff8a90;
+  background: rgba(211, 32, 43, 0.06);
+  font: 600 11px/1.3 var(--sans);
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+.fill-k {
+  margin-right: 0.4em;
+  color: #fff;
+}

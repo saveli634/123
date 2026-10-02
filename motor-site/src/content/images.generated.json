@@ -1,0 +1,315 @@
+{
+ "lift_red_land_cruiser": {
+  "w": 720,
+  "h": 810,
+  "widths": [
+   480,
+   720
+  ],
+  "color": "#7a4844"
+ },
+ "engine_on_crane": {
+  "w": 640,
+  "h": 1030,
+  "widths": [
+   480,
+   640
+  ],
+  "color": "#61504e"
+ },
+ "cylinder_head_valves": {
+  "w": 675,
+  "h": 1200,
+  "widths": [
+   480,
+   675
+  ],
+  "color": "#796d67"
+ },
+ "dial_gauge_measuring": {
+  "w": 675,
+  "h": 1200,
+  "widths": [
+   480,
+   675
+  ],
+  "color": "#4b3f3c"
+ },
+ "pistons_closeup": {
+  "w": 675,
+  "h": 1200,
+  "widths": [
+   480,
+   675
+  ],
+  "color": "#594843"
+ },
+ "crankshaft_block": {
+  "w": 675,
+  "h": 1200,
+  "widths": [
+   480,
+   675
+  ],
+  "color": "#574c46"
+ },
+ "crankshaft_caps": {
+  "w": 675,
+  "h": 1200,
+  "widths": [
+   480,
+   675
+  ],
+  "color": "#58433c"
+ },
+ "engine_on_stand": {
+  "w": 675,
+  "h": 1200,
+  "widths": [
+   480,
+   675
+  ],
+  "color": "#514742"
+ },
+ "oil_yacco_1": {
+  "w": 675,
+  "h": 1200,
+  "widths": [
+   480,
+   675
+  ],
+  "color": "#584642"
+ },
+ "oil_yacco_2": {
+  "w": 675,
+  "h": 1200,
+  "widths": [
+   480,
+   675
+  ],
+  "color": "#5b4643"
+ },
+ "break_in_cluster": {
+  "w": 720,
+  "h": 1050,
+  "widths": [
+   480,
+   720
+  ],
+  "color": "#625856"
+ },
+ "break_in_road": {
+  "w": 720,
+  "h": 840,
+  "widths": [
+   480,
+   720
+  ],
+  "color": "#5c5d57"
+ },
+ "hardkorr_light": {
+  "w": 675,
+  "h": 1200,
+  "widths": [
+   480,
+   675
+  ],
+  "color": "#5e595d"
+ },
+ "land_cruiser_silver_side": {
+  "w": 675,
+  "h": 1200,
+  "widths": [
+   480,
+   675
+  ],
+  "color": "#696a6f"
+ },
+ "land_cruiser_black_front": {
+  "w": 675,
+  "h": 1200,
+  "widths": [
+   480,
+   675
+  ],
+  "color": "#6d6666"
+ },
+ "red_garage_atmosphere": {
+  "w": 675,
+  "h": 1200,
+  "widths": [
+   480,
+   675
+  ],
+  "color": "#36070b"
+ },
+ "red_garage_atmosphere-bg": {
+  "w": 480,
+  "h": 853,
+  "widths": [
+   480
+  ],
+  "color": "#36070b",
+  "single": true
+ },
+ "interior_wheel_wrap_1": {
+  "w": 900,
+  "h": 1200,
+  "widths": [
+   480,
+   800,
+   900
+  ],
+  "color": "#695d4f"
+ },
+ "interior_wheel_wrap_2": {
+  "w": 900,
+  "h": 1200,
+  "widths": [
+   480,
+   800,
+   900
+  ],
+  "color": "#54453c"
+ },
+ "interior_wheel_wrap_3": {
+  "w": 900,
+  "h": 1200,
+  "widths": [
+   480,
+   800,
+   900
+  ],
+  "color": "#4f433e"
+ },
+ "interior_wheel_wrap_4": {
+  "w": 900,
+  "h": 1200,
+  "widths": [
+   480,
+   800,
+   900
+  ],
+  "color": "#453732"
+ },
+ "predator_snorkel_1": {
+  "w": 900,
+  "h": 1200,
+  "widths": [
+   480,
+   800,
+   900
+  ],
+  "color": "#805655"
+ },
+ "predator_snorkel_2": {
+  "w": 901,
+  "h": 1200,
+  "widths": [
+   480,
+   800,
+   901
+  ],
+  "color": "#644846"
+ },
+ "predator_snorkel_3": {
+  "w": 901,
+  "h": 1200,
+  "widths": [
+   480,
+   800,
+   901
+  ],
+  "color": "#825758"
+ },
+ "predator_snorkel_4": {
+  "w": 901,
+  "h": 1200,
+  "widths": [
+   480,
+   800,
+   901
+  ],
+  "color": "#825758"
+ },
+ "red_4x4_street": {
+  "w": 1103,
+  "h": 1200,
+  "widths": [
+   480,
+   800,
+   1103
+  ],
+  "color": "#47362e"
+ },
+ "render-0": {
+  "w": 1200,
+  "h": 857,
+  "widths": [
+   480,
+   800,
+   1200
+  ],
+  "color": "transparent"
+ },
+ "render-1": {
+  "w": 1200,
+  "h": 857,
+  "widths": [
+   480,
+   800,
+   1200
+  ],
+  "color": "transparent"
+ },
+ "render-2": {
+  "w": 1200,
+  "h": 857,
+  "widths": [
+   480,
+   800,
+   1200
+  ],
+  "color": "transparent"
+ },
+ "render-3": {
+  "w": 1200,
+  "h": 857,
+  "widths": [
+   480,
+   800,
+   1200
+  ],
+  "color": "transparent"
+ },
+ "render-4": {
+  "w": 1200,
+  "h": 857,
+  "widths": [
+   480,
+   800,
+   1200
+  ],
+  "color": "transparent"
+ },
+ "render-5": {
+  "w": 1200,
+  "h": 857,
+  "widths": [
+   480,
+   800,
+   1200
+  ],
+  "color": "transparent"
+ },
+ "render-6": {
+  "w": 1200,
+  "h": 857,
+  "widths": [
+   480,
+   800,
+   1200
+  ],
+  "color": "transparent"
+ }
+}

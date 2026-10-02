@@ -1,0 +1,14 @@
+node_modules/
+dist/
+dist-ssr/
+dist-single/
+dist-ssr-single/
+.single-img/
+.scratch/
+shots/
+renders/raw/
+renders/*.png
+# Исходные кадры до размытия (человек на фоне, чужие логотипы) — не публикуем в git.
+# Положите сюда папки frames/ и photos/ из архива frames.zip, затем npm run images.
+assets-src/frames/
+assets-src/photos/

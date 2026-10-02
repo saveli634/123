@@ -12,7 +12,7 @@ import { Topics } from "@/components/sections/Topics";
 import { Materials } from "@/components/sections/Materials";
 import { Predator } from "@/components/sections/Predator";
 import { Contacts } from "@/components/sections/Contacts";
-import { BookingDialog } from "@/components/shared/BookingDialog";
+import { BookingHost } from "@/components/shared/BookingHost";
 import { SITE } from "@/content/copy";
 import { useReveal } from "@/lib/reveal";
 import { useSmoothScroll } from "@/lib/scroll";
@@ -43,7 +43,7 @@ export default function App() {
       </main>
       <Footer />
       <MobileBar />
-      <BookingDialog />
+      <BookingHost />
       <Cursor />
       <div className="grain" aria-hidden="true" />
     </>

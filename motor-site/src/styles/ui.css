@@ -493,7 +493,9 @@
   display: block;
   overflow: hidden;
   border-radius: 10px;
+  /* пока фото грузится — его средний цвет, приглушённый */
   background: #121417;
+  background: linear-gradient(rgba(10, 11, 13, 0.55), rgba(10, 11, 13, 0.55)), var(--ph, #121417);
   -webkit-clip-path: polygon(0 0, calc(100% - var(--cut)) 0, 100% var(--cut), 100% 100%, 0 100%);
   clip-path: polygon(0 0, calc(100% - var(--cut)) 0, 100% var(--cut), 100% 100%, 0 100%);
   isolation: isolate;
@@ -602,20 +604,20 @@
   -webkit-clip-path: inset(0 0 100% 0);
   clip-path: inset(0 0 100% 0);
 }
-.js .wipe.is-in .ph-rev {
+.js .wipe.is-in[data-ready] .ph-rev {
   -webkit-clip-path: inset(0 0 0 0);
   clip-path: inset(0 0 0 0);
   transition:
     clip-path 1.25s var(--ease) var(--d, 0ms),
     -webkit-clip-path 1.25s var(--ease) var(--d, 0ms);
 }
-.js .wipe.is-in .ph-wipe {
+.js .wipe.is-in[data-ready] .ph-wipe {
   animation: wipeLine 1.25s var(--ease) var(--d, 0ms) both;
 }
 .js .wipe .ph-media {
   transform: scale(1.1);
 }
-.js .wipe.is-in .ph-media {
+.js .wipe.is-in[data-ready] .ph-media {
   transform: none;
   transition: transform 1.8s var(--ease) var(--d, 0ms);
 }

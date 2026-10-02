@@ -29,7 +29,15 @@ try {
   const go = async (y) => {
     await page.evaluate((y) => (window.__lenis ? window.__lenis.scrollTo(y, { immediate: true, force: true }) : window.scrollTo(0, y)), y);
     await page.evaluate(() => new Promise((r) => requestAnimationFrame(() => requestAnimationFrame(r))));
-    await page.waitForTimeout(1600);
+    // дождаться загрузки фото в кадре (ленивые картинки после прыжка прокрутки) и шторки
+    await page
+      .waitForFunction(
+        () => [...document.querySelectorAll("img")].filter((i) => { const r = i.getBoundingClientRect(); return r.bottom > 0 && r.top < innerHeight && r.width > 0; }).every((i) => i.complete && i.naturalWidth > 0),
+        null,
+        { timeout: 12000 },
+      )
+      .catch(() => {});
+    await page.waitForTimeout(1800);
   };
   const top = (sel) => page.evaluate((s) => document.querySelector(s).getBoundingClientRect().top + scrollY, sel);
   const st = await page.evaluate(() => { const s = document.getElementById("etapy"); return { top: s.getBoundingClientRect().top + scrollY, h: s.offsetHeight }; });

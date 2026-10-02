@@ -15,8 +15,8 @@ import { waHref } from "@/lib/links";
  */
 type Errors = Partial<Record<"name" | "phone" | "model", string>>;
 
-export function BookingDialog() {
-  const [open, setOpen] = useState(false);
+export default function BookingDialog({ initialOpen = false }: { initialOpen?: boolean }) {
+  const [open, setOpen] = useState(initialOpen);
   const [model, setModel] = useState("");
   const [errors, setErrors] = useState<Errors>({});
   const [preview, setPreview] = useState("");

@@ -1,4 +1,4 @@
-import { useRef, type CSSProperties, type ReactNode } from "react";
+import { useEffect, useRef, type CSSProperties, type ReactNode } from "react";
 import { IMAGES, type ImageName } from "@/content/images";
 import { Img } from "./Img";
 import { useScrollFx } from "@/lib/scroll";
@@ -36,6 +36,29 @@ export function Frame({ img, alt, sizes, caption, index, parallax = 0, wipe = tr
   const meta = IMAGES[img];
   const r = ratio ?? meta.h / meta.w;
 
+  // Шторка открывается, когда фото уже загружено (иначе проявится пустое окно).
+  // Запасной таймер — на случай ошибки загрузки; в однофайловой версии фото уже внутри.
+  useEffect(() => {
+    const el = ref.current;
+    const im = el?.querySelector("img");
+    if (!el) return;
+    const ready = () => {
+      el.dataset.ready = "";
+    };
+    if (!im || (im.complete && im.naturalWidth > 0)) {
+      ready();
+      return;
+    }
+    im.addEventListener("load", ready, { once: true });
+    im.addEventListener("error", ready, { once: true });
+    const t = window.setTimeout(ready, 6000);
+    return () => {
+      im.removeEventListener("load", ready);
+      im.removeEventListener("error", ready);
+      clearTimeout(t);
+    };
+  }, []);
+
   useScrollFx(ref, (p) => {
     if (!parallax || !inner.current) return;
     inner.current.style.transform = `translate3d(0, ${((0.5 - p) * parallax).toFixed(2)}%, 0)`;
@@ -47,7 +70,7 @@ export function Frame({ img, alt, sizes, caption, index, parallax = 0, wipe = tr
       className={cn("frame", wipe && "rv wipe", className)}
       style={{ ...style, ["--d" as string]: `${delay}ms` }}
     >
-      <span className="ph" style={{ paddingTop: `${(r * 100).toFixed(3)}%` }}>
+      <span className="ph" style={{ paddingTop: `${(r * 100).toFixed(3)}%`, ["--ph" as string]: meta.color }}>
         <span className="ph-rev">
           <span ref={inner} className={cn("ph-in", parallax ? "ph-par" : "")}>
             <Img name={img} alt={alt} sizes={sizes} priority={priority} position={position} className="ph-media" />

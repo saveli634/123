@@ -1,5 +1,6 @@
 /**
- * Lighthouse (мобильный профиль по умолчанию) на хостинг-версии dist/.
+ * Lighthouse (мобильный профиль по умолчанию) на хостинг-версии dist/: 5 прогонов, итог — медиана
+ * (так советует сам Lighthouse: отдельные прогоны скачут из-за загрузки процессора).
  *   node scripts/lighthouse.mjs [папка-отчёта]
  * Chrome — тот, что ставит Playwright (CHROME_PATH можно задать вручную).
  */
@@ -21,7 +22,7 @@ const chrome = await chromeLauncher.launch({
 });
 try {
   const runs = [];
-  for (let i = 0; i < 3; i++) {
+  for (let i = 0; i < 5; i++) {
     const r = await lighthouse("http://localhost:4190/", { port: chrome.port, output: ["html", "json"], logLevel: "error" });
     const c = r.lhr.categories;
     const a = r.lhr.audits;
@@ -43,7 +44,10 @@ try {
       writeFileSync(join(OUT, "lighthouse-mobile.json"), r.report[1]);
     }
   }
-  writeFileSync(join(OUT, "summary.json"), JSON.stringify(runs, null, 1));
+  const med = (k) => [...runs].map((r) => r[k]).sort((a, b) => a - b)[Math.floor(runs.length / 2)];
+  const median = { performance: med("performance"), accessibility: med("accessibility"), bestPractices: med("bestPractices"), seo: med("seo") };
+  console.log("median:", JSON.stringify(median));
+  writeFileSync(join(OUT, "summary.json"), JSON.stringify({ runs, median }, null, 1));
 } finally {
   await chrome.kill();
   await new Promise((r) => server.httpServer.close(r));

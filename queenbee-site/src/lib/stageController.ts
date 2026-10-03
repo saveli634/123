@@ -291,7 +291,7 @@ export function mountStage(els: { slot: HTMLElement; pin: HTMLElement; layer: HT
 export const stageSceneState = () => sceneState;
 
 /** Прогресс сцены для готовых рендеров каждого этапа (0 — первый экран). */
-export const STILL_P = [0, 0.17, 0.4, 0.64, 0.8];
+export const STILL_P = [0, 0.13, 0.35, 0.58, 0.8];
 
 /**
  * Режим съёмки (?render=k): квадратная канва, зеркало по центру, стекло — половина кадра,

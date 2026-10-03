@@ -42,7 +42,7 @@ export const CONFIG = {
   guestsConsentConfirmed: false,
   /** мастер на кадрах guest_a_02, guest_a_03 дал согласие */
   staffConsentConfirmed: false,
-  /** показывать @-аккаунты гостий (на сайте не используются) */
+  /** показывать @-аккаунты гостей (на сайте не используются) */
   showGuestHandles: false,
   /** кадры works_check (ролик похож на генерацию) — только после подтверждения владельца */
   showAiReel: false,

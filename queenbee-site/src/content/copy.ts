@@ -58,8 +58,11 @@ export interface Stage {
 }
 
 // На кадрах guest_a_02 и guest_a_03 виден мастер: без его согласия в зеркале — guest_a_01 и guest_a_04.
+// Каждой гостье — своя часть сцены, чтобы одно лицо не повторялось по всей странице:
+// первый экран — гостья у круглого зеркала с подсветкой, макияж — гостья A, причёски — локоны и волны,
+// полный образ — гостьи B и C.
 const staff = CONFIG.staffConsentConfirmed;
-export const HERO_PHOTO: ImgName = "guest_b_01";
+export const HERO_PHOTO: ImgName = "guest_c_01";
 
 export const STAGES: Stage[] = [
   {
@@ -76,7 +79,7 @@ export const STAGES: Stage[] = [
     id: "hair",
     name: "Причёски и укладка",
     line: T.hairLine,
-    photos: ["guest_b_01", "guest_b_02", "hair_waves_1"],
+    photos: ["guest_b_04", "hair_waves_1"],
     from: 0.25,
     to: 0.5,
   },
@@ -85,8 +88,7 @@ export const STAGES: Stage[] = [
     id: "look",
     name: "Полный beauty‑образ",
     line: T.fullLook,
-    // без согласия мастера guest_a_04 уже показан на этапе «Макияж» — здесь берём guest_c_01
-    photos: [staff ? "guest_a_04" : "guest_c_01", "guest_c_02", "guest_b_03"],
+    photos: ["guest_b_03", "guest_c_02"],
     from: 0.5,
     to: 0.75,
   },
@@ -95,4 +97,4 @@ export const STAGES: Stage[] = [
 
 /** Последовательность кадров в зеркале и моменты разворотов (прогресс сцены). */
 export const MIRROR_SEQUENCE: ImgName[] = [HERO_PHOTO, ...STAGES.flatMap((s) => s.photos)];
-export const FLIPS: number[] = [0.035, 0.145, 0.265, 0.35, 0.43, 0.515, 0.595, 0.675];
+export const FLIPS: number[] = [0.035, 0.15, 0.27, 0.39, 0.52, 0.63];

@@ -8,7 +8,7 @@ export function releaseBlockers(): string[] {
   if (!CONFIG.city.trim()) b.push("city — город");
   if (!CONFIG.phone.trim() && !CONFIG.whatsapp.trim()) b.push("phone или whatsapp");
   if (!CONFIG.instagram.trim()) b.push("instagram");
-  if (!CONFIG.guestsConsentConfirmed) b.push("guestsConsentConfirmed — согласие гостий на фото");
+  if (!CONFIG.guestsConsentConfirmed) b.push("guestsConsentConfirmed — согласие гостей на фото");
   if (!CONFIG.staffConsentConfirmed) b.push("staffConsentConfirmed — согласие мастера (guest_a_02, guest_a_03)");
   return b;
 }

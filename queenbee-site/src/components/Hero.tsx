@@ -47,7 +47,7 @@ export const Hero = forwardRef<HTMLDivElement>(function Hero(_props, slotRef) {
           </a>
         </div>
         <div className="hero__mirror">
-          <MirrorCss ref={slotRef} name={HERO_PHOTO} alt="Готовый образ гостьи в салоне Queen Bee: укладка и макияж" eager className="hero__cmirror" />
+          <MirrorCss ref={slotRef} name={HERO_PHOTO} alt="Готовый образ гостьи салона Queen Bee у зеркала с подсветкой" eager className="hero__cmirror" />
         </div>
       </div>
       <a href="#mirror" className="hero__scroll" aria-label="Прокрути к образам">

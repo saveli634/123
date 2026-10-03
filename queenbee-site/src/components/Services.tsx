@@ -11,16 +11,13 @@ import type { ImgName } from "@/content/media";
  */
 export function Services() {
   const priceHref = hasWhatsapp ? waHref(PRICE_TEXT) : hasPhone ? callHref : "#booking";
-  const cards: { title: string; line: string; photo: ImgName; alt: string }[] = [
-    {
-      title: "Макияж",
-      line: "От первого штриха",
-      photo: CONFIG.staffConsentConfirmed ? "guest_a_02" : "guest_a_01",
-      alt: "Макияж в салоне Queen Bee",
-    },
-    { title: "Причёски и укладка", line: T.hairLine, photo: "guest_b_01", alt: "Укладка: локоны, салон Queen Bee" },
-    { title: "Полный beauty‑образ", line: "До финального акцента", photo: "guest_c_02", alt: "Полный образ гостьи салона Queen Bee" },
+  // Кадры, которые не стоят на первом экране; для макияжа — крупный план лица (деталь, а не тот же портрет).
+  const cards: { title: string; line: string; photo: ImgName; alt: string; zoom: number; origin: string }[] = [
+    { title: "Макияж", line: "От первого штриха", photo: "guest_a_01", alt: "Макияж крупным планом, салон Queen Bee", zoom: 2.1, origin: "49% 24%" },
+    { title: "Причёски и укладка", line: T.hairLine, photo: "guest_b_04", alt: "Локоны крупным планом, салон Queen Bee", zoom: 2, origin: "70% 80%" },
+    { title: "Полный beauty‑образ", line: "До финального акцента", photo: "guest_c_02", alt: "Полный образ гостьи салона Queen Bee", zoom: 1.45, origin: "55% 26%" },
   ];
+
   return (
     <section id="services" className="services" aria-labelledby="services-title">
       <div className="wrap">
@@ -33,7 +30,12 @@ export function Services() {
             {cards.map((c, i) => (
               <li key={c.title} className="svc__item" data-reveal style={{ transitionDelay: `${i * 110}ms` }}>
                 <div className="svc__arch" data-tilt>
-                  <Photo name={c.photo} alt={c.alt} sizes="(max-width: 767px) 80vw, 30vw" />
+                  <Photo
+                    name={c.photo}
+                    alt={c.alt}
+                    sizes="(max-width: 767px) 100vw, 50vw"
+                    style={{ transform: `scale(${c.zoom})`, transformOrigin: c.origin }}
+                  />
                   <span className="glint" aria-hidden="true" />
                 </div>
                 <p className="svc__num">0{i + 1}</p>

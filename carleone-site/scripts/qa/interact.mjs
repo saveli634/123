@@ -62,7 +62,8 @@ log.push({ backTitle: await page.title(), backUrl: page.url() });
 
 // 3) форма записи
 await page.click("header .btn");
-await page.waitForTimeout(700);
+await page.waitForSelector("[role='dialog'] input");
+await page.waitForTimeout(400);
 await page.click("form button[type='submit'], form .fill").catch(() => {});
 await shot("dialog_open");
 const dlg = await page.evaluate(() => ({
@@ -81,11 +82,13 @@ const box = await card.boundingBox();
 await page.mouse.move(box.x + box.width * 0.3, box.y + box.height * 0.35, { steps: 6 });
 await page.waitForTimeout(600);
 await shot("card_glow");
+const head = page.locator("header .btn");
+const hb = await head.boundingBox();
+await page.mouse.move(hb.x + 5, hb.y + 5);
+await page.mouse.move(hb.x + hb.width * 0.9, hb.y + hb.height * 0.85, { steps: 4 });
+await page.waitForTimeout(300);
+log.push({ magnetic: await head.evaluate((el) => [el.style.getPropertyValue("--tx"), el.style.getPropertyValue("--ty")]) });
 const btn = page.locator(".card .btn").first();
-const bb = await btn.boundingBox();
-await page.mouse.move(bb.x + bb.width * 0.9, bb.y + bb.height * 0.9, { steps: 5 });
-await page.waitForTimeout(400);
-log.push({ magnetic: await btn.evaluate((el) => [el.style.getPropertyValue("--tx"), el.style.getPropertyValue("--ty")]) });
 await btn.click();
 await page.waitForTimeout(500);
 await shot("price_answer");

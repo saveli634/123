@@ -95,35 +95,41 @@ export function Header({ onBook }: { onBook: () => void }) {
     update();
     window.addEventListener("scroll", on, { passive: true });
     // фокус внутри шапки — показать её
-    const show = () => el.current?.removeAttribute("data-hidden");
-    el.current?.addEventListener("focusin", show);
-    return () => window.removeEventListener("scroll", on);
+    const header = el.current;
+    const show = () => header?.removeAttribute("data-hidden");
+    header?.addEventListener("focusin", show);
+    return () => {
+      window.removeEventListener("scroll", on);
+      header?.removeEventListener("focusin", show);
+    };
   }, []);
 
   return (
     <header ref={el} className="header">
-      <div className="wrap flex h-full items-center justify-between gap-4">
-        <a href="#top" className="flex items-center gap-3" aria-label={t.a11y.home}>
+      <div className="wrap header-grid h-full">
+        <a href="#top" className="flex items-center gap-3 justify-self-start" aria-label={t.a11y.home}>
           <Lion className="h-8 w-8 text-gold md:h-9 md:w-9" />
-          <span className="t-label hidden text-cream xs:inline">Carleone Service</span>
+          <span className="t-label hidden text-cream xs:inline" translate="no">
+            Carleone Service
+          </span>
         </a>
-        <nav aria-label={t.a11y.nav} className="hidden items-center gap-8 lg:flex">
+        <nav aria-label={t.a11y.nav} className="hidden items-center gap-2 lg:flex">
           <a className="navlink t-label" href="#map">
-            {t.nav.map}
+            <span>{t.nav.map}</span>
           </a>
           <a className="navlink t-label" href="#services">
-            {t.nav.services}
+            <span>{t.nav.services}</span>
           </a>
           <a className="navlink t-label" href="#works">
-            {t.nav.works}
+            <span>{t.nav.works}</span>
           </a>
           <a className="navlink t-label" href="#contacts">
-            {t.nav.contacts}
+            <span>{t.nav.contacts}</span>
           </a>
         </nav>
-        <div className="flex items-center gap-2 md:gap-3">
+        <div className="flex items-center justify-end gap-2 md:gap-3">
           <LangSwitch />
-          <Btn variant="ghost" size="sm" onClick={onBook} className="hidden sm:inline-flex">
+          <Btn variant="ghost" size="sm" onClick={onBook} className="header-book hidden sm:inline-flex">
             {t.cta.book}
           </Btn>
         </div>

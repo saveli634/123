@@ -6,12 +6,12 @@ import {
   type KeyboardEvent,
   type PointerEvent as RPointerEvent,
 } from "react";
-import { useT } from "@/lib/lang";
+import { useLang, useT } from "@/lib/lang";
 import { finePointer, motionOK, smooth } from "@/lib/env";
 import { subscribe } from "@/lib/scroll";
 import { LION_CUT_SUM, LION_D, LION_H, LION_PAD, LION_W } from "@/generated/lion";
 import { Frame } from "@/components/Frame";
-import { Kicker, Lines } from "@/components/Text";
+import { Kicker, Lines, q } from "@/components/Text";
 
 // координаты рисунка наклейки (viewBox) — лев + поле высечки
 const VBX = -LION_PAD;
@@ -393,7 +393,7 @@ function StickerToy() {
 }
 
 export function Sticker() {
-  const t = useT();
+  const { t, lang } = useLang();
   return (
     <section className="section" aria-labelledby="sticker-title">
       <div className="wrap">
@@ -402,10 +402,10 @@ export function Sticker() {
         <div className="grid-12 mt-[7vh] items-center gap-y-10">
           <div className="col-span-12 md:col-span-5" data-reveal="">
             <p className="fade-up t-quote text-[1.45rem] md:text-[1.9rem]" style={{ "--d": 120 } as CSSProperties}>
-              «{t.sticker.text}»
+              {q(t.sticker.text, lang)}
             </p>
             <p className="fade-up t-body mt-6 max-w-md" style={{ "--d": 220 } as CSSProperties}>
-              «{t.sticker.wish}»
+              {q(t.sticker.wish, lang)}
             </p>
             <p className="fade-up t-label mt-8 text-muted" style={{ "--d": 320 } as CSSProperties}>
               <span className="hint-fine">{t.sticker.hintDesktop}</span>

@@ -112,12 +112,14 @@ export function Btn({
 export function Fill({
   field,
   label,
+  icon,
   size = "md",
   inline,
   className,
 }: {
   field: string;
-  label?: string;
+  label?: ReactNode;
+  icon?: ReactNode;
   size?: "md" | "sm";
   inline?: boolean;
   className?: string;
@@ -129,6 +131,7 @@ export function Fill({
       className={cn("fill", size === "sm" && "fill-sm", inline && "fill-inline", className)}
       title={`src/config.ts → CONFIG.${field}`}
     >
+      {icon}
       {label && <span>{label}</span>}
       <b>
         {t.fill}: {field}
@@ -148,7 +151,7 @@ export function CallButton({
 }) {
   const t = useT();
   const href = telHref();
-  if (!href) return <Fill field="phone" label={t.cta.call} size={size} className={className} />;
+  if (!href) return <Fill field="phone" label={t.cta.call} icon={<IconPhone />} size={size} className={className} />;
   return (
     <Btn href={href} variant={variant} size={size} className={className} icon={<IconPhone />}>
       {t.cta.call}
@@ -160,19 +163,31 @@ export function WhatsAppButton({
   variant = "line",
   size,
   short,
+  adaptive,
   text,
   className,
 }: {
   variant?: BtnProps["variant"];
   size?: BtnProps["size"];
   short?: boolean;
+  /** на узком экране — короткая подпись «WhatsApp» */
+  adaptive?: boolean;
   text?: string;
   className?: string;
 }) {
   const t = useT();
   const href = waHref(text);
-  const label = short ? t.cta.whatsappShort : t.cta.whatsapp;
-  if (!href) return <Fill field="whatsapp" label={label} size={size} className={className} />;
+  const label: ReactNode = adaptive ? (
+    <>
+      <span className="lbl-long">{t.cta.whatsapp}</span>
+      <span className="lbl-short">{t.cta.whatsappShort}</span>
+    </>
+  ) : short ? (
+    t.cta.whatsappShort
+  ) : (
+    t.cta.whatsapp
+  );
+  if (!href) return <Fill field="whatsapp" label={label} icon={<IconChat />} size={size} className={className} />;
   return (
     <Btn href={href} external variant={variant} size={size} className={className} icon={<IconChat />}>
       {label}

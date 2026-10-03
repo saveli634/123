@@ -4,3 +4,4 @@ dist-ssr-single/
 dist-single/
 .scratch/
 *.log
+qa/lighthouse/*.json

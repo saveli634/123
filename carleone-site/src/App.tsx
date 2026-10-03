@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { lazy, Suspense, useEffect, useState } from "react";
 import type { Lang } from "@/content/i18n";
 import { LangProvider, useLang } from "@/lib/lang";
 import { initSmoothScroll } from "@/lib/scroll";
@@ -12,7 +12,10 @@ import { BeforeAfter } from "@/sections/BeforeAfter";
 import { Sticker } from "@/sections/Sticker";
 import { Quotes, Travellers } from "@/sections/Travellers";
 import { Works } from "@/sections/Works";
-import { BookingDialog, Contacts, Footer } from "@/sections/Contacts";
+import { Contacts, Footer } from "@/sections/Contacts";
+
+const loadBooking = () => import("@/sections/Booking");
+const BookingDialog = lazy(() => loadBooking().then((m) => ({ default: m.BookingDialog })));
 
 declare global {
   interface Window {
@@ -56,12 +59,27 @@ function useReveal(dep: unknown) {
 function Page() {
   const { t, lang } = useLang();
   const [book, setBook] = useState(false);
-  const openBook = () => setBook(true);
+  const [bookMounted, setBookMounted] = useState(false);
+  const openBook = () => {
+    setBookMounted(true);
+    setBook(true);
+  };
 
   useEffect(() => {
     const off = initSmoothScroll();
     window.__clReady = true;
-    return off;
+    // форму записи подгружаем заранее — после первого действия пользователя
+    const warm = () => {
+      loadBooking();
+      ["pointerdown", "keydown", "scroll", "touchstart"].forEach((e) => window.removeEventListener(e, warm));
+    };
+    ["pointerdown", "keydown", "scroll", "touchstart"].forEach((e) =>
+      window.addEventListener(e, warm, { passive: true }),
+    );
+    return () => {
+      off();
+      ["pointerdown", "keydown", "scroll", "touchstart"].forEach((e) => window.removeEventListener(e, warm));
+    };
   }, []);
   useReveal(lang);
 
@@ -88,7 +106,11 @@ function Page() {
       </main>
       <Footer />
       <MobileBar />
-      <BookingDialog open={book} onOpenChange={setBook} />
+      {bookMounted && (
+        <Suspense fallback={null}>
+          <BookingDialog open={book} onOpenChange={setBook} />
+        </Suspense>
+      )}
       <Cursor />
       <div className="grain" aria-hidden="true" />
     </>

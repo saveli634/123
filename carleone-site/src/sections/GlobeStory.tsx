@@ -7,7 +7,7 @@ import { shotsFor } from "@/globe/geo";
 import { textStage } from "@/globe/timeline";
 import type { Globe } from "@/globe/scene";
 import { Lion } from "@/components/Lion";
-import { Rich } from "@/components/Text";
+import { q, Rich } from "@/components/Text";
 import { Frame } from "@/components/Frame";
 import { Stamp } from "@/components/Stamp";
 import { CallButton, WhatsAppButton } from "@/components/Cta";
@@ -22,7 +22,7 @@ const RENDER_R = 0.42;
  * пользователя; до этого и без WebGL 2 / при reduced motion — готовые рендеры того же глобуса.
  */
 export function GlobeStory() {
-  const { t } = useLang();
+  const { t, lang } = useLang();
   const wrap = useRef<HTMLDivElement>(null);
   const layer = useRef<HTMLDivElement>(null);
   const canvas = useRef<HTMLCanvasElement>(null);
@@ -160,7 +160,8 @@ export function GlobeStory() {
     return () => window.removeEventListener("resize", place);
   }, []);
 
-  const renderNeeded = (i: number) => !live && Math.abs(i - renderIdx) <= 1;
+  // грузим только нужный рендер (и соседний — уже внутри карты), на первом экране — только горизонт
+  const renderNeeded = (i: number) => !live && (i === renderIdx || (renderIdx >= 1 && Math.abs(i - renderIdx) <= 1));
 
   return (
     <div ref={wrap} className="relative" id="top">
@@ -245,7 +246,7 @@ export function GlobeStory() {
                   <div>
                     {s.lead && <p className="st-fade t-label mb-3 text-muted">{s.lead}</p>}
                     <blockquote className="st-fade t-quote stage-quote" style={{ "--d": 80 } as CSSProperties}>
-                      «{s.quote}»
+                      {q(s.quote, lang)}
                     </blockquote>
                     {s.after && (
                       <p className="st-fade t-body mt-4 max-w-lg md:mt-6" style={{ "--d": 220 } as CSSProperties}>
@@ -325,7 +326,7 @@ function Hero() {
           <div className="hero-glow" aria-hidden="true" />
           <Lion className="relative h-full w-full text-gold" />
         </div>
-        <h1 ref={title} id="hero-title" className="t-display hero-title">
+        <h1 ref={title} id="hero-title" className="t-display hero-title" translate="no">
           <span className="ln hero-word">
             <span style={{ "--i": 1 } as CSSProperties}>{t.hero.title[0]}</span>
           </span>{" "}
@@ -344,7 +345,7 @@ function Hero() {
             style={{ "--d": 560 } as CSSProperties}
           >
             <CallButton />
-            <WhatsAppButton />
+            <WhatsAppButton adaptive />
           </div>
         </div>
       </div>
@@ -372,9 +373,14 @@ function Marquee({ items }: { items: string[] }) {
     let raf = 0;
     let last = 0;
     let on = false;
+    let paused = false; // наведение мыши — лента стоит (можно прочитать)
+    const pause = () => (paused = true);
+    const resume = () => (paused = false);
+    el.addEventListener("pointerenter", pause);
+    el.addEventListener("pointerleave", resume);
     const loop = (now: number) => {
       raf = requestAnimationFrame(loop);
-      const dt = Math.min(0.05, (now - (last || now)) / 1000);
+      const dt = paused ? 0 : Math.min(0.05, (now - (last || now)) / 1000);
       last = now;
       const v = getVelocity();
       if (Math.abs(v) > 0.5) dir = v > 0 ? -1 : 1;
@@ -399,6 +405,8 @@ function Marquee({ items }: { items: string[] }) {
     return () => {
       io.disconnect();
       cancelAnimationFrame(raf);
+      el.removeEventListener("pointerenter", pause);
+      el.removeEventListener("pointerleave", resume);
     };
   }, []);
   const row = (k: number) =>
@@ -440,8 +448,8 @@ function Hud({
       <span className="hud-corner" />
       <div className="hud-top">
         <p className="t-label text-muted">
-          <span className="text-gold">{t.map.label}</span>
-          <span className="mx-2 opacity-50">/</span>
+          <span className="hud-name text-gold">{t.map.label}</span>
+          <span className="hud-name mx-2 opacity-50">/</span>
           {t.map.scheme}
         </p>
       </div>
@@ -468,9 +476,9 @@ function Hud({
 
 /* ----------------------------------- Паспорт со штампами ----------------------------------- */
 const SLOTS = [
-  { top: "15%", left: "5%", r: -12 },
-  { top: "40%", left: "42%", r: 8 },
-  { top: "64%", left: "9%", r: -5 },
+  { top: "17%", left: "3%", r: -12 },
+  { top: "40%", left: "50%", r: 8 },
+  { top: "63%", left: "8%", r: -5 },
 ];
 
 function Passport({ stage }: { stage: number }) {

@@ -2,6 +2,7 @@
 import { createServer } from "node:http";
 import { readFile, stat } from "node:fs/promises";
 import { extname, join, normalize, resolve } from "node:path";
+import { gzipSync } from "node:zlib";
 
 const TYPES = {
   ".html": "text/html; charset=utf-8",
@@ -24,11 +25,15 @@ export function serve(dir, port = 4173) {
       const file = normalize(join(root, path));
       if (!file.startsWith(root)) throw new Error("forbidden");
       await stat(file);
-      const body = await readFile(file);
-      res.writeHead(200, {
-        "content-type": TYPES[extname(file)] ?? "application/octet-stream",
-        "cache-control": "no-cache",
-      });
+      let body = await readFile(file);
+      const type = TYPES[extname(file)] ?? "application/octet-stream";
+      const headers = { "content-type": type, "cache-control": "no-cache" };
+      // как на обычном хостинге: текст отдаётся сжатым
+      if (/text|javascript|json|svg/.test(type) && /gzip/.test(req.headers["accept-encoding"] ?? "")) {
+        body = gzipSync(body, { level: 6 });
+        headers["content-encoding"] = "gzip";
+      }
+      res.writeHead(200, headers);
       res.end(body);
     } catch {
       res.writeHead(404, { "content-type": "text/plain" });

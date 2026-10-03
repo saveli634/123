@@ -50,3 +50,6 @@ export function Lines({
 export function Kicker({ children, className }: { children: ReactNode; className?: string }) {
   return <p className={cn("kicker t-label", className)}>{children}</p>;
 }
+
+/** Кавычки по языку: «ёлочки» для русского, “лапки” для английского. */
+export const q = (text: string, lang: "ru" | "en") => (lang === "en" ? `“${text}”` : `«${text}»`);

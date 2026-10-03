@@ -6,7 +6,6 @@ import { readFileSync, writeFileSync } from "node:fs";
 
 const FACES = [
   ["playfair-display", "600"],
-  ["playfair-display", "700"],
   ["playfair-display", "600-italic"],
   ["manrope", "400"],
   ["manrope", "600"],

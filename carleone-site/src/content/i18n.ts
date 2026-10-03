@@ -166,7 +166,7 @@ const ru = {
   },
   beforeAfter: {
     label: "Было / стало",
-    title: ["Было", "*стало*"],
+    title: ["Было / *стало*"],
     caption: "Работа по арке и днищу", // [ТЗ 6.7] [004]
     before: "Было",
     after: "Стало",
@@ -184,7 +184,7 @@ const ru = {
   },
   travellers: {
     label: "Гостям из-за границы",
-    title: ["Гостям", "из-за *границы*"],
+    title: ["Гостям из-за *границы*"],
     text: "Мы всегда рады гостям, независимо от того, откуда вы приехали. Если ваш путь проходит через наш город — знайте, что в Carleone Service вас встретят, помогут и сделают всё, чтобы ваше путешествие продолжилось без лишних забот.", // [005]
     route: "Германия · Франция · Бельгия → Казахстан → Япония", // [005] [011] [012]
   },
@@ -195,7 +195,7 @@ const ru = {
   },
   works: {
     label: "Работы",
-    title: ["Наши", "*работы*"],
+    title: ["Наши *работы*"],
     hint: "Листайте", // [UI]
     of: "из",
   },
@@ -215,13 +215,13 @@ const ru = {
     title: "Записаться",
     lead: "Заполните форму — мы соберём сообщение и откроем WhatsApp. Останется нажать «Отправить».", // [UI]
     name: "Имя",
-    namePh: "Как к вам обращаться",
+    namePh: "Как к вам обращаться…",
     phone: "Телефон",
-    phonePh: "+7",
+    phonePh: "+7 …",
     car: "Марка и модель",
-    carPh: "Например, Toyota Rav4",
+    carPh: "Например, Toyota Rav4…",
     problem: "Что случилось",
-    problemPh: "Опишите в двух словах",
+    problemPh: "Опишите в двух словах…",
     submit: "Отправить в WhatsApp",
     errName: "Укажите имя",
     errPhone: "Укажите телефон — хотя бы 10 цифр",
@@ -380,7 +380,7 @@ const en: Dict = {
   },
   beforeAfter: {
     label: "Before / after",
-    title: ["Before", "*after*"],
+    title: ["Before / *after*"],
     caption: "Work on the wheel arch and underbody",
     before: "Before",
     after: "After",
@@ -398,7 +398,7 @@ const en: Dict = {
   },
   travellers: {
     label: "For travellers",
-    title: ["For", "*travellers*"],
+    title: ["For *travellers*"],
     text: "We are always glad to welcome guests, no matter where you have come from. If your route passes through our city, know that at Carleone Service you will be met, helped, and we will do everything so that your journey continues without unnecessary worries.",
     route: "Germany · France · Belgium → Kazakhstan → Japan",
   },
@@ -407,7 +407,7 @@ const en: Dict = {
     text: "Great service! We got a lot of help here! Thank you so much!",
     author: "Travellers from Germany",
   },
-  works: { label: "Work", title: ["Our", "*work*"], hint: "Scroll", of: "of" },
+  works: { label: "Work", title: ["Our *work*"], hint: "Scroll", of: "of" },
   contacts: {
     label: "Contacts",
     title: ["Come by,", "*we're waiting*"],
@@ -424,13 +424,13 @@ const en: Dict = {
     title: "Book a visit",
     lead: "Fill in the form — we will compose the message and open WhatsApp. Then just tap “Send”.",
     name: "Name",
-    namePh: "How should we call you",
+    namePh: "Your name…",
     phone: "Phone",
-    phonePh: "+",
+    phonePh: "+7 …",
     car: "Make and model",
-    carPh: "For example, Toyota Rav4",
+    carPh: "For example, Toyota Rav4…",
     problem: "What happened",
-    problemPh: "A few words",
+    problemPh: "A few words…",
     submit: "Send via WhatsApp",
     errName: "Please enter your name",
     errPhone: "Please enter a phone number — at least 10 digits",

@@ -14,7 +14,9 @@
     "build:release": "tsc -p tsconfig.json && node scripts/build.mjs web --release && node scripts/build.mjs single --release",
     "preview": "vite preview --outDir dist",
     "qa:shots": "node scripts/qa/shots.mjs",
-    "qa:check": "node scripts/qa/check.mjs"
+    "qa:check": "node scripts/qa/links.mjs --seo",
+    "qa:interact": "node scripts/qa/interact.mjs",
+    "qa:lighthouse": "node scripts/qa/lighthouse.mjs"
   },
   "dependencies": {
     "@fontsource/manrope": "^5.3.0",

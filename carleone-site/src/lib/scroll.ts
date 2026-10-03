@@ -53,9 +53,12 @@ function measure(sub: Sub, vh: number) {
 function tick() {
   raf = 0;
   const vh = window.innerHeight;
+  // сначала все чтения геометрии, потом все записи — без принудительных пересчётов раскладки
+  const jobs: [Sub, number][] = [];
   subs.forEach((s) => {
-    if (s.active) s.cb(measure(s, vh));
+    if (s.active) jobs.push([s, measure(s, vh)]);
   });
+  jobs.forEach(([s, p]) => s.cb(p));
 }
 
 export function requestTick() {

@@ -28,6 +28,8 @@ export function Hero({ onBook }: { onBook: () => void }) {
   const media = useRef<HTMLDivElement>(null);
   const copy = useRef<HTMLDivElement>(null);
   const [slide, setSlide] = useState({ idx: 0, prev: -1 });
+  // остальные кадры подгружаем незадолго до первой смены — первый экран грузится быстрее
+  const [extra, setExtra] = useState(false);
   const idx = slide.idx;
 
   // смена кадров: только когда первый экран виден и вкладка активна
@@ -36,6 +38,7 @@ export function Hero({ onBook }: { onBook: () => void }) {
     if (!el || !motionOK()) return;
     let timer = 0;
     let visible = true;
+    const warm = window.setTimeout(() => setExtra(true), SLIDE_MS - 1800);
     const tick = () => {
       window.clearTimeout(timer);
       if (!visible || document.hidden) return;
@@ -52,6 +55,7 @@ export function Hero({ onBook }: { onBook: () => void }) {
     document.addEventListener("visibilitychange", tick);
     return () => {
       window.clearTimeout(timer);
+      window.clearTimeout(warm);
       io.disconnect();
       document.removeEventListener("visibilitychange", tick);
     };
@@ -111,14 +115,16 @@ export function Hero({ onBook }: { onBook: () => void }) {
               data-on={k === idx ? "" : undefined}
               data-prev={k === slide.prev ? "" : undefined}
             >
-              <Frame
-                name={m.name}
-                fill
-                eager={k === 0}
-                sizes="(max-width: 1023px) 100vw, 36vw"
-                position={m.position}
-                className="no-border"
-              />
+              {(k === 0 || extra) && (
+                <Frame
+                  name={m.name}
+                  fill
+                  eager={k === 0}
+                  sizes="(max-width: 1023px) 100vw, 36vw"
+                  position={m.position}
+                  className="no-border"
+                />
+              )}
             </div>
           ))}
           <div className="hero-hud" aria-hidden="true">
@@ -257,4 +263,3 @@ export function Marquee({ items }: { items: string[] }) {
     </div>
   );
 }
-

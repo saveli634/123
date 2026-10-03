@@ -361,8 +361,7 @@
     font-size: 0.6875rem;
   }
 
-  /* Плашка «ЗАПОЛНИТЬ» на месте пустого поля CONFIG (только демо-сборка): выглядит как кнопка-призрак
-     того же размера, а пометка для владельца — маленький ярлык на рамке */
+  /* Короткая подпись кнопки на узком экране */
   .lbl-short {
     display: none;
   }
@@ -1785,6 +1784,12 @@
   .hero-title .ln {
     display: block;
   }
+  @media (max-width: 767px) {
+    /* на телефоне всегда три строки: высота заголовка не зависит от шрифта (CLS = 0) */
+    .hero-title {
+      height: 3em;
+    }
+  }
   .hero-spec {
     margin-top: clamp(1rem, 2.6vh, 1.6rem);
     display: flex;
@@ -2201,6 +2206,9 @@
 
   /* Невысокие экраны (телефон в альбомной ориентации, маленькие ноутбуки) */
   @media (max-height: 560px) and (min-width: 600px) {
+    .hero {
+      min-height: 0;
+    }
     .hero-brand-lion {
       width: 1.8rem;
       height: 1.9rem;
@@ -2716,8 +2724,10 @@
       font-size: clamp(1.45rem, 2.1vw, 2.15rem);
     }
     .core-stage {
-      height: auto;
-      min-height: 34rem;
+      position: sticky;
+      top: calc(var(--header-h) + 1.5rem);
+      align-self: start;
+      height: clamp(30rem, 70vh, 40rem);
     }
   }
 

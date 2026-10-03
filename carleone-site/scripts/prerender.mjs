@@ -18,12 +18,23 @@ export async function prerender(outDir, ssrDir, single) {
     const dir = join(outDir, "assets");
     if (!existsSync(dir)) return "";
     const files = readdirSync(dir);
-    const want = [
-      "playfair-display-latin-600-normal",
-      "playfair-display-latin-600-italic",
-      lang === "ru" ? "manrope-cyrillic-400-normal" : "manrope-latin-400-normal",
-      lang === "ru" ? "manrope-cyrillic-600-normal" : "manrope-latin-600-normal",
-    ];
+    // заголовок первого экрана — Playfair (кириллица для RU), подписи — Manrope; «CARLEONE SERVICE»
+    // в шапке и на первом экране — латиница Manrope 600
+    const want =
+      lang === "ru"
+        ? [
+            "playfair-display-cyrillic-600-normal",
+            "playfair-display-cyrillic-600-italic",
+            "manrope-cyrillic-400-normal",
+            "manrope-cyrillic-600-normal",
+            "manrope-latin-600-normal",
+          ]
+        : [
+            "playfair-display-latin-600-normal",
+            "playfair-display-latin-600-italic",
+            "manrope-latin-400-normal",
+            "manrope-latin-600-normal",
+          ];
     return want
       .map((w) => files.find((f) => f.startsWith(w) && f.endsWith(".woff2")))
       .filter(Boolean)

@@ -1,6 +1,6 @@
 /// <reference types="vite/client" />
 
-/** Демо-сборка: на месте пустых полей CONFIG видны плашки «ЗАПОЛНИТЬ». В build:release — false. */
+/** Демо-сборка (npm run build). В build:release — false: там обязательные поля CONFIG проверяются. */
 declare const __DEMO__: boolean;
 
 declare module "@/imgsrc" {

@@ -1,0 +1,172 @@
+{
+ "lobby_chandelier": {
+  "w": 720,
+  "h": 1280,
+  "widths": [
+   360,
+   720
+  ],
+  "color": "#848280"
+ },
+ "lounge_burgundy": {
+  "w": 720,
+  "h": 1280,
+  "widths": [
+   360,
+   720
+  ],
+  "color": "#827a7b"
+ },
+ "lounge_green": {
+  "w": 720,
+  "h": 1280,
+  "widths": [
+   360,
+   720
+  ],
+  "color": "#95908c"
+ },
+ "staircase_spiral": {
+  "w": 720,
+  "h": 1280,
+  "widths": [
+   360,
+   720
+  ],
+  "color": "#726a5e"
+ },
+ "fireplace_wood": {
+  "w": 720,
+  "h": 1280,
+  "widths": [
+   360,
+   720
+  ],
+  "color": "#8e8379"
+ },
+ "reception_desk": {
+  "w": 720,
+  "h": 1280,
+  "widths": [
+   360,
+   720
+  ],
+  "color": "#908781"
+ },
+ "shelves_products": {
+  "w": 720,
+  "h": 1280,
+  "widths": [
+   360,
+   720
+  ],
+  "color": "#493b39"
+ },
+ "gift_boxes_monogram": {
+  "w": 720,
+  "h": 1280,
+  "widths": [
+   360,
+   720
+  ],
+  "color": "#5a544e"
+ },
+ "ceiling_leaves": {
+  "w": 720,
+  "h": 1280,
+  "widths": [
+   360,
+   720
+  ],
+  "color": "#969494"
+ },
+ "nail_lounge": {
+  "w": 720,
+  "h": 1280,
+  "widths": [
+   360,
+   720
+  ],
+  "color": "#615a55"
+ },
+ "spiral-0": {
+  "w": 1600,
+  "h": 1000,
+  "widths": [
+   480,
+   800,
+   1100
+  ],
+  "color": "#f0eadf"
+ },
+ "spiral-1": {
+  "w": 1000,
+  "h": 1250,
+  "widths": [
+   480,
+   800,
+   1000
+  ],
+  "color": "#d2ccc2"
+ },
+ "spiral-2": {
+  "w": 1000,
+  "h": 1250,
+  "widths": [
+   480,
+   800,
+   1000
+  ],
+  "color": "#c9c1b9"
+ },
+ "spiral-3": {
+  "w": 1000,
+  "h": 1250,
+  "widths": [
+   480,
+   800,
+   1000
+  ],
+  "color": "#d4cdc2"
+ },
+ "spiral-4": {
+  "w": 1000,
+  "h": 1250,
+  "widths": [
+   480,
+   800,
+   1000
+  ],
+  "color": "#d8d1c6"
+ },
+ "spiral-5": {
+  "w": 1000,
+  "h": 1250,
+  "widths": [
+   480,
+   800,
+   1000
+  ],
+  "color": "#e3dcd0"
+ },
+ "spiral-6": {
+  "w": 1000,
+  "h": 1250,
+  "widths": [
+   480,
+   800,
+   1000
+  ],
+  "color": "#dcd5ca"
+ },
+ "spiral-7": {
+  "w": 1000,
+  "h": 1250,
+  "widths": [
+   480,
+   800,
+   1000
+  ],
+  "color": "#f0eadf"
+ }
+}

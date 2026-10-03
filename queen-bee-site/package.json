@@ -1,0 +1,48 @@
+{
+  "name": "queen-bee-site",
+  "private": true,
+  "version": "1.0.0",
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "images": "node scripts/images.mjs",
+    "fonts": "node scripts/fonts.mjs",
+    "typecheck": "tsc -p tsconfig.json",
+    "build": "tsc -p tsconfig.json && vite build && vite build --ssr src/entry-server.tsx --outDir dist-ssr && node scripts/prerender.mjs dist dist-ssr && node scripts/compat.mjs dist/assets dist/index.html",
+    "build:single": "vite build --mode single && vite build --mode single --ssr src/entry-server.tsx --outDir dist-ssr-single && node scripts/prerender.mjs dist-single dist-ssr-single && node scripts/compat.mjs dist-single/index.html && node scripts/size.mjs dist-single/index.html",
+    "build:release": "node scripts/check-release.mjs && cross-env QB_RELEASE=1 npm run build && cross-env QB_RELEASE=1 npm run build:single",
+    "renders": "node scripts/renders.mjs",
+    "preview": "vite preview"
+  },
+  "dependencies": {
+    "@fontsource/cormorant-garamond": "^5.3.0",
+    "@fontsource-variable/manrope": "^5.3.0",
+    "@radix-ui/react-dialog": "^1.1.23",
+    "@radix-ui/react-slot": "^1.3.3",
+    "class-variance-authority": "^0.7.1",
+    "clsx": "^2.1.1",
+    "lenis": "^1.3.26",
+    "react": "^19.3.0",
+    "react-dom": "^19.3.0",
+    "tailwind-merge": "^3.7.0",
+    "three": "^0.186.1"
+  },
+  "devDependencies": {
+    "@csstools/postcss-cascade-layers": "^6.0.1",
+    "@tailwindcss/vite": "^4.3.3",
+    "@types/node": "^22.10.0",
+    "@types/react": "^19.3.0",
+    "@types/react-dom": "^19.3.0",
+    "@types/three": "^0.186.0",
+    "@vitejs/plugin-react": "^6.1.1",
+    "cross-env": "^10.0.0",
+    "lightningcss": "^1.33.0",
+    "playwright": "1.56.1",
+    "postcss": "^8.5.28",
+    "sharp": "^0.35.5",
+    "tailwindcss": "^4.3.3",
+    "typescript": "^7.0.2",
+    "vite": "^8.3.2",
+    "vite-plugin-singlefile": "^2.3.3"
+  }
+}

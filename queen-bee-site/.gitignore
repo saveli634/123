@@ -1,0 +1,12 @@
+node_modules/
+/dist/
+/dist-ssr/
+/dist-single/
+/dist-ssr-single/
+/single-img/
+# Фото гостий требуют их письменного согласия — исходники и обработанные копии в git не храним
+source-media/guests/
+media-guests/
+# Служебные результаты проверок
+qa/
+lighthouse/

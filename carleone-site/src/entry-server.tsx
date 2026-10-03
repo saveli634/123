@@ -2,7 +2,7 @@ import { StrictMode } from "react";
 import { renderToString } from "react-dom/server";
 import App from "./App";
 import { DICT, type Lang } from "./content/i18n";
-import { pageTitle } from "./lib/lang";
+import { pageDescription, pageTitle } from "./lib/lang";
 import { CONFIG } from "./config";
 import { digits } from "./lib/links";
 
@@ -26,12 +26,13 @@ export function head(lang: Lang) {
   const ruUrl = CONFIG.siteUrl.trim() ? site : "./";
   const enUrl = abs("en.html");
   const title = pageTitle(lang);
+  const description = pageDescription(lang);
   const city = CONFIG.city.trim();
   const ld: Record<string, unknown> = {
     "@context": "https://schema.org",
     "@type": "AutoRepair",
     name: CONFIG.name,
-    description: DICT.ru.meta.description,
+    description: pageDescription("ru"),
     image: abs("og.jpg"),
     ...(CONFIG.siteUrl.trim() ? { url: site } : {}),
     areaServed: city || "KZ",
@@ -41,21 +42,23 @@ export function head(lang: Lang) {
       ...(city ? { addressLocality: city } : {}),
       ...(CONFIG.address.trim() ? { streetAddress: CONFIG.address.trim() } : {}),
     },
-    makesOffer: DICT.ru.services.items.map((s) => ({
-      "@type": "Offer",
-      itemOffered: { "@type": "Service", name: s.title },
-    })),
+    makesOffer: DICT.ru.core.cats
+      .flatMap((c) => c.services)
+      .map((name) => ({
+        "@type": "Offer",
+        itemOffered: { "@type": "Service", name: name.replace(/\u00a0/g, " ") },
+      })),
   };
   if (CONFIG.phone.trim()) ld.telephone = `+${digits(CONFIG.phone)}`;
   if (CONFIG.instagram.trim()) ld.sameAs = [CONFIG.instagram.trim()];
   return [
     `<title>${esc(title)}</title>`,
-    `<meta name="description" content="${esc(t.description)}" />`,
+    `<meta name="description" content="${esc(description)}" />`,
     `<meta property="og:type" content="website" />`,
     `<meta property="og:site_name" content="${esc(CONFIG.name)}" />`,
     `<meta property="og:locale" content="${t.locale}" />`,
     `<meta property="og:title" content="${esc(t.ogTitle)}" />`,
-    `<meta property="og:description" content="${esc(t.description)}" />`,
+    `<meta property="og:description" content="${esc(description)}" />`,
     `<meta property="og:image" content="${abs("og.jpg")}" />`,
     `<meta property="og:image:width" content="1200" />`,
     `<meta property="og:image:height" content="630" />`,

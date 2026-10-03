@@ -1,10 +1,10 @@
 import type { CSSProperties, ReactNode } from "react";
-import { useT } from "@/lib/lang";
+import { cityFor, useLang, useT } from "@/lib/lang";
 import { CONFIG } from "@/config";
 import { digits, instagramHref, mapHref, telHref, waHref } from "@/lib/links";
 import { Frame } from "@/components/Frame";
 import { Kicker, Lines } from "@/components/Text";
-import { Btn, Fill } from "@/components/Cta";
+import { Btn } from "@/components/Cta";
 import { Lion } from "@/components/Lion";
 import { IconArrow, IconArrowUp, IconChat, IconPhone, IconRoute } from "@/components/Icons";
 
@@ -18,16 +18,20 @@ function Row({ label, children, action }: { label: string; children: ReactNode; 
   );
 }
 
-/** Контакты и запись: всё из CONFIG; пустое поле → плашка «ЗАПОЛНИТЬ» (демо) или ничего (релиз). */
+/**
+ * Контакты и запись: всё из CONFIG; пустое поле → строки нет. Пока не указаны ни телефон, ни WhatsApp,
+ * ни Instagram — одна спокойная строка «Контакты появятся в финальной версии после согласования».
+ */
 export function Contacts({ onBook }: { onBook: () => void }) {
-  const t = useT();
+  const { t, lang } = useLang();
   const tel = telHref();
   const wa = waHref();
   const insta = instagramHref();
   const route = mapHref();
-  const city = CONFIG.city.trim();
+  const city = cityFor(lang);
   const address = CONFIG.address.trim();
   const hours = CONFIG.workHours.trim();
+  const pending = !tel && !wa && !insta;
 
   return (
     <section id="contacts" className="section contacts" aria-labelledby="contacts-title">
@@ -41,85 +45,79 @@ export function Contacts({ onBook }: { onBook: () => void }) {
       <div className="wrap relative grid-12 mt-[7vh] gap-y-12">
         <div className="col-span-12 lg:col-span-4">
           <div data-reveal="">
-            <p className="fade-up t-body max-w-sm">{t.contacts.bookText}</p>
-            <div className="fade-up mt-7" style={{ "--d": 120 } as CSSProperties}>
+            {wa && <p className="fade-up t-body mb-7 max-w-sm">{t.contacts.bookText}</p>}
+            <div className="fade-up" style={{ "--d": 120 } as CSSProperties}>
               <Btn onClick={onBook} variant="gold" iconEnd={<IconArrow />}>
                 {t.cta.book}
               </Btn>
             </div>
-            <p className="fade-up t-label mt-8 text-muted" style={{ "--d": 200 } as CSSProperties}>
-              {t.contacts.note}
-            </p>
+            {tel && (
+              <p className="fade-up t-label mt-8 text-muted" style={{ "--d": 200 } as CSSProperties}>
+                {t.contacts.note}
+              </p>
+            )}
           </div>
         </div>
 
         <div className="col-span-12 lg:col-span-7 lg:col-start-6" data-reveal="">
-          {(tel || __DEMO__) && (
-            <Row
-              label={t.contacts.phone}
-              action={
-                tel && (
-                  <Btn href={tel} variant="line" size="sm" icon={<IconPhone />}>
-                    {t.cta.call}
-                  </Btn>
-                )
-              }
-            >
-              {tel ? <a href={tel}>{CONFIG.phone}</a> : <Fill field="phone" inline />}
-            </Row>
-          )}
-          {(wa || __DEMO__) && (
-            <Row
-              label={t.contacts.whatsapp}
-              action={
-                wa && (
-                  <Btn href={wa} external variant="line" size="sm" icon={<IconChat />}>
-                    {t.cta.whatsappShort}
-                  </Btn>
-                )
-              }
-            >
-              {wa ? (
-                <a href={wa} target="_blank" rel="noopener noreferrer">
-                  +{digits(CONFIG.whatsapp)}
-                </a>
-              ) : (
-                <Fill field="whatsapp" inline />
-              )}
-            </Row>
-          )}
           <Row
-            label={t.contacts.address}
+            label={address ? t.contacts.address : t.contacts.city}
             action={
-              route ? (
+              route && (
                 <Btn href={route} external variant="line" size="sm" icon={<IconRoute />}>
                   {t.cta.route}
                 </Btn>
-              ) : (
-                <Fill field="mapLink" label={t.cta.route} size="sm" />
               )
             }
           >
             <span>
-              {[address, city].filter(Boolean).join(", ") || (__DEMO__ ? "" : t.contacts.country)}
+              {[address, city].filter(Boolean).join(", ") || t.contacts.country}
               {(address || city) && <span className="text-muted">, {t.contacts.country}</span>}
             </span>
-            {!address && <Fill field="address" inline className="mr-2 mt-2" />}
-            {!city && <Fill field="city" inline className="mt-2" />}
           </Row>
-          {(hours || __DEMO__) && (
-            <Row label={t.contacts.hours}>{hours ? <span>{hours}</span> : <Fill field="workHours" inline />}</Row>
-          )}
-          {(insta || __DEMO__) && (
-            <Row label={t.contacts.instagram}>
-              {insta ? (
-                <a href={insta} target="_blank" rel="noopener noreferrer">
-                  {insta.replace(/^https?:\/\/(www\.)?/, "").replace(/\/$/, "")}
-                </a>
-              ) : (
-                <Fill field="instagram" inline />
-              )}
+          {tel && (
+            <Row
+              label={t.contacts.phone}
+              action={
+                <Btn href={tel} variant="line" size="sm" icon={<IconPhone />}>
+                  {t.cta.call}
+                </Btn>
+              }
+            >
+              <a href={tel}>{CONFIG.phone}</a>
             </Row>
+          )}
+          {wa && (
+            <Row
+              label={t.contacts.whatsapp}
+              action={
+                <Btn href={wa} external variant="line" size="sm" icon={<IconChat />}>
+                  {t.cta.whatsappShort}
+                </Btn>
+              }
+            >
+              <a href={wa} target="_blank" rel="noopener noreferrer">
+                +{digits(CONFIG.whatsapp)}
+              </a>
+            </Row>
+          )}
+          {hours && (
+            <Row label={t.contacts.hours}>
+              <span>{hours}</span>
+            </Row>
+          )}
+          {insta && (
+            <Row label={t.contacts.instagram}>
+              <a href={insta} target="_blank" rel="noopener noreferrer">
+                {insta.replace(/^https?:\/\/(www\.)?/, "").replace(/\/$/, "")}
+              </a>
+            </Row>
+          )}
+          {pending && (
+            <div className="contact-pending fade-up" style={{ "--d": 120 } as CSSProperties}>
+              <Lion className="h-7 w-7 flex-none text-gold" />
+              <p>{t.contacts.demo}</p>
+            </div>
           )}
         </div>
       </div>
@@ -143,12 +141,10 @@ export function Footer() {
           </div>
         </div>
         <div className="col-span-12 flex flex-wrap items-center gap-4 md:col-span-7 md:justify-end">
-          {insta ? (
+          {insta && (
             <Btn href={insta} external variant="ghost" size="sm" iconEnd={<IconArrow />}>
               Instagram
             </Btn>
-          ) : (
-            <Fill field="instagram" label="Instagram" size="sm" />
           )}
           <Btn href="#top" variant="ghost" size="sm" iconEnd={<IconArrowUp />}>
             {t.footer.top}

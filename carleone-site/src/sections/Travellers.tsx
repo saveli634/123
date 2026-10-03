@@ -6,13 +6,18 @@ import { Kicker, q, Rich } from "@/components/Text";
 import { WhatsAppButton } from "@/components/Cta";
 import { Lion } from "@/components/Lion";
 
-/** Схема маршрутов (не карта): Германия, Франция, Бельгия → Казахстан → Япония. Дуги рисуются при появлении. */
-function RouteMap() {
-  const from: [string, number, number][] = [
-    ["FR", 40, 118],
-    ["BE", 78, 70],
-    ["DE", 112, 96],
-  ];
+/**
+ * Схема маршрутов (не карта): Германия, Франция, Бельгия → Казахстан → Япония. Дуги рисуются при
+ * появлении. only — одна страна отправления (кейс «Бельгия → Казахстан → Япония»).
+ */
+export function RouteMap({ only }: { only?: string }) {
+  const from = (
+    [
+      ["FR", 40, 118],
+      ["BE", 78, 70],
+      ["DE", 112, 96],
+    ] as [string, number, number][]
+  ).filter(([code]) => !only || code === only);
   const KZ: [number, number] = [372, 104];
   const JP: [number, number] = [612, 84];
   const arc = ([x1, y1]: [number, number], [x2, y2]: [number, number], h: number) =>

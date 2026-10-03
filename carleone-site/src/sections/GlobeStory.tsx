@@ -1,25 +1,25 @@
 import { useEffect, useRef, useState, type CSSProperties } from "react";
 import { useLang } from "@/lib/lang";
-import { clamp, finePointer, hasWebGL2, motionOK } from "@/lib/env";
-import { getVelocity, scrollToTarget, subscribe } from "@/lib/scroll";
+import { clamp, hasWebGL2, motionOK } from "@/lib/env";
+import { scrollToTarget, subscribe } from "@/lib/scroll";
 import { cn } from "@/lib/cn";
 import { shotsFor } from "@/globe/geo";
 import { textStage } from "@/globe/timeline";
 import type { Globe } from "@/globe/scene";
 import { Lion } from "@/components/Lion";
-import { q, Rich } from "@/components/Text";
+import { Kicker, Lines, q, Rich } from "@/components/Text";
 import { Frame } from "@/components/Frame";
 import { Stamp } from "@/components/Stamp";
 import { CallButton, WhatsAppButton } from "@/components/Cta";
-import { Star } from "@/components/Icons";
 
 /** Радиус глобуса в квадратных рендерах этапов (доля стороны картинки) — см. scripts/render-globe.mjs. */
 const RENDER_R = 0.42;
 
 /**
- * Первый экран + бегущая лента + «Карта Carleone» (500svh) над одним закреплённым слоем с глобусом.
- * t: -1 — первый экран, 0…4 — этапы. Глобус (three.js) грузится лениво, по первому действию
- * пользователя; до этого и без WebGL 2 / при reduced motion — готовые рендеры того же глобуса.
+ * «Путешественники»: вступление (горизонт глобуса) + «Карта Carleone» (500svh) над одним закреплённым
+ * слоем с глобусом. Раздел доверия, ниже технических. t: -1 — вступление, 0…4 — этапы.
+ * Глобус (three.js) грузится лениво, когда раздел подходит к экрану; до этого, без WebGL 2 и при
+ * reduced motion — готовые рендеры того же глобуса.
  */
 export function GlobeStory() {
   const { t, lang } = useLang();
@@ -34,6 +34,7 @@ export function GlobeStory() {
   const renders = useRef<(HTMLDivElement | null)[]>([]);
   const [stage, setStage] = useState(-1);
   const [live, setLive] = useState(false);
+  const [near, setNear] = useState(false);
 
   // --- прокрутка → t, активный этап, шкала HUD --------------------------------------------
   useEffect(
@@ -45,8 +46,9 @@ export function GlobeStory() {
         const r = m.getBoundingClientRect();
         let tt: number;
         if (r.top > 0) {
-          const start = r.top + window.scrollY;
-          tt = -1 + 0.5 * clamp(window.scrollY / Math.max(1, start));
+          // вступление: от верха раздела до начала карты — горизонт поднимается в глобус
+          const top = wrap.current!.getBoundingClientRect().top;
+          tt = -1 + 0.5 * clamp(-top / Math.max(1, r.top - top));
         } else {
           tt = -0.5 + 5 * clamp(-r.top / Math.max(1, r.height - vh));
         }
@@ -71,12 +73,10 @@ export function GlobeStory() {
     let started = false;
     let g: Globe | null = null;
     const cleanups: (() => void)[] = [];
-    const events = ["pointermove", "pointerdown", "touchstart", "wheel", "keydown", "scroll"] as const;
 
     const load = async () => {
       if (started) return;
       started = true;
-      events.forEach((e) => window.removeEventListener(e, load));
       const { createGlobe } = await import("@/globe/scene");
       const el = layer.current;
       if (disposed || !canvas.current || !el) return;
@@ -124,17 +124,37 @@ export function GlobeStory() {
       );
     };
 
-    events.forEach((e) => window.addEventListener(e, load, { passive: true }));
-    // файл с диска — Lighthouse тут не при чём, грузим сразу после первой отрисовки
-    const idle = location.protocol === "file:" ? window.setTimeout(load, 1200) : 0;
+    // грузим, когда до раздела остаётся около полутора экранов
+    const near = new IntersectionObserver(
+      ([e]) => {
+        if (!e.isIntersecting) return;
+        near.disconnect();
+        load();
+      },
+      { rootMargin: "150% 0px 150% 0px" },
+    );
+    near.observe(wrap.current!);
     return () => {
       disposed = true;
-      window.clearTimeout(idle);
-      events.forEach((e) => window.removeEventListener(e, load));
+      near.disconnect();
       cleanups.forEach((c) => c());
       g?.dispose();
       globe.current = null;
     };
+  }, []);
+
+  // --- рендер горизонта грузим, только когда раздел близко (без JS — сразу, см. index.css) ---
+  useEffect(() => {
+    const io = new IntersectionObserver(
+      ([e]) => {
+        if (!e.isIntersecting) return;
+        io.disconnect();
+        setNear(true);
+      },
+      { rootMargin: "200% 0px 200% 0px" },
+    );
+    io.observe(wrap.current!);
+    return () => io.disconnect();
   }, []);
 
   // --- запасные рендеры: позиция как у живого глобуса --------------------------------------
@@ -164,9 +184,9 @@ export function GlobeStory() {
   const renderNeeded = (i: number) => !live && (i === renderIdx || (renderIdx >= 1 && Math.abs(i - renderIdx) <= 1));
 
   return (
-    <div ref={wrap} className="relative" id="top">
+    <div ref={wrap} className="relative">
       <div className="globe-track" aria-hidden="true">
-        <div ref={layer} className="globe-layer">
+        <div ref={layer} className="globe-layer" data-near={near ? "" : undefined}>
           <div className="globe-fallback">
             {[0, 1, 2, 3, 4, 5].map((i) => (
               <div
@@ -184,8 +204,12 @@ export function GlobeStory() {
         </div>
       </div>
 
-      <Hero />
-      <Marquee items={t.marquee} />
+      <section className="map-intro" aria-labelledby="map-intro-title">
+        <div className="wrap map-intro-inner">
+          <Kicker>{t.map.intro.kicker}</Kicker>
+          <Lines id="map-intro-title" lines={t.map.intro.title} className="t-title map-intro-title mt-6" />
+        </div>
+      </section>
 
       <section ref={map} id="map" className="map" aria-labelledby="map-title">
         <h2 id="map-title" className="sr-only">
@@ -266,164 +290,6 @@ export function GlobeStory() {
           ))}
         </div>
       </section>
-    </div>
-  );
-}
-
-/* ----------------------------------- Первый экран ----------------------------------- */
-function Hero() {
-  const { t } = useLang();
-  const root = useRef<HTMLElement>(null);
-  const lion = useRef<HTMLDivElement>(null);
-  const title = useRef<HTMLHeadingElement>(null);
-  const sub = useRef<HTMLDivElement>(null);
-
-  // параллакс: лев уходит медленнее заголовка, строки слегка разъезжаются; лев тянется за мышью
-  useEffect(() => {
-    if (!motionOK()) return;
-    let mx = 0;
-    let my = 0;
-    let p = 0;
-    let raf = 0;
-    const paint = () => {
-      raf = 0;
-      if (lion.current)
-        lion.current.style.transform = `translate3d(${(mx * 14).toFixed(1)}px, ${(p * -120 + my * 10).toFixed(1)}px, 0) scale(${(1 - p * 0.18).toFixed(3)})`;
-      if (title.current) {
-        const [a, b] = Array.from(title.current.querySelectorAll<HTMLElement>(".hero-word"));
-        if (a) a.style.transform = `translate3d(${(p * -6).toFixed(2)}vw, ${(p * -40).toFixed(1)}px, 0)`;
-        if (b) b.style.transform = `translate3d(${(p * 6).toFixed(2)}vw, ${(p * -40).toFixed(1)}px, 0)`;
-      }
-      if (sub.current) {
-        sub.current.style.opacity = String(1 - p * 1.6);
-        sub.current.style.transform = `translate3d(0, ${(p * -30).toFixed(1)}px, 0)`;
-      }
-    };
-    const req = () => {
-      if (!raf) raf = requestAnimationFrame(paint);
-    };
-    const un = subscribe(root.current, "exit", (v) => {
-      p = v;
-      req();
-    });
-    const move = (e: PointerEvent) => {
-      mx = e.clientX / window.innerWidth - 0.5;
-      my = e.clientY / window.innerHeight - 0.5;
-      req();
-    };
-    if (finePointer()) window.addEventListener("pointermove", move, { passive: true });
-    return () => {
-      un();
-      window.removeEventListener("pointermove", move);
-      cancelAnimationFrame(raf);
-    };
-  }, []);
-
-  return (
-    <section ref={root} className="hero" aria-labelledby="hero-title">
-      <div className="wrap hero-inner" data-reveal="">
-        <div ref={lion} className="hero-lion fade-up" style={{ "--d": 100 } as CSSProperties}>
-          <div className="hero-glow" aria-hidden="true" />
-          <Lion className="relative h-full w-full text-gold" />
-        </div>
-        <h1 ref={title} id="hero-title" className="t-display hero-title" translate="no">
-          <span className="ln hero-word">
-            <span style={{ "--i": 1 } as CSSProperties}>{t.hero.title[0]}</span>
-          </span>{" "}
-          <span className="ln hero-word">
-            <span style={{ "--i": 2 } as CSSProperties}>
-              <Rich text={t.hero.title[1]} />
-            </span>
-          </span>
-        </h1>
-        <div ref={sub} className="hero-sub">
-          <p className="fade-up t-body hero-lead" style={{ "--d": 450 } as CSSProperties}>
-            {t.hero.sub}
-          </p>
-          <div
-            className="fade-up mt-7 flex flex-wrap items-center justify-center gap-3"
-            style={{ "--d": 560 } as CSSProperties}
-          >
-            <CallButton />
-            <WhatsAppButton adaptive />
-          </div>
-        </div>
-      </div>
-      <div className="wrap hero-foot" aria-hidden="true">
-        <span className="t-label text-muted">{t.hero.country}</span>
-        <span className="t-label hero-scroll text-muted">
-          {t.hero.scroll}
-          <i />
-        </span>
-      </div>
-    </section>
-  );
-}
-
-/* ----------------------------------- Бегущая лента ----------------------------------- */
-function Marquee({ items }: { items: string[] }) {
-  const root = useRef<HTMLDivElement>(null);
-  const track = useRef<HTMLDivElement>(null);
-  useEffect(() => {
-    const el = root.current;
-    const tr = track.current;
-    if (!el || !tr || !motionOK()) return;
-    let x = 0;
-    let dir = -1;
-    let raf = 0;
-    let last = 0;
-    let on = false;
-    let paused = false; // наведение мыши — лента стоит (можно прочитать)
-    const pause = () => (paused = true);
-    const resume = () => (paused = false);
-    el.addEventListener("pointerenter", pause);
-    el.addEventListener("pointerleave", resume);
-    const loop = (now: number) => {
-      raf = requestAnimationFrame(loop);
-      const dt = paused ? 0 : Math.min(0.05, (now - (last || now)) / 1000);
-      last = now;
-      const v = getVelocity();
-      if (Math.abs(v) > 0.5) dir = v > 0 ? -1 : 1;
-      const speed = 38 + Math.min(900, Math.abs(v) * 42); // px/с: база + разгон от прокрутки
-      const w = tr.scrollWidth / 2;
-      x += dir * speed * dt;
-      if (x <= -w) x += w;
-      if (x > 0) x -= w;
-      tr.style.transform = `translate3d(${x.toFixed(2)}px, 0, 0)`;
-    };
-    const io = new IntersectionObserver(([e]) => {
-      if (e.isIntersecting && !on) {
-        on = true;
-        last = 0;
-        raf = requestAnimationFrame(loop);
-      } else if (!e.isIntersecting && on) {
-        on = false;
-        cancelAnimationFrame(raf);
-      }
-    });
-    io.observe(el);
-    return () => {
-      io.disconnect();
-      cancelAnimationFrame(raf);
-      el.removeEventListener("pointerenter", pause);
-      el.removeEventListener("pointerleave", resume);
-    };
-  }, []);
-  const row = (k: number) =>
-    items.map((s, i) => (
-      <span className="marquee-item" key={`${k}-${i}`}>
-        {s}
-        <Star className="marquee-star" />
-      </span>
-    ));
-  return (
-    <div ref={root} className="marquee" aria-hidden="true">
-      <div ref={track} className="marquee-track">
-        {row(0)}
-        {row(1)}
-        {row(2)}
-        {row(3)}
-      </div>
     </div>
   );
 }

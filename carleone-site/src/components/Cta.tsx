@@ -105,41 +105,6 @@ export function Btn({
   );
 }
 
-/**
- * Плашка «ЗАПОЛНИТЬ: поле» на месте элемента с пустым полем CONFIG. Только в демо-сборке;
- * в build:release пустые элементы просто не выводятся.
- */
-export function Fill({
-  field,
-  label,
-  icon,
-  size = "md",
-  inline,
-  className,
-}: {
-  field: string;
-  label?: ReactNode;
-  icon?: ReactNode;
-  size?: "md" | "sm";
-  inline?: boolean;
-  className?: string;
-}) {
-  const t = useT();
-  if (!__DEMO__) return null;
-  return (
-    <span
-      className={cn("fill", size === "sm" && "fill-sm", inline && "fill-inline", className)}
-      title={`src/config.ts → CONFIG.${field}`}
-    >
-      {icon}
-      {label && <span>{label}</span>}
-      <b>
-        {t.fill}: {field}
-      </b>
-    </span>
-  );
-}
-
 export function CallButton({
   variant = "gold",
   size,
@@ -151,7 +116,7 @@ export function CallButton({
 }) {
   const t = useT();
   const href = telHref();
-  if (!href) return <Fill field="phone" label={t.cta.call} icon={<IconPhone />} size={size} className={className} />;
+  if (!href) return null; // телефон не указан — кнопки нет
   return (
     <Btn href={href} variant={variant} size={size} className={className} icon={<IconPhone />}>
       {t.cta.call}
@@ -187,7 +152,7 @@ export function WhatsAppButton({
   ) : (
     t.cta.whatsapp
   );
-  if (!href) return <Fill field="whatsapp" label={label} icon={<IconChat />} size={size} className={className} />;
+  if (!href) return null; // WhatsApp не указан — кнопки нет
   return (
     <Btn href={href} external variant={variant} size={size} className={className} icon={<IconChat />}>
       {label}

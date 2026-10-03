@@ -59,7 +59,7 @@ export function Radiator() {
 
   return (
     <>
-      <section ref={root} className="pin-250" aria-labelledby="radiator-title">
+      <section ref={root} id="rav4" className="pin-250" aria-labelledby="radiator-title">
         <div className="pin-inner">
           <div className="wrap grid-12 h-full content-center items-center gap-y-6 pt-[calc(var(--header-h)+1rem)] pb-6 md:pt-[var(--header-h)]">
             <div className="radiator-window relative col-span-12 md:col-span-6 lg:col-span-5">

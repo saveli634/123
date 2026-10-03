@@ -6,15 +6,16 @@ import { motionOK } from "@/lib/env";
 import { subscribe } from "@/lib/scroll";
 import { cn } from "@/lib/cn";
 import { Frame } from "@/components/Frame";
-import { Kicker, Lines } from "@/components/Text";
-import { Btn, Fill } from "@/components/Cta";
+import { Kicker, Lines, q } from "@/components/Text";
+import { Btn } from "@/components/Cta";
 import { IconArrow } from "@/components/Icons";
 
 /**
- * «Работы»: горизонтальная закреплённая галерея (компьютер) — вертикальная прокрутка двигает ленту
- * кадров вбок; на телефоне — лента со свайпом. Шкала прогресса снизу.
+ * «Мастерская и команда»: слова заказчика о команде + горизонтальная закреплённая галерея кадров
+ * из бокса (компьютер) — вертикальная прокрутка двигает ленту вбок; на телефоне — лента со свайпом.
+ * Лиц нет (CONFIG.showFaces), фамилий и должностей — тоже: они не подтверждены.
  */
-export function Works() {
+export function Team() {
   const { t, lang } = useLang();
   const root = useRef<HTMLElement>(null);
   const track = useRef<HTMLDivElement>(null);
@@ -76,24 +77,24 @@ export function Works() {
 
   const insta = instagramHref();
   return (
-    <section ref={root} id="works" className="hscroll" aria-labelledby="works-title">
+    <section ref={root} id="team" className="hscroll team" aria-labelledby="team-title">
       <div className="hscroll-pin">
-        <div className="wrap mb-8 flex flex-col gap-6 md:mb-12 md:flex-row md:items-end md:justify-between">
+        <div className="wrap team-head mb-8 md:mb-12">
           <div>
-            <Kicker>{t.works.label}</Kicker>
-            <Lines id="works-title" lines={t.works.title} className="t-title mt-6" />
+            <Kicker>{t.team.label}</Kicker>
+            <Lines id="team-title" lines={t.team.title} className="t-title t-title-long mt-6" />
           </div>
-          <div className="flex items-center gap-5" data-reveal="">
-            <span className="fade-up t-label hidden text-muted lg:inline">{t.works.hint} →</span>
-            <span className="fade-up">
-              {insta ? (
-                <Btn href={insta} external variant="line" iconEnd={<IconArrow />}>
+          <div className="team-quote" data-reveal="">
+            <blockquote className="fade-up t-quote">{q(t.team.quote, lang)}</blockquote>
+            <div className="fade-up mt-5 flex flex-wrap items-center gap-5" style={{ "--d": 140 } as CSSProperties}>
+              <span className="t-label text-muted">{t.team.text}</span>
+              <span className="t-label hidden text-gold lg:inline">{t.team.hint} →</span>
+              {insta && (
+                <Btn href={insta} external variant="line" size="sm" iconEnd={<IconArrow />}>
                   {t.cta.works}
                 </Btn>
-              ) : (
-                <Fill field="instagram" label={t.cta.works} />
               )}
-            </span>
+            </div>
           </div>
         </div>
 

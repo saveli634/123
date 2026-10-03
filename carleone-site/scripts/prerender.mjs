@@ -32,23 +32,22 @@ export async function prerender(outDir, ssrDir, single) {
   };
 
   // версия для хостинга: стили встраиваем прямо в <head> (минус блокирующий запрос — быстрее первый
-  // экран на мобильном), а картинку первого экрана (горизонт глобуса) просим грузить сразу
+  // экран на мобильном), а кадр первого экрана просим грузить сразу
   let page0 = html;
   let lcpPreload = "";
   let inlined = null;
   if (!single) {
     const dir = join(outDir, "assets");
-    const files = existsSync(dir) ? readdirSync(dir) : [];
     page0 = page0.replace(/<link rel="stylesheet"[^>]*href="\.\/assets\/([^"]+\.css)"[^>]*>/, (m, file) => {
       inlined = join(dir, file);
       const css = readFileSync(inlined, "utf8").replace(/url\(\.\//g, "url(./assets/");
       return `<style>${css}</style>`;
     });
-    const wide = files.find((f) => /^globe-0-[\w-]+\.webp$/.test(f));
-    const tall = files.find((f) => /^globe-0m-[\w-]+\.webp$/.test(f));
+    // кадр первого экрана (гидроблок АКПП) — тот же srcset, что у <img> в Hero
+    const meta = JSON.parse(readFileSync(resolve("src/generated/frames.json"), "utf8")).valve_body_hand;
+    const set = meta.widths.map((w) => `./frames/valve_body_hand-${w}.webp ${w}w`).join(", ");
     lcpPreload = [
-      wide && `<link rel="preload" as="image" href="./assets/${wide}" media="(min-aspect-ratio: 9/10)" fetchpriority="high" />`,
-      tall && `<link rel="preload" as="image" href="./assets/${tall}" media="(max-aspect-ratio: 9/10)" fetchpriority="high" />`,
+      `<link rel="preload" as="image" type="image/webp" imagesrcset="${set}" imagesizes="(max-width: 1023px) 100vw, 36vw" fetchpriority="high" />`,
     ]
       .filter(Boolean)
       .join("\n    ");

@@ -123,7 +123,7 @@ export function BeforeAfter() {
   const t = useT();
   if (!CONFIG.showBeforeAfter) return null;
   return (
-    <section className="section" aria-labelledby="ba-title">
+    <section id="before-after" className="section" aria-labelledby="ba-title">
       <div className="wrap">
         <div className="grid-12 items-end gap-y-6">
           <div className="col-span-12 md:col-span-7">
@@ -132,7 +132,7 @@ export function BeforeAfter() {
           </div>
           <div className="fade-up col-span-12 md:col-span-4 md:col-start-9" data-reveal="">
             <p className="t-quote text-[1.5rem] md:text-[1.9rem]">
-              {CONFIG.underbodyServiceName.trim() || t.beforeAfter.caption}
+              {t.beforeAfter.caption}
             </p>
             <p className="t-label mt-4 text-muted">{t.beforeAfter.hint}</p>
           </div>

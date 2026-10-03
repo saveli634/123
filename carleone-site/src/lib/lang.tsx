@@ -9,9 +9,20 @@ const LangCtx = createContext<Ctx>({
   setLang: () => {},
 });
 
+/** Город на языке страницы (CONFIG.city / CONFIG.cityEn); пусто — города нет. */
+export function cityFor(lang: Lang) {
+  return (lang === "en" ? CONFIG.cityEn || CONFIG.city : CONFIG.city).trim();
+}
+
 export function pageTitle(lang: Lang) {
   const t = DICT[lang].meta;
-  return CONFIG.city.trim() ? t.titleCity.replace("{city}", CONFIG.city.trim()) : t.title;
+  const city = cityFor(lang);
+  return city ? t.titleCity.replace("{city}", city) : t.title;
+}
+
+export function pageDescription(lang: Lang) {
+  const t = DICT[lang].meta;
+  return t.description.replace("{city}", cityFor(lang) || t.cityFallback);
 }
 
 /**
@@ -28,7 +39,7 @@ export function LangProvider({ initial, children }: { initial: Lang; children: R
     html.lang = l;
     document.title = pageTitle(l);
     const desc = document.querySelector('meta[name="description"]');
-    if (desc) desc.setAttribute("content", DICT[l].meta.description);
+    if (desc) desc.setAttribute("content", pageDescription(l));
     // Адрес меняем только на хостинге: на file:// replaceState на другой файл запрещён
     if (/^https?:$/.test(location.protocol)) {
       try {

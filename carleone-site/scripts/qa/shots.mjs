@@ -18,7 +18,7 @@ const SIZES = arg("sizes", "1440x900,1280x800,390x844,375x667,360x780,844x390")
 const MODES = arg("modes", "webgl,nowebgl,reduced,nojs,file,en").split(",");
 const POINTS = arg(
   "points",
-  "hero,marquee,s1,s2,s3,s4,s5,services,radiator,ba,sticker,travellers,works,contacts,footer",
+  "hero,core,cases,radiator,ba,project,team,intro,s1,s2,s3,s4,s5,travellers,sticker,contacts,footer",
 ).split(",");
 const WAIT = Number(arg("wait", "1300"));
 
@@ -78,18 +78,20 @@ for (const mode of MODES) {
       const pin = (el, f) => (el ? top(el) + f * Math.max(0, el.offsetHeight - vh) : null);
       return {
         hero: 0,
-        marquee: Math.round(vh * 0.55),
+        core: top(q("#services")) + vh * 0.35,
+        cases: top(q("#cases")),
+        project: top(q("#project")) + vh * 0.5,
+        team: pin(q("#team"), 0.4),
+        intro: top(q(".map-intro")),
         s1: mt + 0.1 * mh,
         s2: mt + 0.3 * mh,
         s3: mt + 0.5 * mh,
         s4: mt + 0.7 * mh,
         s5: mt + 0.93 * mh,
-        services: top(q("#services")),
         radiator: pin(q(".pin-250"), 0.62),
         ba: top(q("[aria-labelledby='ba-title']")),
         sticker: top(q("[aria-labelledby='sticker-title']")) + vh * 0.25,
         travellers: top(q(".travellers")),
-        works: pin(q("#works"), 0.4),
         contacts: top(q("#contacts")),
         footer: document.documentElement.scrollHeight - vh,
       };

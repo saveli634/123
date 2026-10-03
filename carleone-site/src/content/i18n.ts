@@ -1,12 +1,16 @@
 /**
  * Все тексты сайта, RU и EN.
  *
- * Правило: факты — только из подписей к роликам (caption.txt) и ТЗ. Рядом с каждой фразой —
- * источник: [006] = подпись к ролику 006, [ТЗ] = интерфейс из ТЗ, [кадры] = frames/manifest.csv,
- * [UI] = служебная подсказка без фактов. Английский — перевод тех же фраз, без новых утверждений.
+ * Правило: факты — только из подписей к роликам (caption.txt), ТЗ и подтверждений заказчика.
+ * Рядом с каждой фразой — источник: [006] = подпись к ролику 006, [ТЗ] = интерфейс из ТЗ,
+ * [кадры] = frames/manifest.csv, [З2] = подтверждено заказчиком во второй итерации (направления
+ * работ, город, проект «Волга», слова о команде), [UI] = служебная подсказка без фактов.
+ * Английский — перевод тех же фраз, без новых утверждений.
  * Разметка: *слово* — акцент (курсив Playfair), элементы массива title — строки заголовка.
  * Неразрывные пробелы расставляются при сборке (scripts/typograph.mjs).
  */
+import type { FrameName } from "./frames";
+
 export type Lang = "ru" | "en";
 
 export type StageCode = "KZ" | "DE" | "FR" | "BE" | "ALL";
@@ -23,15 +27,43 @@ export type Stage = {
   inset?: string;
 };
 
+/** Направление в «Техническом ядре». Кадр — реальный; схема — там, где своих кадров пока нет. */
+export type CoreCat = {
+  id: "engine" | "transmission" | "performance" | "service";
+  code: string;
+  name: string;
+  desc: string;
+  services: string[];
+  details: string[];
+  media: { frame: FrameName; position?: string } | { scheme: "engine" | "turbo" };
+  related: { href: string; label: string };
+};
+
+/** Реальный кейс: «проблема» (или «задача», если проблема в ролике не названа) → «что сделано». */
+export type Case = {
+  id: string;
+  tag: string;
+  title: string;
+  kind: "problem" | "task";
+  problem: string;
+  done: string;
+  frame?: FrameName;
+  /** второй кадр — проявляется при наведении (было → стало) */
+  frameAfter?: FrameName;
+  route?: boolean;
+  link?: { href: string; label: string };
+};
+
 const ru = {
   meta: {
-    /** [ТЗ 8] название + «Казахстан»; город добавляется из CONFIG.city */
+    /** [З2] город — Алматы; если CONFIG.city пуст — без города */
     title: "Carleone Service — автосервис, Казахстан",
-    titleCity: "Carleone Service — автосервис, {city}, Казахстан",
-    /** [006] проверка, [012] ремонт, [005] техника путешественников и мотоциклы, [007][014] радиатор АКПП */
+    titleCity: "Carleone Service — автосервис в {city}",
+    /** [З2] направления работ; {city} — CONFIG.city, иначе «Казахстане» */
     description:
-      "Carleone Service, Казахстан: проверка и ремонт автомобилей, обслуживание техники путешественников, в том числе мотоциклов, установка дополнительного радиатора охлаждения АКПП.",
-    ogTitle: "Carleone Service — ещё одна страна на карте",
+      "Carleone Service — автосервис в {city}: двигатели, ремонт АКПП, прошивка ЭБУ и тюнинг, турбонаддув, дополнительное охлаждение ATF, техническое обслуживание.",
+    cityFallback: "Казахстане",
+    ogTitle: "Carleone Service — сложные задачи, технические решения",
     locale: "ru_RU",
   },
   a11y: {
@@ -47,42 +79,198 @@ const ru = {
     slider: "Шторка «было / стало»: стрелки влево и вправо",
     globe:
       "Схема: золотые дуги маршрутов путешественников из Германии, Франции и Бельгии сходятся в Казахстане, дальше — в Японию.",
+    core: "Направления работ",
+    scheme: "Схема",
   },
   nav: {
+    services: "Направления",
+    cases: "Работы",
+    project: "Проект",
+    team: "Команда",
     map: "Карта",
-    services: "Услуги",
-    works: "Работы",
     contacts: "Контакты",
   },
-  /** [ТЗ 3] формулировки кнопок */
+  /** [ТЗ 3] [UI] формулировки кнопок */
   cta: {
     call: "Позвонить",
     whatsapp: "Написать в WhatsApp",
     whatsappShort: "WhatsApp",
-    book: "Записаться",
-    price: "Узнать цену",
+    book: "Записаться на сервис",
+    bookShort: "Записаться",
+    cases: "Смотреть реальные работы",
+    casesShort: "Работы",
     route: "Построить маршрут",
-    works: "Смотреть работы",
+    works: "Ролики в Instagram",
     reel: "Ролик в Instagram",
   },
-  /** [ТЗ 3] «Спорное — уточняйте по телефону» */
-  priceAnswer: "Цену уточняйте по телефону",
-  fill: "ЗАПОЛНИТЬ",
   hero: {
-    country: "Казахстан", // [ТЗ 3] страна
-    title: ["Carleone", "*Service*"], // [ТЗ 3] название
-    sub: "Пришло время проверить свою машину", // [006]
+    brand: "Carleone Service", // [ТЗ 3] название
+    city: "Алматы · Казахстан", // [З2]
+    title: ["Сложные задачи.", "*Технические решения.*"], // [З2] позиционирование
+    spec: ["Двигатели", "АКПП", "Тюнинг", "Performance"], // [З2]
+    sub: "Пришло время проверить свою машину.", // [006]
     scroll: "Листайте", // [UI]
+    media: ["Гидроблок АКПП", "Доп. радиатор АКПП · Rav4", "Бокс с подъёмником"], // [кадры]
   },
-  /** [ТЗ 6.3] бегущая лента */
-  marquee: ["Проверка авто", "Ремонт", "Радиатор АКПП", "Мотоциклы и авто путешественников"],
+  /** [З2] бегущая лента — направления работ */
+  marquee: [
+    "Двигатели",
+    "Ремонт АКПП",
+    "Прошивка ЭБУ",
+    "Турбонаддув",
+    "Охлаждение ATF",
+    "Техобслуживание",
+    "Нестандартные проекты",
+  ],
+  core: {
+    label: "Направления",
+    title: ["Двигатель. АКПП.", "*Тюнинг. Сервис.*"],
+    lead: "Выберите направление — кадр, услуги и связанный кейс сменятся.", // [UI]
+    services: "Что делаем",
+    details: "Детали",
+    related: "Связанный кейс",
+    scheme: "Схема, не фото работы", // [UI] честная подпись к схеме
+    cats: <CoreCat[]>[
+      {
+        id: "engine",
+        code: "ENGINE",
+        name: "Двигатель",
+        desc: "Работы по двигателю и его усиление — вплоть до проектов с Lexus 3UZ‑FE на базе Mercedes‑Benz W124.", // [З2]
+        services: ["Работы по двигателю", "Усиление двигателя"], // [З2]
+        details: ["Lexus 3UZ‑FE · V8", "Mercedes‑Benz W124"], // [З2]
+        media: { scheme: "engine" },
+        related: { href: "#project", label: "Проект «Волга»: W124 + 3UZ‑FE" },
+      },
+      {
+        id: "transmission",
+        code: "TRANSMISSION",
+        name: "АКПП",
+        desc: "Ремонт автоматических коробок передач и дополнительное охлаждение ATF — установка дополнительного радиатора охлаждения АКПП.", // [З2] [007] [014]
+        services: ["Ремонт АКПП", "Дополнительное охлаждение ATF"], // [З2]
+        details: ["Гидроблок АКПП", "Доп. радиатор ATF", "Toyota Rav4"], // [кадры] [007]
+        media: { frame: "valve_body_hand", position: "50% 55%" },
+        related: { href: "#rav4", label: "Rav4: дополнительный радиатор охлаждения АКПП" },
+      },
+      {
+        id: "performance",
+        code: "PERFORMANCE",
+        name: "Performance",
+        desc: "Прошивка и настройка ЭБУ, тюнинг двигателя, турбонаддув и нестандартные технические проекты.", // [З2]
+        services: ["Прошивка и настройка ЭБУ", "Тюнинг двигателя", "Турбонаддув", "Нестандартные технические проекты"], // [З2]
+        details: ["ЭБУ", "Турбонаддув", "Проекты под задачу"],
+        media: { scheme: "turbo" },
+        related: { href: "#project", label: "Проект «Волга»: W124 + 3UZ‑FE" },
+      },
+      {
+        id: "service",
+        code: "SERVICE",
+        name: "Сервис",
+        desc: "Техническое обслуживание и проверка автомобиля, работа по арке и днищу, обслуживание техники путешественников — в том числе мотоциклов.", // [З2] [006] [004] [005]
+        services: ["Техническое обслуживание", "Проверка автомобиля", "Ремонт арок и днища", "Мотоциклы и техника путешественников"], // [З2] [006] [005]
+        details: ["Подъёмник", "Бокс"], // [кадры]
+        media: { frame: "garage_lift_wide", position: "50% 50%" },
+        related: { href: "#before-after", label: "Арка и днище: было / стало" },
+      },
+    ],
+  },
+  cases: {
+    label: "Реальные работы",
+    title: ["Реальные", "*работы*"],
+    lead: "Проблема — и что сделано. Кадры из роликов Carleone Service, без досочинённых результатов.", // [UI]
+    problem: "Проблема",
+    task: "Задача",
+    done: "Что сделано",
+    items: <Case[]>[
+      {
+        id: "case-rav4",
+        tag: "АКПП · охлаждение ATF",
+        title: "Toyota Rav4",
+        kind: "task",
+        problem: "Дополнительное охлаждение АКПП.", // [007]
+        done: "Установлен дополнительный радиатор охлаждения АКПП.", // [007] [кадры]
+        frame: "radiator_installed",
+        link: { href: "#rav4", label: "Смотреть по шагам" },
+      },
+      {
+        id: "case-atf",
+        tag: "АКПП",
+        title: "Автоматическая коробка передач",
+        kind: "task",
+        problem: "Ремонт АКПП.", // [З2]
+        done: "Работа с гидроблоком АКПП.", // [кадры] valve_body_hand
+        frame: "valve_body_hand",
+      },
+      {
+        id: "case-arch",
+        tag: "Кузов · днище",
+        title: "Арка и днище",
+        kind: "problem",
+        problem: "Ржавая арка, днище и узел подвески.", // [кадры] underbody_before_1, _2
+        done: "Работа по арке и днищу: нанесено покрытие.", // [004] [кадры] underbody_after_1, _2
+        frame: "underbody_before_1",
+        frameAfter: "underbody_after_1",
+        link: { href: "#before-after", label: "Шторка «было / стало»" },
+      },
+      {
+        id: "case-route",
+        tag: "Ремонт в дороге",
+        title: "Бельгия → Казахстан → Япония",
+        kind: "problem",
+        problem: "В дороге случилась поломка — на пути из Бельгии через Казахстан в Японию.", // [011] [012]
+        done: "Автомобиль отремонтирован и снова готов покорять километры.", // [012]
+        route: true,
+        link: { href: "#map", label: "Карта гостей" },
+      },
+      {
+        id: "case-moto",
+        tag: "Сервис · мотоциклы",
+        title: "Мотоциклы гостей из Германии",
+        kind: "task",
+        problem: "Спокойно обслужить технику перед продолжением пути через Казахстан.", // [005]
+        done: "Мотоциклы обслужены в боксе Carleone Service. «Мы с удовольствием помогли!»", // [005]
+        frame: "bike_in_garage",
+      },
+      /*
+       * Prado и Iveco: ролики есть в архиве заказчика, но подписи и кадры к ним в материалы сайта
+       * не попали. Кейс добавляется сюда так же — только с проблемой и работой из подписи к ролику.
+       */
+    ],
+  },
+  project: {
+    label: "Фирменный проект",
+    title: ["*Волга*"], // [З2]
+    sub: "W124 · 3UZ‑FE",
+    lead: "Mercedes‑Benz W124, элементы кузова «Волги» и двигатель Lexus 3UZ‑FE — в одном автомобиле.", // [З2]
+    dossier: "Досье проекта",
+    rows: [
+      ["Основа", "Mercedes‑Benz W124"],
+      ["Кузов", "Элементы кузова ГАЗ «Волга»"],
+      ["Двигатель", "Lexus 3UZ‑FE · V8"],
+    ] as [string, string][], // [З2]
+    callouts: ["Основа W124", "Кузов «Волга»", "3UZ‑FE V8"],
+    note: "Схема, не чертёж проекта.", // [UI]
+    stamp: "Проект",
+    stampRing: "Carleone Service · Алматы ·",
+  },
+  team: {
+    label: "Мастерская и команда",
+    title: ["Не только", "*Сергей*"], // [З2]
+    quote: "Carleone Service — это не только Сергей. Это целая команда специалистов.", // [З2]
+    text: "Подъёмники, инструмент и работа в боксе — кадры из роликов.", // [кадры]
+    hint: "Листайте", // [UI]
+    of: "из",
+  },
   map: {
     label: "Карта Carleone", // [ТЗ 5]
     scheme: "Схема, не карта", // [ТЗ 5]
+    intro: {
+      kicker: "Путешественники",
+      title: ["Люди из разных стран", "останавливались в Carleone,", "*путешествуя через Казахстан*"], // [З2]
+    },
     stages: <Stage[]>[
       {
         code: "KZ",
-        kicker: "Казахстан",
+        kicker: "Алматы · Казахстан",
         title: ["Ещё одна страна", "*на карте*"], // [012]
         text: "Carleone Service", // [012]
         stamp: "",
@@ -123,36 +311,8 @@ const ru = {
     ],
     stampRing: "Carleone Service · Казахстан ·", // [ТЗ 3] название + страна
   },
-  services: {
-    label: "Услуги",
-    title: ["Что", "*делаем*"],
-    items: [
-      {
-        id: "check",
-        title: "Проверка автомобиля", // [ТЗ 3] [006]
-        text: "Пришло время проверить свою машину в Carleone Service. Приезжай, ждём тебя.", // [006]
-      },
-      {
-        id: "repair",
-        title: "Ремонт при поломке", // [ТЗ 6.5]
-        text: "«В дороге случилась поломка, но теперь всё позади — автомобиль отремонтирован и снова готов покорять километры.»", // [012]
-      },
-      {
-        id: "radiator",
-        title: "Дополнительный радиатор охлаждения АКПП", // [007] [014]
-        text: "Установка дополнительного радиатора охлаждения АКПП — на Rav4 и на Toyota.", // [007] [014]
-      },
-      {
-        id: "travel",
-        title: "Техника путешественников", // [ТЗ 3]
-        text: "Обслуживание и ремонт техники путешественников, в том числе мотоциклов.", // [005] [012]
-      },
-    ],
-    underbodyText: "Работа по арке и днищу.", // [004] — показывается только с CONFIG.underbodyServiceName
-    carSales: { title: "Продажа автомобилей", text: "Уточняйте по телефону." }, // только с CONFIG.showCarSales
-  },
   radiator: {
-    kicker: "Rav4 · АКПП",
+    kicker: "Кейс · Toyota Rav4 · АКПП",
     title: ["Установка дополнительного", "радиатора охлаждения", "*АКПП на Rav4*"], // [ТЗ 6.6] [007]
     steps: [
       "Rav4 на подъёмнике", // [кадры]
@@ -165,7 +325,7 @@ const ru = {
     detailValve: "Гидроблок АКПП", // [кадры]
   },
   beforeAfter: {
-    label: "Было / стало",
+    label: "Кейс · арка и днище",
     title: ["Было / *стало*"],
     caption: "Работа по арке и днищу", // [ТЗ 6.7] [004]
     before: "Было",
@@ -193,26 +353,23 @@ const ru = {
     text: "Отличный сервис! Нам здесь очень помогли! Огромное спасибо!", // [005] титры ролика
     author: "Путешественники из Германии",
   },
-  works: {
-    label: "Работы",
-    title: ["Наши *работы*"],
-    hint: "Листайте", // [UI]
-    of: "из",
-  },
   contacts: {
     label: "Контакты",
     title: ["Приезжай,", "*ждём тебя*"], // [006]
+    city: "Город",
     phone: "Телефон",
     whatsapp: "WhatsApp",
     address: "Адрес",
     hours: "Часы работы",
     instagram: "Instagram",
     country: "Казахстан",
+    /** демо-сборка без телефона, WhatsApp и Instagram — одна спокойная строка вместо пустых полей */
+    demo: "Контакты появятся в финальной версии после согласования.", // [UI]
     note: "Цены и сроки — уточняйте по телефону.", // [ТЗ 3]
     bookText: "Оставьте имя, телефон и пару слов о машине — заявка откроется в WhatsApp.", // [UI]
   },
   form: {
-    title: "Записаться",
+    title: "Записаться на сервис",
     lead: "Заполните форму — мы соберём сообщение и откроем WhatsApp. Останется нажать «Отправить».", // [UI]
     name: "Имя",
     namePh: "Как к вам обращаться…",
@@ -225,7 +382,6 @@ const ru = {
     submit: "Отправить в WhatsApp",
     errName: "Укажите имя",
     errPhone: "Укажите телефон — хотя бы 10 цифр",
-    noWhatsapp: "Номер WhatsApp ещё не указан в настройках сайта.",
     msgHello: "Здравствуйте! Хочу записаться в Carleone Service.",
     msgName: "Имя",
     msgPhone: "Телефон",
@@ -233,7 +389,7 @@ const ru = {
     msgProblem: "Что случилось",
   },
   footer: {
-    country: "Казахстан",
+    country: "Алматы · Казахстан",
     scheme: "Схема, не карта: глобус показывает страны, откуда приезжали гости, а не точные маршруты.", // [ТЗ 5]
     top: "Наверх",
   },
@@ -244,11 +400,12 @@ type Dict = typeof ru;
 
 const en: Dict = {
   meta: {
-    title: "Carleone Service — car service, Kazakhstan",
-    titleCity: "Carleone Service — car service, {city}, Kazakhstan",
+    title: "Carleone Service — Auto Service, Kazakhstan",
+    titleCity: "Carleone Service — Auto Service in {city}",
     description:
-      "Carleone Service, Kazakhstan: car checks and repair, servicing travellers' vehicles including motorcycles, installation of an additional automatic transmission (ATF) cooler.",
-    ogTitle: "Carleone Service — one more country on the map",
+      "Carleone Service — auto service in {city}: engines, automatic transmission repair, ECU flashing and tuning, turbocharging, additional ATF cooling, maintenance.",
+    cityFallback: "Kazakhstan",
+    ogTitle: "Carleone Service — complex problems, technical solutions",
     locale: "en_US",
   },
   a11y: {
@@ -264,39 +421,192 @@ const en: Dict = {
     slider: "Before / after curtain: use the left and right arrows",
     globe:
       "Diagram: golden arcs of travellers' routes from Germany, France and Belgium meet in Kazakhstan, then continue to Japan.",
+    core: "Areas of work",
+    scheme: "Diagram",
   },
   nav: {
-    map: "Map",
     services: "Services",
-    works: "Work",
+    cases: "Work",
+    project: "Project",
+    team: "Team",
+    map: "Map",
     contacts: "Contacts",
   },
   cta: {
     call: "Call",
     whatsapp: "Message on WhatsApp",
     whatsappShort: "WhatsApp",
-    book: "Book a visit",
-    price: "Ask the price",
+    book: "Book a service",
+    bookShort: "Book",
+    cases: "View real work",
+    casesShort: "Work",
     route: "Get directions",
-    works: "See our work",
+    works: "Videos on Instagram",
     reel: "Reel on Instagram",
   },
-  priceAnswer: "Please ask for the price by phone",
-  fill: "TO FILL",
   hero: {
-    country: "Kazakhstan",
-    title: ["Carleone", "*Service*"],
-    sub: "It's time to check your car",
+    brand: "Carleone Service",
+    city: "Almaty · Kazakhstan",
+    title: ["Complex problems.", "*Technical solutions.*"],
+    spec: ["Engines", "Automatic transmissions", "Tuning", "Performance"],
+    sub: "It's time to check your car.",
     scroll: "Scroll",
+    media: ["Transmission valve body", "Extra ATF cooler · Rav4", "The bay with a lift"],
   },
-  marquee: ["Car check", "Repair", "ATF cooler", "Travellers' motorcycles and cars"],
+  marquee: [
+    "Engines",
+    "Automatic transmission repair",
+    "ECU flashing",
+    "Turbocharging",
+    "ATF cooling",
+    "Maintenance",
+    "Custom projects",
+  ],
+  core: {
+    label: "Services",
+    title: ["Engine. Transmission.", "*Performance. Service.*"],
+    lead: "Pick an area — the frame, services and related case will change.",
+    services: "What we do",
+    details: "Details",
+    related: "Related case",
+    scheme: "A diagram, not a photo of the job",
+    cats: <CoreCat[]>[
+      {
+        id: "engine",
+        code: "ENGINE",
+        name: "Engine",
+        desc: "Engine work and engine strengthening — up to projects like a Lexus 3UZ‑FE on a Mercedes‑Benz W124 base.",
+        services: ["Engine work", "Engine strengthening"],
+        details: ["Lexus 3UZ‑FE · V8", "Mercedes‑Benz W124"],
+        media: { scheme: "engine" },
+        related: { href: "#project", label: "The Volga project: W124 + 3UZ‑FE" },
+      },
+      {
+        id: "transmission",
+        code: "TRANSMISSION",
+        name: "Transmission",
+        desc: "Automatic transmission repair and additional ATF cooling — installing an additional automatic transmission cooler.",
+        services: ["Automatic transmission repair", "Additional ATF cooling"],
+        details: ["Valve body", "Extra ATF cooler", "Toyota Rav4"],
+        media: { frame: "valve_body_hand", position: "50% 55%" },
+        related: { href: "#rav4", label: "Rav4: additional transmission cooler" },
+      },
+      {
+        id: "performance",
+        code: "PERFORMANCE",
+        name: "Performance",
+        desc: "ECU flashing and tuning, engine tuning, turbocharging and custom technical projects.",
+        services: ["ECU flashing and tuning", "Engine tuning", "Turbocharging", "Custom technical projects"],
+        details: ["ECU", "Turbocharging", "Built to the task"],
+        media: { scheme: "turbo" },
+        related: { href: "#project", label: "The Volga project: W124 + 3UZ‑FE" },
+      },
+      {
+        id: "service",
+        code: "SERVICE",
+        name: "Service",
+        desc: "Maintenance and car checks, wheel arch and underbody work, servicing travellers' vehicles — including motorcycles.",
+        services: ["Maintenance and technical service", "Car check", "Wheel arch and underbody repair", "Motorcycles and travellers' vehicles"],
+        details: ["Lift", "Bay"],
+        media: { frame: "garage_lift_wide", position: "50% 50%" },
+        related: { href: "#before-after", label: "Arch and underbody: before / after" },
+      },
+    ],
+  },
+  cases: {
+    label: "Real work",
+    title: ["Real", "*work*"],
+    lead: "The problem — and what was done. Frames from Carleone Service videos, no made-up results.",
+    problem: "Problem",
+    task: "Task",
+    done: "What was done",
+    items: <Case[]>[
+      {
+        id: "case-rav4",
+        tag: "Transmission · ATF cooling",
+        title: "Toyota Rav4",
+        kind: "task",
+        problem: "Additional automatic transmission cooling.",
+        done: "An additional automatic transmission cooler was installed.",
+        frame: "radiator_installed",
+        link: { href: "#rav4", label: "See it step by step" },
+      },
+      {
+        id: "case-atf",
+        tag: "Transmission",
+        title: "Automatic transmission",
+        kind: "task",
+        problem: "Automatic transmission repair.",
+        done: "Work on the transmission valve body.",
+        frame: "valve_body_hand",
+      },
+      {
+        id: "case-arch",
+        tag: "Body · underbody",
+        title: "Wheel arch and underbody",
+        kind: "problem",
+        problem: "A rusty wheel arch, underbody and suspension mount.",
+        done: "Wheel arch and underbody work: a coating was applied.",
+        frame: "underbody_before_1",
+        frameAfter: "underbody_after_1",
+        link: { href: "#before-after", label: "Before / after curtain" },
+      },
+      {
+        id: "case-route",
+        tag: "Repair on the road",
+        title: "Belgium → Kazakhstan → Japan",
+        kind: "problem",
+        problem: "A breakdown on the road — on the way from Belgium through Kazakhstan to Japan.",
+        done: "The car has been repaired and is ready to conquer the kilometres again.",
+        route: true,
+        link: { href: "#map", label: "Our guests' map" },
+      },
+      {
+        id: "case-moto",
+        tag: "Service · motorcycles",
+        title: "Motorcycles of our guests from Germany",
+        kind: "task",
+        problem: "Calmly service the bikes before continuing the journey through Kazakhstan.",
+        done: "The motorcycles were serviced in the Carleone Service bay. “We were happy to help!”",
+        frame: "bike_in_garage",
+      },
+    ],
+  },
+  project: {
+    label: "Signature project",
+    title: ["*Volga*"],
+    sub: "W124 · 3UZ‑FE",
+    lead: "A Mercedes‑Benz W124, Volga body elements and a Lexus 3UZ‑FE engine — in one car.",
+    dossier: "Project dossier",
+    rows: [
+      ["Base", "Mercedes‑Benz W124"],
+      ["Body", "GAZ Volga body elements"],
+      ["Engine", "Lexus 3UZ‑FE · V8"],
+    ] as [string, string][],
+    callouts: ["W124 base", "Volga body", "3UZ‑FE V8"],
+    note: "A diagram, not the project's drawing.",
+    stamp: "Project",
+    stampRing: "Carleone Service · Almaty ·",
+  },
+  team: {
+    label: "Workshop & team",
+    title: ["Not just", "*Sergey*"],
+    quote: "Carleone Service is not just Sergey. It is a whole team of specialists.",
+    text: "Lifts, tools and work in the bay — frames from our videos.",
+    hint: "Scroll",
+    of: "of",
+  },
   map: {
     label: "The Carleone map",
     scheme: "A diagram, not a map",
+    intro: {
+      kicker: "Travellers",
+      title: ["People from different countries", "have stopped at Carleone", "*while travelling through Kazakhstan*"],
+    },
     stages: <Stage[]>[
       {
         code: "KZ",
-        kicker: "Kazakhstan",
+        kicker: "Almaty · Kazakhstan",
         title: ["One more country", "*on the map*"],
         text: "Carleone Service",
         stamp: "",
@@ -337,36 +647,8 @@ const en: Dict = {
     ],
     stampRing: "Carleone Service · Kazakhstan ·",
   },
-  services: {
-    label: "Services",
-    title: ["What", "*we do*"],
-    items: [
-      {
-        id: "check",
-        title: "Car check",
-        text: "It's time to check your car at Carleone Service. Come by, we're waiting for you.",
-      },
-      {
-        id: "repair",
-        title: "Repair after a breakdown",
-        text: "“A breakdown happened on the road, but now it's all behind — the car has been repaired and is ready to conquer the kilometres again.”",
-      },
-      {
-        id: "radiator",
-        title: "Additional ATF cooler",
-        text: "Installation of an additional automatic transmission (ATF) cooler — on a Rav4 and on a Toyota.",
-      },
-      {
-        id: "travel",
-        title: "Travellers' vehicles",
-        text: "Servicing and repair of travellers' vehicles, including motorcycles.",
-      },
-    ],
-    underbodyText: "Work on the wheel arch and underbody.",
-    carSales: { title: "Car sales", text: "Please ask by phone." },
-  },
   radiator: {
-    kicker: "Rav4 · Automatic transmission",
+    kicker: "Case · Toyota Rav4 · Transmission",
     title: ["Installing an additional", "automatic transmission", "*cooler on a Rav4*"],
     steps: [
       "Rav4 on the lift",
@@ -379,7 +661,7 @@ const en: Dict = {
     detailValve: "Automatic transmission valve body",
   },
   beforeAfter: {
-    label: "Before / after",
+    label: "Case · arch and underbody",
     title: ["Before / *after*"],
     caption: "Work on the wheel arch and underbody",
     before: "Before",
@@ -407,21 +689,22 @@ const en: Dict = {
     text: "Great service! We got a lot of help here! Thank you so much!",
     author: "Travellers from Germany",
   },
-  works: { label: "Work", title: ["Our *work*"], hint: "Scroll", of: "of" },
   contacts: {
     label: "Contacts",
     title: ["Come by,", "*we're waiting*"],
+    city: "City",
     phone: "Phone",
     whatsapp: "WhatsApp",
     address: "Address",
     hours: "Opening hours",
     instagram: "Instagram",
     country: "Kazakhstan",
+    demo: "Contacts will be connected in the final version after approval.",
     note: "Prices and timing — please ask by phone.",
     bookText: "Leave your name, phone and a few words about the car — the request opens in WhatsApp.",
   },
   form: {
-    title: "Book a visit",
+    title: "Book a service",
     lead: "Fill in the form — we will compose the message and open WhatsApp. Then just tap “Send”.",
     name: "Name",
     namePh: "Your name…",
@@ -434,15 +717,14 @@ const en: Dict = {
     submit: "Send via WhatsApp",
     errName: "Please enter your name",
     errPhone: "Please enter a phone number — at least 10 digits",
-    noWhatsapp: "The WhatsApp number is not set in the site settings yet.",
-    msgHello: "Hello! I would like to book a visit to Carleone Service.",
+    msgHello: "Hello! I would like to book a service at Carleone Service.",
     msgName: "Name",
     msgPhone: "Phone",
     msgCar: "Car",
     msgProblem: "What happened",
   },
   footer: {
-    country: "Kazakhstan",
+    country: "Almaty · Kazakhstan",
     scheme: "A diagram, not a map: the globe shows the countries our guests came from, not exact routes.",
     top: "Back to top",
   },

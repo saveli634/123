@@ -5,13 +5,16 @@ import { initSmoothScroll } from "@/lib/scroll";
 import { LionDefs } from "@/components/Lion";
 import { InkFilter } from "@/components/Stamp";
 import { Cursor, Header, MobileBar, Preloader, ProgressThread } from "@/components/Chrome";
+import { Hero, Marquee } from "@/sections/Hero";
+import { TechCore } from "@/sections/TechCore";
+import { Cases } from "@/sections/Cases";
+import { Project } from "@/sections/Project";
 import { GlobeStory } from "@/sections/GlobeStory";
-import { Services } from "@/sections/Services";
 import { Radiator } from "@/sections/Radiator";
 import { BeforeAfter } from "@/sections/BeforeAfter";
 import { Sticker } from "@/sections/Sticker";
 import { Quotes, Travellers } from "@/sections/Travellers";
-import { Works } from "@/sections/Works";
+import { Team } from "@/sections/Works";
 import { Contacts, Footer } from "@/sections/Contacts";
 
 const loadBooking = () => import("@/sections/Booking");
@@ -94,18 +97,24 @@ function Page() {
       <ProgressThread />
       <Header onBook={openBook} />
       <main id="main">
-        <GlobeStory />
-        <Services />
+        {/* техническая часть: кто мы и что умеем */}
+        <Hero onBook={openBook} />
+        <Marquee items={t.marquee} />
+        <TechCore />
+        <Cases />
         <Radiator />
         <BeforeAfter />
-        <Sticker />
+        <Project />
+        <Team />
+        {/* доверие и характер: гости из разных стран, традиция наклейки */}
+        <GlobeStory />
         <Travellers />
         <Quotes />
-        <Works />
+        <Sticker />
         <Contacts onBook={openBook} />
       </main>
       <Footer />
-      <MobileBar />
+      <MobileBar onBook={openBook} />
       {bookMounted && (
         <Suspense fallback={null}>
           <BookingDialog open={book} onOpenChange={setBook} />

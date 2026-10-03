@@ -73,6 +73,7 @@ export function Frame({
             width={m.w}
             height={m.h}
             loading={eager ? "eager" : "lazy"}
+            fetchPriority={eager ? "high" : undefined}
             decoding="async"
             draggable={false}
             style={{ objectPosition: position }}

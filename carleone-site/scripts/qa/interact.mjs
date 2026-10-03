@@ -64,7 +64,7 @@ log.push({ backTitle: await page.title(), backUrl: page.url() });
 await page.click("header .btn");
 await page.waitForSelector("[role='dialog'] input");
 await page.waitForTimeout(400);
-await page.click("form button[type='submit'], form .fill").catch(() => {});
+await page.click("form button[type='submit']").catch(() => {});
 await shot("dialog_open");
 const dlg = await page.evaluate(() => ({
   open: !!document.querySelector("[role='dialog']"),
@@ -75,23 +75,34 @@ log.push({ dialog: dlg });
 await page.keyboard.press("Escape");
 await page.waitForTimeout(400);
 
-// 4) подсветка карточки и магнитная кнопка
-await scrollTo("#services", 0);
-const card = page.locator(".card").nth(1);
-const box = await card.boundingBox();
-await page.mouse.move(box.x + box.width * 0.3, box.y + box.height * 0.35, { steps: 6 });
-await page.waitForTimeout(600);
-await shot("card_glow");
+// 4) «Техническое ядро»: вкладки, подсветка окна, магнитная кнопка; кейс «было → стало»
+await scrollTo("#services", 300);
+await page.click("#core-tab-transmission");
+await page.waitForTimeout(900);
+const stage = await page.locator(".core-stage").boundingBox();
+await page.mouse.move(stage.x + stage.width * 0.3, stage.y + stage.height * 0.35, { steps: 6 });
+await page.waitForTimeout(500);
+await shot("core_transmission");
+await page.keyboard.press("ArrowDown");
+await page.waitForTimeout(900);
+log.push({
+  core: await page.evaluate(() => ({
+    selected: document.querySelector("[role='tab'][aria-selected='true']")?.id,
+    panel: document.querySelector(".core-item[data-on] h3")?.textContent,
+  })),
+});
+await shot("core_performance");
 const head = page.locator("header .btn");
 const hb = await head.boundingBox();
 await page.mouse.move(hb.x + 5, hb.y + 5);
 await page.mouse.move(hb.x + hb.width * 0.9, hb.y + hb.height * 0.85, { steps: 4 });
 await page.waitForTimeout(300);
 log.push({ magnetic: await head.evaluate((el) => [el.style.getPropertyValue("--tx"), el.style.getPropertyValue("--ty")]) });
-const btn = page.locator(".card .btn").first();
-await btn.click();
-await page.waitForTimeout(500);
-await shot("price_answer");
+await scrollTo("#case-arch", -120);
+await page.click("#case-arch .case-flip");
+await page.waitForTimeout(1000);
+await shot("case_flip");
+log.push({ caseAfter: await page.evaluate(() => document.querySelector("#case-arch")?.hasAttribute("data-after")) });
 
 // 5) наклейка: отгиб уголка и перенос
 await scrollTo("[aria-labelledby='sticker-title']", 200);

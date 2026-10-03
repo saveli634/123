@@ -6,6 +6,7 @@ import { subscribe } from "@/lib/scroll";
 import type { Lang } from "@/content/i18n";
 import { Lion } from "./Lion";
 import { Btn, CallButton, WhatsAppButton } from "./Cta";
+import { telHref, waHref } from "@/lib/links";
 
 /**
  * Прелоадер ≤1,2 с: контур льва прорисовывается, затем заливка. Чистый CSS (работает до загрузки
@@ -113,24 +114,25 @@ export function Header({ onBook }: { onBook: () => void }) {
             Carleone Service
           </span>
         </a>
-        <nav aria-label={t.a11y.nav} className="hidden items-center gap-2 lg:flex">
-          <a className="navlink t-label" href="#map">
-            <span>{t.nav.map}</span>
-          </a>
-          <a className="navlink t-label" href="#services">
-            <span>{t.nav.services}</span>
-          </a>
-          <a className="navlink t-label" href="#works">
-            <span>{t.nav.works}</span>
-          </a>
-          <a className="navlink t-label" href="#contacts">
-            <span>{t.nav.contacts}</span>
-          </a>
+        <nav aria-label={t.a11y.nav} className="hidden items-center gap-2 xl:flex">
+          {(
+            [
+              ["#services", t.nav.services],
+              ["#cases", t.nav.cases],
+              ["#project", t.nav.project],
+              ["#team", t.nav.team],
+              ["#contacts", t.nav.contacts],
+            ] as const
+          ).map(([href, label]) => (
+            <a key={href} className="navlink t-label" href={href}>
+              <span>{label}</span>
+            </a>
+          ))}
         </nav>
         <div className="flex items-center justify-end gap-2 md:gap-3">
           <LangSwitch />
           <Btn variant="ghost" size="sm" onClick={onBook} className="header-book hidden sm:inline-flex">
-            {t.cta.book}
+            {t.cta.bookShort}
           </Btn>
         </div>
       </div>
@@ -138,13 +140,30 @@ export function Header({ onBook }: { onBook: () => void }) {
   );
 }
 
-/** Нижняя панель телефона «Позвонить / WhatsApp» — всегда под рукой. */
-export function MobileBar() {
+/**
+ * Нижняя панель телефона — всегда под рукой: «Позвонить / WhatsApp», а пока номера не указаны —
+ * «Записаться / Работы».
+ */
+export function MobileBar({ onBook }: { onBook: () => void }) {
   const t = useT();
+  const direct = telHref() || waHref();
   return (
     <nav className="mobilebar" aria-label={t.a11y.menuMobile}>
-      <CallButton size="sm" />
-      <WhatsAppButton short size="sm" variant="line" />
+      {direct ? (
+        <>
+          <CallButton size="sm" />
+          <WhatsAppButton short size="sm" variant="line" />
+        </>
+      ) : (
+        <>
+          <Btn size="sm" onClick={onBook}>
+            {t.cta.bookShort}
+          </Btn>
+          <Btn size="sm" variant="line" href="#cases">
+            {t.cta.casesShort}
+          </Btn>
+        </>
+      )}
     </nav>
   );
 }

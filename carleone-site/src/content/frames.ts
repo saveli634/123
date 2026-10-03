@@ -85,8 +85,17 @@ export type WorkItem = {
   quote?: Text;
 };
 
-/** Галерея «Работы»: кадр + подпись. reel — номер ролика (ссылка из CONFIG.reels). */
+/** Галерея «Мастерская и команда»: кадр + подпись. reel — номер ролика (ссылка из CONFIG.reels). */
 export const WORKS: WorkItem[] = [
+  {
+    frame: "garage_lift_wide",
+    title: { ru: "Бокс с подъёмником", en: "The bay with a lift" }, // [кадры]
+  },
+  {
+    frame: "valve_body_hand",
+    title: { ru: "Гидроблок АКПП", en: "Transmission valve body" }, // [кадры]
+    quote: { ru: "В руках мастера", en: "In the mechanic's hands" }, // [кадры]
+  },
   {
     frame: "rav4_on_lift",
     reel: "007",
@@ -97,22 +106,8 @@ export const WORKS: WorkItem[] = [
     }, // [007]
   },
   {
-    frame: "radiator_installed",
-    reel: "007",
-    title: {
-      ru: "Дополнительный радиатор охлаждения АКПП",
-      en: "The additional transmission cooler",
-    },
-    quote: { ru: "Установлен на Rav4", en: "Installed on a Rav4" }, // [007] [кадры]
-  },
-  {
-    frame: "bike_in_garage",
-    reel: "005",
-    title: { ru: "Гости из Германии", en: "Guests from Germany" },
-    quote: {
-      ru: "«Мы с удовольствием помогли!»",
-      en: "“We were happy to help!”",
-    }, // [005]
+    frame: "radiator_hand",
+    title: { ru: "Радиатор и вентиляторы", en: "Radiator and fans" }, // [кадры]
   },
   {
     frame: "lion_plaque_bumper",
@@ -123,35 +118,25 @@ export const WORKS: WorkItem[] = [
     }, // [кадры]
   },
   {
-    frame: "underbody_after_1",
-    reel: "004",
-    title: {
-      ru: "Работа по арке и днищу",
-      en: "Wheel arch and underbody work",
-    }, // [ТЗ 6.7] [004]
-    quote: {
-      ru: "Стало: арка с белым слоем покрытия",
-      en: "After: the arch with a white coating layer",
-    }, // [кадры]
-  },
-  {
-    frame: "valve_body_hand",
-    title: { ru: "Гидроблок АКПП", en: "Transmission valve body" }, // [кадры]
-  },
-  {
-    frame: "garage_lift_wide",
-    title: { ru: "Бокс с подъёмником", en: "The bay with a lift" }, // [кадры]
-  },
-  {
-    frame: "radiator_hand",
-    title: { ru: "Радиатор и вентиляторы", en: "Radiator and fans" }, // [кадры]
-  },
-  {
     frame: "radiator_close",
     reel: "007",
     title: {
       ru: "Радиатор и шланги крупно",
       en: "The cooler and hoses up close",
     }, // [кадры]
+  },
+  {
+    frame: "underbody_after_2",
+    reel: "004",
+    title: {
+      ru: "Работа по арке и днищу",
+      en: "Wheel arch and underbody work",
+    }, // [ТЗ 6.7] [004]
+    quote: { ru: "Стало: тёмное покрытие", en: "After: dark coating" }, // [кадры]
+  },
+  {
+    frame: "bike_in_garage",
+    reel: "005",
+    title: { ru: "Мотоцикл гостей в боксе", en: "Our guests' motorcycle in the bay" }, // [кадры] [005]
   },
 ];

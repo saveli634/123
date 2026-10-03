@@ -3,7 +3,7 @@ import * as Dialog from "@radix-ui/react-dialog";
 import { useLang } from "@/lib/lang";
 import { digits, telHref, waHref } from "@/lib/links";
 import { cn } from "@/lib/cn";
-import { Btn, Fill } from "@/components/Cta";
+import { Btn } from "@/components/Cta";
 import { Lion } from "@/components/Lion";
 import { IconChat, IconClose, IconPhone } from "@/components/Icons";
 
@@ -80,7 +80,7 @@ export function BookingDialog({ open, onOpenChange }: { open: boolean; onOpenCha
               <IconClose className="h-5 w-5" />
             </Dialog.Close>
           </div>
-          <Dialog.Description className="t-body mt-4 text-[0.95rem]">{f.lead}</Dialog.Description>
+          <Dialog.Description className="t-body mt-4 text-[0.95rem]">{wa ? f.lead : t.contacts.demo}</Dialog.Description>
           <form className="mt-7 flex flex-col gap-5" noValidate onSubmit={submit}>
             <div className="field" data-invalid={err.name ? "" : undefined}>
               <label htmlFor="bk-name">{f.name}</label>
@@ -131,8 +131,6 @@ export function BookingDialog({ open, onOpenChange }: { open: boolean; onOpenCha
               </Btn>
             ) : (
               <div className={cn("mt-2 flex flex-col gap-3")}>
-                <p className="t-body text-[0.9rem] text-cream/70">{f.noWhatsapp}</p>
-                <Fill field="whatsapp" label={f.submit} className="w-full" />
                 {tel && (
                   <Btn href={tel} variant="line" icon={<IconPhone />} className="w-full">
                     {t.cta.call}

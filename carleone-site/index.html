@@ -1,0 +1,32 @@
+<!doctype html>
+<html lang="ru">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+    <script>
+      // .js — можно прятать то, что появится анимацией; без скриптов всё видно сразу.
+      // Запасной таймер: если приложение не ожило за 2 с — снимаем .js, контент на месте.
+      (function () {
+        var d = document.documentElement;
+        d.classList.add("js");
+        try {
+          if (localStorage.getItem("cl-intro") || matchMedia("(prefers-reduced-motion: reduce)").matches) d.classList.add("no-intro");
+          else localStorage.setItem("cl-intro", "1");
+        } catch (e) {
+          d.classList.add("no-intro");
+        }
+        setTimeout(function () {
+          if (!window.__clReady) d.classList.remove("js");
+        }, 2000);
+      })();
+    </script>
+    <!--head-->
+    <meta name="theme-color" content="#0A0809" />
+    <meta name="format-detection" content="telephone=no" />
+    <link rel="icon" href="./favicon.svg" type="image/svg+xml" />
+  </head>
+  <body>
+    <div id="root"><!--app--></div>
+    <script type="module" src="/src/main.tsx"></script>
+  </body>
+</html>

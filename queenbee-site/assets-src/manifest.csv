@@ -1,0 +1,28 @@
+﻿file,size,status,focusX,focusY,caption
+works/guest_a_01.jpg,1500x2000,нужно согласие гостьи,0.49,0.3,Образ
+works/guest_a_02.jpg,1500x2000,нужно согласие гостьи; виден мастер: нужно согласие мастера,0.34,0.36,Макияж
+works/guest_a_03.jpg,1500x2000,нужно согласие гостьи; виден мастер: нужно согласие мастера,0.62,0.36,Макияж
+works/guest_a_04.jpg,1500x2000,нужно согласие гостьи,0.47,0.28,Укладка
+works/guest_b_01.jpg,1500x2000,нужно согласие гостьи,0.48,0.26,Укладка
+works/guest_b_02.jpg,1500x2000,нужно согласие гостьи,0.43,0.26,Укладка
+works/guest_b_03.jpg,1500x2000,нужно согласие гостьи,0.56,0.39,Образ
+works/guest_b_04.jpg,1500x2000,нужно согласие гостьи,0.51,0.28,Укладка
+works/guest_c_01.jpg,1500x2000,нужно согласие гостьи,0.44,0.38,Образ
+works/guest_c_02.jpg,1500x2000,нужно согласие гостьи,0.55,0.28,Образ
+works/guest_c_03.jpg,1500x2000,нужно согласие гостьи,0.51,0.31,Образ
+works/hair_waves_1.jpg,720x1280,"нужно согласие гостьи; 720 px, использовать малым/средним",0.47,0.42,Волосы
+works/hair_waves_2.jpg,720x1280,"нужно согласие гостьи; 720 px, две гостьи",0.43,0.52,Волосы
+works/hair_waves_3.jpg,720x1280,"нужно согласие гостьи; 720 px, две гостьи",0.46,0.49,Волосы
+works_check/makeup_eyeliner.jpg,720x1280,"ВЫКЛЮЧЕНО: ролик похож на генерацию, нужно подтверждение владельца",,,Макияж
+works_check/makeup_lips.jpg,720x1280,"ВЫКЛЮЧЕНО: ролик похож на генерацию, нужно подтверждение владельца",,,Макияж
+works_check/makeup_prep.jpg,720x1280,"ВЫКЛЮЧЕНО: ролик похож на генерацию, нужно подтверждение владельца",,,Макияж
+interiors/ceiling_leaves.jpg,720x1280,без людей,,,
+interiors/fireplace_wood.jpg,720x1280,без людей,,,
+interiors/gift_boxes_monogram.jpg,720x1280,без людей,,,
+interiors/lobby_chandelier.jpg,720x1280,без людей,,,
+interiors/lounge_burgundy.jpg,720x1280,без людей,,,
+interiors/lounge_green.jpg,720x1280,без людей,,,
+interiors/nail_lounge.jpg,720x1280,без людей,,,
+interiors/reception_desk.jpg,720x1280,без людей,,,
+interiors/shelves_products.jpg,720x1280,без людей,,,
+interiors/staircase_spiral.jpg,720x1280,без людей,,,

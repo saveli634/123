@@ -1,0 +1,68 @@
+<!doctype html>
+<html lang="ru">
+  <head>
+    <meta charset="UTF-8" />
+    <script>
+      (function () {
+        var d = document.documentElement, q = location.search;
+        d.classList.add("js");
+        if (/[?&]render=/.test(q)) d.classList.add("capture");
+        if (/[?&]og=1/.test(q)) d.classList.add("og");
+        var rm = window.matchMedia && matchMedia("(prefers-reduced-motion: reduce)").matches;
+        var seen = false;
+        try {
+          var t = +localStorage.getItem("qb-seen") || 0;
+          seen = Date.now() - t < 864e5 * 7;
+          localStorage.setItem("qb-seen", String(Date.now()));
+        } catch (e) {}
+        if (!rm && !seen && !/[?&](render|og|nopl)/.test(q)) d.classList.add("pl");
+        // запасной таймер: если скрипты не запустились, всё скрытое до появления — показать
+        setTimeout(function () {
+          if (!window.__qbReady) d.classList.remove("js", "pl");
+        }, 2000);
+      })();
+    </script>
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+    <title>Queen Bee Boheme Residence — салон красоты</title>
+    <meta name="description" content="Queen Bee Boheme Residence — салон красоты: макияж, причёски и укладка, полный beauty-образ." />
+    <meta name="theme-color" content="#F4EFE6" />
+    <meta name="format-detection" content="telephone=no" />
+    <meta property="og:type" content="website" />
+    <meta property="og:locale" content="ru_RU" />
+    <meta property="og:site_name" content="Queen Bee" />
+    <meta property="og:title" content="Queen Bee Boheme Residence — салон красоты" />
+    <meta property="og:description" content="Макияж · Причёски · Полный beauty-образ" />
+    <meta property="og:image" content="./og/og-image.jpg" />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <!-- После подключения домена: <link rel="canonical" href="https://ДОМЕН/" /> и абсолютный og:image -->
+    <link rel="icon" href="./favicon.svg" type="image/svg+xml" />
+    <link
+      rel="preload"
+      as="image"
+      type="image/webp"
+      href="./img/guest_b_01-800.webp"
+      imagesrcset="./img/guest_b_01-480.webp 480w, ./img/guest_b_01-800.webp 800w, ./img/guest_b_01-1200.webp 1200w"
+      imagesizes="(max-width: 767px) 95vw, 45vw"
+      fetchpriority="high"
+    />
+  </head>
+  <body>
+    <script>
+      // заголовок «Queen Bee» показываем уже в своём шрифте — без сдвига строки при подмене (CLS 0)
+      (function (d) {
+        var done = function () { d.classList.add("fonts"); };
+        try {
+          Promise.all([
+            document.fonts.load('500 1em "Cormorant Garamond"', "Queen"),
+            document.fonts.load('italic 500 1em "Cormorant Garamond"', "Bee"),
+          ]).then(done, done);
+        } catch (e) { done(); }
+        setTimeout(done, 1600);
+      })(document.documentElement);
+    </script>
+    <div id="root"></div>
+    <script type="module" src="/src/main.tsx"></script>
+  </body>
+</html>

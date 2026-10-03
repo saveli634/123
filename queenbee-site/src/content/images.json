@@ -1,0 +1,447 @@
+{
+  "guest_a_01": {
+    "kind": "guest",
+    "w": 1200,
+    "h": 1600,
+    "widths": [
+      480,
+      800,
+      1200
+    ],
+    "fx": 0.49,
+    "fy": 0.3,
+    "caption": "Образ",
+    "color": "#382818",
+    "ext": "jpg"
+  },
+  "guest_a_02": {
+    "kind": "guest",
+    "w": 1200,
+    "h": 1600,
+    "widths": [
+      480,
+      800,
+      1200
+    ],
+    "fx": 0.34,
+    "fy": 0.36,
+    "caption": "Макияж",
+    "color": "#989888",
+    "ext": "jpg"
+  },
+  "guest_a_03": {
+    "kind": "guest",
+    "w": 1200,
+    "h": 1600,
+    "widths": [
+      480,
+      800,
+      1200
+    ],
+    "fx": 0.62,
+    "fy": 0.36,
+    "caption": "Макияж",
+    "color": "#180808",
+    "ext": "jpg"
+  },
+  "guest_a_04": {
+    "kind": "guest",
+    "w": 1200,
+    "h": 1600,
+    "widths": [
+      480,
+      800,
+      1200
+    ],
+    "fx": 0.47,
+    "fy": 0.28,
+    "caption": "Укладка",
+    "color": "#382818",
+    "ext": "jpg"
+  },
+  "guest_b_01": {
+    "kind": "guest",
+    "w": 1200,
+    "h": 1600,
+    "widths": [
+      480,
+      800,
+      1200
+    ],
+    "fx": 0.48,
+    "fy": 0.26,
+    "caption": "Укладка",
+    "color": "#080808",
+    "ext": "jpg"
+  },
+  "guest_b_02": {
+    "kind": "guest",
+    "w": 1200,
+    "h": 1600,
+    "widths": [
+      480,
+      800,
+      1200
+    ],
+    "fx": 0.43,
+    "fy": 0.26,
+    "caption": "Укладка",
+    "color": "#080808",
+    "ext": "jpg"
+  },
+  "guest_b_03": {
+    "kind": "guest",
+    "w": 1200,
+    "h": 1600,
+    "widths": [
+      480,
+      800,
+      1200
+    ],
+    "fx": 0.56,
+    "fy": 0.39,
+    "caption": "Образ",
+    "color": "#080808",
+    "ext": "jpg"
+  },
+  "guest_b_04": {
+    "kind": "guest",
+    "w": 1200,
+    "h": 1600,
+    "widths": [
+      480,
+      800,
+      1200
+    ],
+    "fx": 0.51,
+    "fy": 0.28,
+    "caption": "Укладка",
+    "color": "#080808",
+    "ext": "jpg"
+  },
+  "guest_c_01": {
+    "kind": "guest",
+    "w": 1200,
+    "h": 1600,
+    "widths": [
+      480,
+      800,
+      1200
+    ],
+    "fx": 0.44,
+    "fy": 0.38,
+    "caption": "Образ",
+    "color": "#080818",
+    "ext": "jpg"
+  },
+  "guest_c_02": {
+    "kind": "guest",
+    "w": 1200,
+    "h": 1600,
+    "widths": [
+      480,
+      800,
+      1200
+    ],
+    "fx": 0.55,
+    "fy": 0.28,
+    "caption": "Образ",
+    "color": "#584818",
+    "ext": "jpg"
+  },
+  "guest_c_03": {
+    "kind": "guest",
+    "w": 1200,
+    "h": 1600,
+    "widths": [
+      480,
+      800,
+      1200
+    ],
+    "fx": 0.51,
+    "fy": 0.31,
+    "caption": "Образ",
+    "color": "#181828",
+    "ext": "jpg"
+  },
+  "hair_waves_1": {
+    "kind": "hair",
+    "w": 720,
+    "h": 1280,
+    "widths": [
+      480,
+      720
+    ],
+    "fx": 0.47,
+    "fy": 0.42,
+    "caption": "Волосы",
+    "color": "#989888",
+    "ext": "jpg"
+  },
+  "hair_waves_2": {
+    "kind": "hair",
+    "w": 720,
+    "h": 1280,
+    "widths": [
+      480,
+      720
+    ],
+    "fx": 0.43,
+    "fy": 0.52,
+    "caption": "Волосы",
+    "color": "#988878",
+    "ext": "jpg"
+  },
+  "hair_waves_3": {
+    "kind": "hair",
+    "w": 720,
+    "h": 1280,
+    "widths": [
+      480,
+      720
+    ],
+    "fx": 0.46,
+    "fy": 0.49,
+    "caption": "Волосы",
+    "color": "#a89888",
+    "ext": "jpg"
+  },
+  "makeup_eyeliner": {
+    "kind": "check",
+    "w": 720,
+    "h": 1280,
+    "widths": [
+      480,
+      720
+    ],
+    "fx": 0.5,
+    "fy": 0.45,
+    "caption": "Макияж",
+    "color": "#b88868",
+    "ext": "jpg"
+  },
+  "makeup_lips": {
+    "kind": "check",
+    "w": 720,
+    "h": 1280,
+    "widths": [
+      480,
+      720
+    ],
+    "fx": 0.5,
+    "fy": 0.45,
+    "caption": "Макияж",
+    "color": "#c88868",
+    "ext": "jpg"
+  },
+  "makeup_prep": {
+    "kind": "check",
+    "w": 720,
+    "h": 1280,
+    "widths": [
+      480,
+      720
+    ],
+    "fx": 0.5,
+    "fy": 0.45,
+    "caption": "Макияж",
+    "color": "#080808",
+    "ext": "jpg"
+  },
+  "ceiling_leaves": {
+    "kind": "interior",
+    "w": 720,
+    "h": 1280,
+    "widths": [
+      480,
+      720
+    ],
+    "fx": 0.5,
+    "fy": 0.45,
+    "caption": "Гостиная",
+    "color": "#c8c8c8",
+    "ext": "jpg"
+  },
+  "fireplace_wood": {
+    "kind": "interior",
+    "w": 720,
+    "h": 1280,
+    "widths": [
+      480,
+      720
+    ],
+    "fx": 0.5,
+    "fy": 0.45,
+    "caption": "Лаунж",
+    "color": "#a8a898",
+    "ext": "jpg"
+  },
+  "gift_boxes_monogram": {
+    "kind": "interior",
+    "w": 720,
+    "h": 1280,
+    "widths": [
+      480,
+      720
+    ],
+    "fx": 0.5,
+    "fy": 0.45,
+    "caption": "Холл",
+    "color": "#888888",
+    "ext": "jpg"
+  },
+  "lobby_chandelier": {
+    "kind": "interior",
+    "w": 720,
+    "h": 1280,
+    "widths": [
+      480,
+      720
+    ],
+    "fx": 0.5,
+    "fy": 0.45,
+    "caption": "Холл",
+    "color": "#a8a8a8",
+    "ext": "jpg"
+  },
+  "lounge_burgundy": {
+    "kind": "interior",
+    "w": 720,
+    "h": 1280,
+    "widths": [
+      480,
+      720
+    ],
+    "fx": 0.5,
+    "fy": 0.45,
+    "caption": "Лаунж",
+    "color": "#281818",
+    "ext": "jpg"
+  },
+  "lounge_green": {
+    "kind": "interior",
+    "w": 720,
+    "h": 1280,
+    "widths": [
+      480,
+      720
+    ],
+    "fx": 0.5,
+    "fy": 0.45,
+    "caption": "Гостиная",
+    "color": "#988878",
+    "ext": "jpg"
+  },
+  "nail_lounge": {
+    "kind": "interior",
+    "w": 720,
+    "h": 1280,
+    "widths": [
+      480,
+      720
+    ],
+    "fx": 0.5,
+    "fy": 0.45,
+    "caption": "Зал",
+    "color": "#989898",
+    "ext": "jpg"
+  },
+  "reception_desk": {
+    "kind": "interior",
+    "w": 720,
+    "h": 1280,
+    "widths": [
+      480,
+      720
+    ],
+    "fx": 0.5,
+    "fy": 0.45,
+    "caption": "Ресепшен",
+    "color": "#c8c8c8",
+    "ext": "jpg"
+  },
+  "shelves_products": {
+    "kind": "interior",
+    "w": 720,
+    "h": 1280,
+    "widths": [
+      480,
+      720
+    ],
+    "fx": 0.5,
+    "fy": 0.45,
+    "caption": "Витрина",
+    "color": "#281818",
+    "ext": "jpg"
+  },
+  "render_0": {
+    "kind": "render",
+    "w": 700,
+    "h": 700,
+    "widths": [
+      480,
+      900
+    ],
+    "fx": 0.5,
+    "fy": 0.5,
+    "caption": "",
+    "color": "transparent",
+    "ext": "png"
+  },
+  "render_1": {
+    "kind": "render",
+    "w": 700,
+    "h": 700,
+    "widths": [
+      480,
+      900
+    ],
+    "fx": 0.5,
+    "fy": 0.5,
+    "caption": "",
+    "color": "transparent",
+    "ext": "png"
+  },
+  "render_2": {
+    "kind": "render",
+    "w": 700,
+    "h": 700,
+    "widths": [
+      480,
+      900
+    ],
+    "fx": 0.5,
+    "fy": 0.5,
+    "caption": "",
+    "color": "transparent",
+    "ext": "png"
+  },
+  "render_3": {
+    "kind": "render",
+    "w": 700,
+    "h": 700,
+    "widths": [
+      480,
+      900
+    ],
+    "fx": 0.5,
+    "fy": 0.5,
+    "caption": "",
+    "color": "transparent",
+    "ext": "png"
+  },
+  "render_4": {
+    "kind": "render",
+    "w": 700,
+    "h": 700,
+    "widths": [
+      480,
+      900
+    ],
+    "fx": 0.5,
+    "fy": 0.5,
+    "caption": "",
+    "color": "transparent",
+    "ext": "png"
+  }
+}

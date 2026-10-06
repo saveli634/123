@@ -1,0 +1,82 @@
+{
+ "hero": {
+  "w": 1440,
+  "h": 1440,
+  "files": [
+   {
+    "w": 720,
+    "file": "hero-720.webp"
+   },
+   {
+    "w": 1440,
+    "file": "hero-1440.webp"
+   }
+  ]
+ },
+ "before": {
+  "w": 1238,
+  "h": 794,
+  "files": [
+   {
+    "w": 800,
+    "file": "before-800.webp"
+   },
+   {
+    "w": 1238,
+    "file": "before-1238.webp"
+   }
+  ]
+ },
+ "after": {
+  "w": 1238,
+  "h": 794,
+  "files": [
+   {
+    "w": 800,
+    "file": "after-800.webp"
+   },
+   {
+    "w": 1238,
+    "file": "after-1238.webp"
+   }
+  ]
+ },
+ "violet": {
+  "w": 880,
+  "h": 560,
+  "files": [
+   {
+    "w": 640,
+    "file": "violet-640.webp"
+   },
+   {
+    "w": 880,
+    "file": "violet-880.webp"
+   }
+  ]
+ },
+ "selfie": {
+  "w": 1210,
+  "h": 550,
+  "files": [
+   {
+    "w": 800,
+    "file": "selfie-800.webp"
+   },
+   {
+    "w": 1210,
+    "file": "selfie-1210.webp"
+   }
+  ]
+ },
+ "poster": {
+  "w": 480,
+  "h": 854,
+  "files": [
+   {
+    "w": 480,
+    "file": "poster-480.webp"
+   }
+  ]
+ }
+}

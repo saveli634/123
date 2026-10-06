@@ -1,0 +1,68 @@
+<!doctype html>
+<html lang="ru">
+  <head>
+    <meta charset="UTF-8" />
+    <script>
+      (function () {
+        var d = document.documentElement;
+        d.classList.add("js");
+        // Интро — только при первом заходе в сессии и без «уменьшить движение»
+        try {
+          var reduce = window.matchMedia && matchMedia("(prefers-reduced-motion: reduce)").matches;
+          if (reduce || sessionStorage.getItem("tv-intro")) d.classList.add("no-intro");
+          else sessionStorage.setItem("tv-intro", "1");
+        } catch (e) {
+          d.classList.add("no-intro");
+        }
+        // Запасной таймер: если скрипты не запустились — показываем всё статично
+        setTimeout(function () {
+          if (!window.__tvReady) d.classList.remove("js");
+        }, 2000);
+      })();
+    </script>
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+    <title>Татьяна — нумерология и натальная карта</title>
+    <meta
+      name="description"
+      content="Нумерологический расчёт по дате рождения и натальная карта: зачем мы родились на этой планете Земля, какие в нас заложены качества, таланты, способности, характер."
+    />
+    <meta name="theme-color" content="#070312" />
+    <meta name="color-scheme" content="dark" />
+    <meta name="format-detection" content="telephone=no" />
+    <meta property="og:type" content="website" />
+    <meta property="og:locale" content="ru_RU" />
+    <meta property="og:site_name" content="Татьяна — карта неба" />
+    <meta property="og:title" content="Татьяна — нумерология и натальная карта" />
+    <meta property="og:description" content="Карта, которая объясняет, зачем вы здесь. Нумерологический расчёт по дате рождения и натальная карта." />
+    <meta property="og:image" content="./og-image.jpg" />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <!-- После подключения домена: <link rel="canonical" href="https://ДОМЕН/" /> и абсолютный адрес og:image -->
+    <link rel="icon" href="./favicon.svg" type="image/svg+xml" />
+  </head>
+  <body>
+    <div class="intro" aria-hidden="true">
+      <svg class="intro__sky" viewBox="0 0 400 150">
+        <polyline class="intro__line" pathLength="1" points="34,104 92,58 148,86 204,30 262,70 318,40 366,92" />
+        <g class="intro__stars">
+          <circle cx="34" cy="104" r="3" style="--i: 0" />
+          <circle cx="92" cy="58" r="2.4" style="--i: 1" />
+          <circle cx="148" cy="86" r="3.2" style="--i: 2" />
+          <circle cx="204" cy="30" r="4.2" style="--i: 3" />
+          <circle cx="262" cy="70" r="2.6" style="--i: 4" />
+          <circle cx="318" cy="40" r="3.4" style="--i: 5" />
+          <circle cx="366" cy="92" r="2.8" style="--i: 6" />
+        </g>
+      </svg>
+      <div class="intro__name">Татьяна</div>
+    </div>
+    <div id="root"></div>
+    <noscript>
+      <style>
+        .intro { display: none !important; }
+      </style>
+    </noscript>
+    <script type="module" src="/src/main.tsx"></script>
+  </body>
+</html>

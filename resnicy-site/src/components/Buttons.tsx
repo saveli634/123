@@ -10,10 +10,12 @@ interface LinkProps {
   className?: string;
   external?: boolean;
   icon?: ReactNode;
+  /** Пробегающий блик по кнопке (главные призывы). */
+  shine?: boolean;
 }
 
 /** Кнопка-ссылка с магнитом. Якоря (#...) прокручиваются плавно, внешние ссылки — в новой вкладке. */
-export function MagLink({ href, children, variant = "solid", className = "", external, icon }: LinkProps) {
+export function MagLink({ href, children, variant = "solid", className = "", external, icon, shine }: LinkProps) {
   const ref = useRef<HTMLAnchorElement>(null);
   useMagnetic(ref);
   const isHash = href.startsWith("#");
@@ -21,7 +23,7 @@ export function MagLink({ href, children, variant = "solid", className = "", ext
     <a
       ref={ref}
       href={href}
-      className={`btn btn--${variant} ${className}`}
+      className={`btn btn--${variant} ${shine ? "btn--shine" : ""} ${className}`}
       {...(external ? { target: "_blank", rel: "noopener noreferrer" } : {})}
       onClick={
         isHash

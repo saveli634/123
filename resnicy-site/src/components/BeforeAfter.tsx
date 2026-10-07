@@ -1,4 +1,5 @@
 import { useEffect, useRef } from "react";
+import { Split } from "./Split";
 import { Photo } from "./Photo";
 import { ScrollTrigger, motionStarted } from "@/lib/motion";
 import { clamp } from "@/lib/env";
@@ -96,11 +97,9 @@ export function BeforeAfter() {
       <div className="container ba-grid">
         <header className="ba-head">
           <p className="eyebrow" data-reveal>
-            Ламинирование ресниц
+            <span className="eyebrow-num">02</span>Ламинирование ресниц
           </p>
-          <h2 id="ba-title" className="h2" data-reveal>
-            <span className="nowrap">До/после</span> <em>за 60 минут</em>
-          </h2>
+          <Split id="ba-title" className="h2" text="До/после *за 60 минут*" />
           <p className="ba-note" data-reveal>
             <svg viewBox="0 0 120 40" aria-hidden="true">
               <path d="M2 30 C 30 36, 70 30, 112 8 M100 6 l13 2 -4 12" fill="none" stroke="currentColor" strokeWidth="1.4" strokeLinecap="round" />
@@ -109,7 +108,7 @@ export function BeforeAfter() {
           </p>
         </header>
 
-        <div className="ba-frame" ref={frame} style={{ "--pos": "50%", "--pos-n": 0.5 } as React.CSSProperties} data-reveal="curtain">
+        <div className="ba-frame" data-cursor="тяни" ref={frame} style={{ "--pos": "50%", "--pos-n": 0.5 } as React.CSSProperties} data-reveal="curtain">
           <div className="ba-layer ba-after">
             <Photo name="after" alt="После ламинирования: реснички подняты, разделены и окрашены" sizes="(min-width: 1100px) 1000px, 94vw" position="48% 58%" />
           </div>

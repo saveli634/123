@@ -1,4 +1,5 @@
 import { useEffect, useRef } from "react";
+import { Split } from "./Split";
 import { ScrollTrigger, motionStarted } from "@/lib/motion";
 import { LiftRenderer } from "@/lib/liftRenderer";
 import { IRIS, LASHES_FULL, LOWER, bez, bezTangent, lashOutline, lashPoint, lashPose, lids, makeLashes, sceneState } from "@/lib/lashes";
@@ -103,10 +104,10 @@ export function LiftScene() {
         <canvas className="lift-canvas" ref={canvas} aria-hidden="true" />
         <LiftStatic />
         <div className="lift-copy">
-          <p className="eyebrow">Ламинирование</p>
-          <h2 id="lift-title" className="lift-title">
-            Как поднимается <em>взгляд</em>
-          </h2>
+          <p className="eyebrow">
+            <span className="eyebrow-num">01</span>Ламинирование
+          </p>
+          <Split id="lift-title" className="lift-title" text="Как поднимается *взгляд*" />
           <ol className="lift-stages" ref={stageList}>
             {STAGES.map((s, i) => (
               <li key={s}>

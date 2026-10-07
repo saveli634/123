@@ -1,5 +1,11 @@
-/** «Почему ко мне» — шесть причин из её поста. «60 минут» и «1 месяц» — счётчики-барабаны. */
+import { useEffect, useRef } from "react";
+import { Split } from "./Split";
+import { ScrollTrigger, motionStarted } from "@/lib/motion";
 
+/**
+ * «Почему ко мне» — шесть причин из её поста. Карточки при прокрутке складываются в стопку
+ * (каждая следующая наезжает на предыдущую, та чуть уменьшается). «60 минут» и «1 месяц» — счётчики-барабаны.
+ */
 function Odometer({ value, label }: { value: string; label: string }) {
   // каждая цифра — колонка 0…9 0…9 и нужная цифра; при появлении колонка «прокручивается» до неё
   return (
@@ -33,23 +39,51 @@ const REASONS: { text: string; counter?: { value: string; label: string } }[] = 
 ];
 
 export function Reasons() {
+  const list = useRef<HTMLOListElement>(null);
+
+  // карточка, на которую наехала следующая, чуть уменьшается и темнеет
+  useEffect(() => {
+    if (!motionStarted() || !list.current) return;
+    const cards = Array.from(list.current.querySelectorAll<HTMLElement>(".reason-card"));
+    const sts = cards.slice(0, -1).map((card, i) =>
+      ScrollTrigger.create({
+        trigger: cards[i + 1].parentElement!,
+        start: "top bottom",
+        end: "top top+=120",
+        scrub: true,
+        onUpdate: (self) => {
+          const k = self.progress;
+          card.style.transform = `scale(${(1 - k * 0.06).toFixed(4)})`;
+          card.style.setProperty("--dim", (k * 0.55).toFixed(3));
+        },
+      }),
+    );
+    return () => sts.forEach((s) => s.kill());
+  }, []);
+
   return (
     <section className="reasons section" id="pochemu" aria-labelledby="reasons-title">
-      <div className="container">
-        <header className="section-head">
+      <div className="container reasons-layout">
+        <header className="section-head reasons-head">
           <p className="eyebrow" data-reveal>
-            Шесть причин
+            <span className="eyebrow-num">05</span>Шесть причин
           </p>
-          <h2 id="reasons-title" className="h2" data-reveal>
-            Почему <em>ко мне</em>
-          </h2>
+          <Split id="reasons-title" className="h2" text="Почему *ко мне*" />
+          <p className="reasons-lead" data-reveal>
+            Из моего поста «Почему тебе нужно записаться ко мне на реснички».
+          </p>
         </header>
-        <ol className="reasons-grid">
+        <ol className="reasons-stack" ref={list}>
           {REASONS.map((r, i) => (
-            <li key={r.text} className={`reason ${r.counter ? "reason--count" : ""}`} data-reveal="curtain" style={{ "--d": `${(i % 3) * 90}ms` } as React.CSSProperties}>
-              <span className="reason-num">{String(i + 1).padStart(2, "0")}</span>
-              {r.counter && <Odometer {...r.counter} />}
-              <p className="reason-text">{r.text}</p>
+            <li key={r.text} className="reason" style={{ "--n": i } as React.CSSProperties}>
+              <div className={`reason-card ${r.counter ? "reason-card--count" : ""}`} data-reveal="curtain">
+                <span className="reason-num">
+                  {String(i + 1).padStart(2, "0")}
+                  <span aria-hidden="true"> / 06</span>
+                </span>
+                {r.counter && <Odometer {...r.counter} />}
+                <p className="reason-text">{r.text}</p>
+              </div>
             </li>
           ))}
         </ol>

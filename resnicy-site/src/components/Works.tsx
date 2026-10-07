@@ -1,17 +1,16 @@
 import { useEffect, useRef, useState } from "react";
+import { Split } from "./Split";
 import { Photo, ratio, type PhotoName } from "./Photo";
 import { videoUrl, single } from "@/media-src";
 import { canHover, motionAllowed } from "@/lib/env";
 import { gsap } from "@/lib/motion";
 
-type Item =
-  | { kind: "photo"; name: PhotoName; alt: string; caption: string; position?: string }
-  | { kind: "video"; caption: string };
+type Item = { kind: "photo"; name: PhotoName; alt: string; caption: string; position?: string } | { kind: "video"; caption: string };
 
 const ITEMS: Item[] = [
   { kind: "photo", name: "hero", alt: "Ламинированные ресницы крупным планом, зелёный глаз", caption: "ламинирование ресниц" },
   { kind: "photo", name: "after", alt: "Ресницы после ламинирования: подняты и разделены, голубой глаз", caption: "ламинирование · после" },
-  { kind: "video", caption: "expressive eyes!" },
+  { kind: "video", caption: "expressive eyes! — выразительные глаза" },
   { kind: "photo", name: "violet", alt: "Наращенные ресницы в фиолетовом свете, карие глаза", caption: "наращивание ресниц" },
   { kind: "photo", name: "selfie", alt: "Наращенные ресницы, голубые глаза и брови крупным планом", caption: "наращивание ресниц" },
 ];
@@ -32,13 +31,18 @@ export function Works() {
     const el = scroller.current!;
     const items = Array.from(el.querySelectorAll<HTMLElement>(".work"));
     let frame = 0;
+    const pars = items.map((it) => it.querySelector<HTMLElement>(".work-par"));
     const update = () => {
       frame = 0;
       const mid = el.scrollLeft + el.clientWidth / 2;
       let best = 0;
       let bestD = Infinity;
       items.forEach((it, i) => {
-        const d = Math.abs(it.offsetLeft + it.offsetWidth / 2 - mid);
+        const off = it.offsetLeft + it.offsetWidth / 2 - mid;
+        // фото внутри кадра чуть отстаёт от рамки — глубина при перелистывании
+        const par = pars[i];
+        if (par) par.style.transform = `translate3d(${Math.max(-9, Math.min(9, (-off / el.clientWidth) * 9)).toFixed(2)}%,0,0) scale(1.18)`;
+        const d = Math.abs(off);
         if (d < bestD) {
           bestD = d;
           best = i;
@@ -199,11 +203,9 @@ export function Works() {
       <div className="container works-head">
         <header className="section-head">
           <p className="eyebrow" data-reveal>
-            Из моих постов
+            <span className="eyebrow-num">06</span>Из моих постов
           </p>
-          <h2 id="works-title" className="h2" data-reveal>
-            <em>Работы</em>
-          </h2>
+          <Split id="works-title" className="h2" text="*Работы*" />
         </header>
         <div className="works-nav" data-reveal>
           <span className="works-count" aria-hidden="true">
@@ -211,18 +213,45 @@ export function Works() {
           </span>
           <button type="button" className="round-btn" onClick={() => go(-1)} aria-label="Предыдущая работа" disabled={current === 0}>
             <svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true">
-              <path d="M20 12H5m6-6-6 6 6 6" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" />
+              <path
+                d="M20 12H5m6-6-6 6 6 6"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="1.6"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+              />
             </svg>
           </button>
-          <button type="button" className="round-btn" onClick={() => go(1)} aria-label="Следующая работа" disabled={current === ITEMS.length - 1}>
+          <button
+            type="button"
+            className="round-btn"
+            onClick={() => go(1)}
+            aria-label="Следующая работа"
+            disabled={current === ITEMS.length - 1}
+          >
             <svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true">
-              <path d="M4 12h15m-6-6 6 6-6 6" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" />
+              <path
+                d="M4 12h15m-6-6 6 6-6 6"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="1.6"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+              />
             </svg>
           </button>
         </div>
       </div>
 
-      <div className="works-scroller" ref={scroller} tabIndex={0} role="region" aria-label="Галерея работ, листается вбок">
+      <div
+        className="works-scroller"
+        data-cursor="листай"
+        ref={scroller}
+        tabIndex={0}
+        role="region"
+        aria-label="Галерея работ, листается вбок"
+      >
         <ul className="works-track">
           {ITEMS.map((it, i) => {
             const ar = it.kind === "video" ? VIDEO_RATIO : ratio(it.name);
@@ -235,22 +264,24 @@ export function Works() {
               >
                 <figure className="work-figure" data-reveal="curtain">
                   <div className="work-media">
-                    {it.kind === "photo" ? (
-                      <Photo name={it.name} alt={it.alt} sizes="(min-width: 1024px) 50vw, 86vw" position={it.position} />
-                    ) : (
-                      <>
-                        <Photo name="poster" alt="" sizes="280px" className="work-poster" />
-                        <video
-                          ref={video}
-                          className="work-video"
-                          muted
-                          loop
-                          playsInline
-                          preload="none"
-                          aria-label="Ролик: глаза с ламинированными ресницами крупным планом"
-                        />
-                      </>
-                    )}
+                    <div className="work-par">
+                      {it.kind === "photo" ? (
+                        <Photo name={it.name} alt={it.alt} sizes="(min-width: 1024px) 50vw, 86vw" position={it.position} />
+                      ) : (
+                        <>
+                          <Photo name="poster" alt="" sizes="280px" className="work-poster" />
+                          <video
+                            ref={video}
+                            className="work-video"
+                            muted
+                            loop
+                            playsInline
+                            preload="none"
+                            aria-label="Ролик: глаза с ламинированными ресницами крупным планом"
+                          />
+                        </>
+                      )}
+                    </div>
                   </div>
                   <figcaption className="work-caption">
                     <span className="work-index">{String(i + 1).padStart(2, "0")}</span>

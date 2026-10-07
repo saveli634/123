@@ -1,4 +1,5 @@
 import { useEffect, useRef } from "react";
+import { Split } from "./Split";
 import { ScrollTrigger, motionStarted } from "@/lib/motion";
 import { clamp } from "@/lib/env";
 import { Arrow, MagLink } from "./Buttons";
@@ -122,10 +123,10 @@ export function Process() {
 
         <div className="process-track" ref={track}>
           <header className="process-intro">
-            <p className="eyebrow">Около часа</p>
-            <h2 id="process-title" className="h2">
-              Как проходит <em>ламинирование</em>
-            </h2>
+            <p className="eyebrow">
+              <span className="eyebrow-num">04</span>Около часа
+            </p>
+            <Split id="process-title" className="h2" text="Как проходит *ламинирование*" />
             <p className="process-lead">Пять шагов — рассказываю так, как делаю сама.</p>
           </header>
 

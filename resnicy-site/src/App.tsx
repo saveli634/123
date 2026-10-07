@@ -13,6 +13,7 @@ import { Works } from "@/components/Works";
 import { Booking } from "@/components/Booking";
 import { Footer } from "@/components/Footer";
 import { MobileBar } from "@/components/MobileBar";
+import { Cursor } from "@/components/Cursor";
 import { useReveal } from "@/lib/reveal";
 
 export default function App() {
@@ -28,8 +29,8 @@ export default function App() {
       <Header />
       <main id="main">
         <Hero />
-        <Marquee />
         <LiftScene />
+        <Marquee />
         <BeforeAfter />
         <Services />
         <Process />
@@ -39,6 +40,7 @@ export default function App() {
       </main>
       <Footer />
       <MobileBar />
+      <Cursor />
     </>
   );
 }

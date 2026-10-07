@@ -1,4 +1,6 @@
 import { BrandMark } from "./Brand";
+import { Silk } from "./Silk";
+import { Split } from "./Split";
 import { ChannelIcon, MagLink } from "./Buttons";
 import { bookingChannels, site } from "@/site.config";
 
@@ -8,22 +10,21 @@ export function Booking() {
   return (
     <section className="booking section" id="zapis" aria-labelledby="booking-title">
       <div className="booking-bg" aria-hidden="true">
+        <Silk className="booking-silk" mood={0.85} />
         <BrandMark decorative className="booking-watermark" />
       </div>
       <div className="container booking-inner">
         <p className="eyebrow" data-reveal>
-          Запись
+          <span className="eyebrow-num">07</span>Запись
         </p>
-        <h2 id="booking-title" className="booking-title" data-reveal>
-          Запишись <em>на реснички</em>
-        </h2>
+        <Split as="h2" id="booking-title" className="booking-title" text="Запишись *на реснички*" />
         <p className="booking-lead" data-reveal>
           Напиши мне — договоримся о дне и времени.
         </p>
         {channels.length > 0 && (
           <div className="booking-actions" data-reveal>
             {channels.map((c, i) => (
-              <MagLink key={c.id} href={c.href} external={c.id !== "phone"} variant={i === 0 ? "light" : "ghost"} icon={<ChannelIcon id={c.id} />}>
+              <MagLink key={c.id} href={c.href} external={c.id !== "phone"} variant={i === 0 ? "light" : "ghost"} shine={i === 0} icon={<ChannelIcon id={c.id} />}>
                 {c.label}
               </MagLink>
             ))}

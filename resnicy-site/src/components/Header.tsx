@@ -3,6 +3,7 @@ import { BrandMark } from "./Brand";
 import { ChannelIcon, MagLink } from "./Buttons";
 import { scrollToHash, stopScroll } from "@/lib/motion";
 import { bookingChannels, site } from "@/site.config";
+import { useMinskTime } from "@/lib/time";
 
 export const NAV = [
   { href: "#do-posle", label: "До/после" },
@@ -14,6 +15,7 @@ export const NAV = [
 
 export function Header() {
   const [open, setOpen] = useState(false);
+  const time = useMinskTime();
   const header = useRef<HTMLElement>(null);
   const menuBtn = useRef<HTMLButtonElement>(null);
   const firstLink = useRef<HTMLAnchorElement>(null);
@@ -79,6 +81,12 @@ export function Header() {
             ))}
           </nav>
           <div className="header-actions">
+            {time && (
+              <span className="header-time" aria-label={`В Минске ${time}`}>
+                <span className="header-time-dot" aria-hidden="true" />
+                Минск {time}
+              </span>
+            )}
             <MagLink href="#zapis" variant="light" className="btn--sm header-cta">
               Записаться
             </MagLink>

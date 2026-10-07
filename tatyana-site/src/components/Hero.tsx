@@ -3,6 +3,7 @@ import { hasBooking, fullName } from "@/data/site.config";
 import { finePointer, lerp, motionOk } from "@/lib/motion";
 import { ScrollTrigger } from "@/lib/scroll";
 import { Btn } from "./ui";
+import { SphereNav } from "./Spheres";
 import { SPARKLE } from "./glyphs";
 
 /** Орбиты вокруг «затмения»: декоративная астролябия первого экрана */
@@ -251,10 +252,7 @@ export function Hero() {
           <svg width="10" height="10" viewBox="0 0 24 24" className="eyebrow__star" aria-hidden="true">
             <path d={SPARKLE} fill="currentColor" />
           </svg>
-          <span>
-            {fullName}
-            <span className="hide-sm"> · нумерология и натальная карта</span>
-          </span>
+          <span>{fullName}</span>
         </p>
         <h1 id="hero-title" className="hero__title">
           <span className="hero__line">
@@ -274,13 +272,16 @@ export function Hero() {
           </span>
         </h1>
         <p className="hero__sub hero-in" style={{ ["--d" as string]: 4 }}>
-          Нумерологический расчёт по дате рождения и натальная карта
+          Нумерология, натальная карта, стихи и песни
         </p>
         <div className="hero__actions hero-in" style={{ ["--d" as string]: 5 }}>
           {hasBooking && <Btn href="#zapis">Записаться на расчёт</Btn>}
           <Btn href="#chislo" variant={hasBooking ? "ghost" : "primary"}>
             Узнать своё число
           </Btn>
+        </div>
+        <div className="hero-in" style={{ ["--d" as string]: 6 }}>
+          <SphereNav className="hero__spheres" />
         </div>
       </div>
       <a href="#nebo" className="hero__cue hero-in" style={{ ["--d" as string]: 7 }}>

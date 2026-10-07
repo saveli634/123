@@ -3,7 +3,7 @@ import { skyStages } from "@/data/content";
 import { motionOk } from "@/lib/motion";
 import { ScrollTrigger } from "@/lib/scroll";
 import { Wheel, renderWheel, stageOf } from "./Wheel";
-import { Eyebrow } from "./ui";
+import { SphereEyebrow } from "./Spheres";
 
 const ROMAN = ["I", "II", "III", "IV"];
 
@@ -78,7 +78,7 @@ export function BirthSky() {
         <div className="sky__sticky">
           <div className="wrap sky__grid">
             <div className="sky__copy">
-              <Eyebrow>Как это работает</Eyebrow>
+              <SphereEyebrow id="karta">как это работает</SphereEyebrow>
               <h2 id="sky-title" className="h2 sky__title">
                 Небо в момент <em>рождения</em>
               </h2>

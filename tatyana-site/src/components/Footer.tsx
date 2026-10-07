@@ -18,14 +18,15 @@ export function Footer() {
             </svg>
             <span>Татьяна</span>
           </a>
-          <p className="footer__tag">Нумерологический расчёт по дате рождения и натальная карта</p>
+          <p className="footer__tag">Нумерология, натальная карта, стихи и песни</p>
         </div>
         <nav className="footer__nav" aria-label="Разделы">
           {NAV.map((n) => (
-            <a key={n.id} href={`#${n.id}`}>
+            <a key={n.sphere} href={`#${n.id}`}>
               {n.label}
             </a>
           ))}
+          <a href="#podarok">Подарок</a>
           {hasBooking && <a href="#zapis">Записаться</a>}
         </nav>
         <p className="footer__disclaimer">

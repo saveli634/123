@@ -9,6 +9,8 @@ import { NumberCalc } from "./components/NumberCalc";
 import { Constellations } from "./components/Constellations";
 import { Keys } from "./components/Keys";
 import { Poems } from "./components/Poems";
+import { Gift } from "./components/Gift";
+import { Songs } from "./components/Songs";
 import { Booking } from "./components/Booking";
 import { Footer } from "./components/Footer";
 import { MobileBar } from "./components/MobileBar";
@@ -33,7 +35,9 @@ export default function App() {
         <NumberCalc />
         <Constellations />
         <Keys />
+        <Gift />
         <Poems />
+        <Songs />
         <Booking />
       </main>
       <Footer />

@@ -1,7 +1,8 @@
 import { useEffect, useRef } from "react";
 import { poems } from "@/data/poems.generated";
 import { motionOk } from "@/lib/motion";
-import { Btn, Eyebrow } from "./ui";
+import { Btn } from "./ui";
+import { SphereEyebrow } from "./Spheres";
 import { SPARKLE } from "./glyphs";
 
 /** Заголовки карточек (из brief/content/stihi_istochnik.md, строки 3 и 52) */
@@ -58,7 +59,7 @@ export function Poems() {
     <section id="stihi" ref={root} className="poems section" aria-labelledby="poems-title">
       <div className="wrap">
         <header className="poems__head rv">
-          <Eyebrow>Из моих роликов</Eyebrow>
+          <SphereEyebrow id="slovo">из моих роликов</SphereEyebrow>
           <h2 id="poems-title" className="h2">
             <em>Стихи</em>
           </h2>

@@ -2,13 +2,11 @@ import { useEffect, useRef, useState } from "react";
 import { hasBooking, channels } from "@/data/site.config";
 import { stopScroll } from "@/lib/scroll";
 import { Sparkle } from "./glyphs";
+import { SPHERES } from "@/data/spheres";
+import { Planet } from "./Spheres";
 
-export const NAV = [
-  { id: "nebo", label: "Карта неба" },
-  { id: "chislo", label: "Ваше число" },
-  { id: "voprosy", label: "Расчёты" },
-  { id: "stihi", label: "Стихи" },
-];
+/** Навигация — четыре сферы (Карта · Число · Слово · Песня) */
+export const NAV = SPHERES.map((s) => ({ id: s.href.slice(1), label: s.label, sphere: s.id }));
 
 /** Тонкая полоса прогресса сверху — «орбита» с планетой на конце */
 function ScrollOrbit() {
@@ -116,7 +114,8 @@ export function Header() {
           </a>
           <nav className="nav" aria-label="Разделы">
             {NAV.map((n) => (
-              <a key={n.id} href={`#${n.id}`} className="nav__link">
+              <a key={n.sphere} href={`#${n.id}`} className="nav__link">
+                <Planet id={n.sphere} className="planet--xs" />
                 {n.label}
               </a>
             ))}
@@ -154,14 +153,18 @@ export function Header() {
       >
         <nav className="sheet__nav" aria-label="Разделы">
           {NAV.map((n, i) => (
-            <a key={n.id} href={`#${n.id}`} onClick={close} style={{ ["--i" as string]: i }}>
-              <span className="sheet__num">{String(i + 1).padStart(2, "0")}</span>
+            <a key={n.sphere} href={`#${n.id}`} onClick={close} style={{ ["--i" as string]: i }}>
+              <Planet id={n.sphere} className="planet--sm" />
               {n.label}
             </a>
           ))}
+          <a href="#podarok" onClick={close} style={{ ["--i" as string]: NAV.length }}>
+            <Sparkle size={16} className="sheet__star" />
+            Подарок
+          </a>
           {hasBooking && (
-            <a href="#zapis" onClick={close} style={{ ["--i" as string]: NAV.length }}>
-              <span className="sheet__num">{String(NAV.length + 1).padStart(2, "0")}</span>
+            <a href="#zapis" onClick={close} style={{ ["--i" as string]: NAV.length + 1 }}>
+              <Sparkle size={16} className="sheet__star" />
               Записаться
             </a>
           )}

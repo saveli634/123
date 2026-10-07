@@ -36,6 +36,17 @@ interface Shooting {
 }
 
 const QUALITY_SCALE: Record<Quality, number> = { 0: 0.35, 1: 0.6, 2: 1 };
+
+/**
+ * Орбиты четырёх сфер на фоне («музыка небесных сфер»): Карта, Число, Слово, Песня.
+ * r — радиус в долях большей стороны экрана, period — секунды на оборот.
+ */
+const SPHERE_ORBITS = [
+  { r: 0.3, a: 0.1, period: 80, phase: 0.6, core: "rgba(230,207,154,0.95)", glow: "rgba(230,207,154,0.22)" },
+  { r: 0.45, a: 0.085, period: 120, phase: 2.4, core: "rgba(196,176,255,0.95)", glow: "rgba(167,139,250,0.25)" },
+  { r: 0.62, a: 0.07, period: 170, phase: 4.1, core: "rgba(246,241,255,0.95)", glow: "rgba(237,228,255,0.2)" },
+  { r: 0.8, a: 0.06, period: 240, phase: 5.3, core: "rgba(178,140,255,0.95)", glow: "rgba(123,77,243,0.28)" },
+];
 const rand = (a: number, b: number) => a + Math.random() * (b - a);
 
 function sprite(core: string, glow: string) {
@@ -65,6 +76,7 @@ export class Starfield {
   private nebula: HTMLCanvasElement | null = null;
   private cool: HTMLCanvasElement;
   private warm: HTMLCanvasElement;
+  private planets: HTMLCanvasElement[];
   private raf = 0;
   private running = false;
   private frame = 0;
@@ -84,6 +96,7 @@ export class Starfield {
     this.ctx = canvas.getContext("2d", { alpha: true })!;
     this.cool = sprite("rgba(237,228,255,0.95)", "rgba(167,139,250,0.22)");
     this.warm = sprite("rgba(230,207,154,0.95)", "rgba(230,207,154,0.18)");
+    this.planets = SPHERE_ORBITS.map((o) => sprite(o.core, o.glow));
     this.resize();
     this.offQuality = onQuality((q) => {
       this.quality = q;
@@ -245,6 +258,29 @@ export class Starfield {
     this.nextShot = t + 100000;
   }
 
+  private drawOrbits(time: number, prog: number) {
+    const { ctx, w, h } = this;
+    const base = Math.max(w, h);
+    ctx.save();
+    ctx.translate(w * 0.5 + this.px * 16, h * (0.66 - prog * 0.32) + this.py * 12);
+    ctx.rotate(-0.2);
+    ctx.lineWidth = 1;
+    SPHERE_ORBITS.forEach((o, i) => {
+      const rx = base * o.r;
+      const ry = rx * 0.3;
+      ctx.globalAlpha = 1;
+      ctx.strokeStyle = `rgba(167,139,250,${o.a})`;
+      ctx.beginPath();
+      ctx.ellipse(0, 0, rx, ry, 0, 0, Math.PI * 2);
+      ctx.stroke();
+      const th = o.phase + (this.reduced ? 0 : (time * Math.PI * 2) / o.period);
+      const s = (this.w < 768 ? 16 : 22) * (0.75 + 0.25 * Math.sin(th));
+      ctx.globalAlpha = 0.5 + 0.35 * Math.sin(th);
+      ctx.drawImage(this.planets[i], Math.cos(th) * rx - s / 2, Math.sin(th) * ry - s / 2, s, s);
+    });
+    ctx.restore();
+  }
+
   draw(time: number) {
     const { ctx, w, h } = this;
     ctx.clearRect(0, 0, w, h);
@@ -257,6 +293,8 @@ export class Starfield {
       ctx.globalAlpha = 1;
       ctx.drawImage(this.nebula, -this.px * 12 - 14, -prog * (nh - h) - this.py * 10, w + 28, nh);
     }
+
+    this.drawOrbits(time, prog);
 
     const twinkle = !this.reduced;
     for (const L of this.layers) {

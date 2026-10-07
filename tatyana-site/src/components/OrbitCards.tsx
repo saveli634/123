@@ -3,7 +3,7 @@ import { natalPoints } from "@/data/content";
 import { finePointer, motionOk } from "@/lib/motion";
 import { scrollVelocity } from "@/lib/scroll";
 import { PLANETS, type PlanetId } from "./glyphs";
-import { Eyebrow } from "./ui";
+import { SphereEyebrow } from "./Spheres";
 
 const ICONS: PlanetId[] = ["sun", "moon", "mars", "venus", "jupiter", "neptune", "saturn", "pluto"];
 const TAU = Math.PI * 2;
@@ -162,7 +162,7 @@ export function OrbitCards() {
           </div>
           <div className="orbit__center">
             <div className="rv">
-              <Eyebrow>Натальная карта</Eyebrow>
+              <SphereEyebrow id="karta">натальная карта</SphereEyebrow>
               <h2 id="orbit-title" className="h2">
                 Что покажет <em>карта</em>
               </h2>

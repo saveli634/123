@@ -3,7 +3,8 @@ import { birthNumber, maskDate, parseDate, personalYear, toIso, toRu, zodiac, ty
 import { hasBooking } from "@/data/site.config";
 import { motionOk } from "@/lib/motion";
 import { ZODIAC, SPARKLE } from "./glyphs";
-import { Btn, Eyebrow, SubmitBtn } from "./ui";
+import { Btn, SubmitBtn } from "./ui";
+import { SphereEyebrow } from "./Spheres";
 
 interface Result {
   birth: NumberResult;
@@ -130,7 +131,7 @@ export function NumberCalc() {
     <section id="chislo" className="calc section" aria-labelledby="calc-title">
       <div className="wrap calc__grid">
         <div className="calc__intro rv">
-          <Eyebrow>Ваше число</Eyebrow>
+          <SphereEyebrow id="chislo">ваше число</SphereEyebrow>
           <h2 id="calc-title" className="h2">
             Узнайте своё <em>число</em>
           </h2>

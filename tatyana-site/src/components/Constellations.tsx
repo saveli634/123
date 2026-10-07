@@ -1,6 +1,6 @@
 import { useState, type KeyboardEvent } from "react";
 import { constellations, questions } from "@/data/content";
-import { Eyebrow } from "./ui";
+import { SphereEyebrow } from "./Spheres";
 
 const textOf = (n: number) => questions.find((q) => q.n === n)!.text;
 const plural = (n: number) => {
@@ -55,7 +55,7 @@ export function Constellations() {
       </svg>
       <div className="wrap">
         <header className="cons__head rv">
-          <Eyebrow>23 расчёта</Eyebrow>
+          <SphereEyebrow id="chislo">23 расчёта</SphereEyebrow>
           <h2 id="cons-title" className="h2">
             Созвездие <em>вопросов</em>
           </h2>

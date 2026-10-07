@@ -3,7 +3,7 @@ import { keys } from "@/data/content";
 import { motionOk } from "@/lib/motion";
 import { ScrollTrigger } from "@/lib/scroll";
 import { PLANETS, SPARKLE } from "./glyphs";
-import { Eyebrow } from "./ui";
+import { SphereEyebrow } from "./Spheres";
 
 /** Иконки ключей — тонкие линии, квадрат 24×24 */
 const KEY_ICONS: Record<(typeof keys)[number]["id"], string> = {
@@ -66,7 +66,7 @@ export function Keys() {
     <section id="klyuchi" ref={root} className="keys section" aria-labelledby="keys-title">
       <div className="wrap">
         <header className="keys__head rv">
-          <Eyebrow>Пять ключей</Eyebrow>
+          <SphereEyebrow id="karta">пять ключей</SphereEyebrow>
           <h2 id="keys-title" className="h2">
             Что нужно <em>для карты</em>
           </h2>

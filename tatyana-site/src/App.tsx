@@ -1,47 +1,46 @@
 import { useEffect } from "react";
 import { Backdrop } from "./components/Backdrop";
 import { Header } from "./components/Header";
-import { Hero } from "./components/Hero";
-import { BirthSky } from "./components/BirthSky";
-import { Marquee } from "./components/Marquee";
-import { OrbitCards } from "./components/OrbitCards";
-import { NumberCalc } from "./components/NumberCalc";
-import { Constellations } from "./components/Constellations";
-import { Keys } from "./components/Keys";
-import { Poems } from "./components/Poems";
-import { Gift } from "./components/Gift";
-import { Songs } from "./components/Songs";
 import { Booking } from "./components/Booking";
 import { Footer } from "./components/Footer";
 import { MobileBar } from "./components/MobileBar";
+import { PageContent } from "./components/Pages";
 import { useRevealObserver } from "./components/ui";
 import { initScroll } from "./lib/scroll";
+import { RouteProvider } from "./lib/route";
+import { PAGE_ORDER, type PageId } from "./data/pages";
 
-export default function App() {
+/**
+ * page — страница этого HTML-файла (хостинг) или "spa": все страницы в одном файле (sait.html),
+ * видна та, что в адресе #/karta (CSS по data-route на <html>).
+ */
+export default function App({ page }: { page: PageId | "spa" }) {
   useRevealObserver();
   useEffect(() => initScroll(), []);
+  const spa = page === "spa";
   return (
-    <>
+    <RouteProvider initial={spa ? "home" : page}>
       <a className="skip" href="#main">
         К содержанию
       </a>
       <Backdrop />
       <Header />
       <main id="main">
-        <Hero />
-        <BirthSky />
-        <Marquee />
-        <OrbitCards />
-        <NumberCalc />
-        <Constellations />
-        <Keys />
-        <Gift />
-        <Poems />
-        <Songs />
+        {spa ? (
+          PAGE_ORDER.map((id) => (
+            <div key={id} id={`/${id}`} className={`page page--${id}`}>
+              <PageContent id={id} />
+            </div>
+          ))
+        ) : (
+          <div className={`page page--${page}`}>
+            <PageContent id={page} />
+          </div>
+        )}
         <Booking />
       </main>
       <Footer />
       <MobileBar />
-    </>
+    </RouteProvider>
   );
 }

@@ -5,6 +5,8 @@ import { ScrollTrigger } from "@/lib/scroll";
 import { Btn } from "./ui";
 import { SphereNav } from "./Spheres";
 import { SPARKLE } from "./glyphs";
+import { photos } from "@/data/photos";
+import { pageHref } from "@/data/pages";
 
 /** Орбиты вокруг «затмения»: декоративная астролябия первого экрана */
 const TILT = -16;
@@ -112,6 +114,14 @@ function Orrery() {
   return (
     <svg ref={svg} className="orr" viewBox="-320 -320 640 640" aria-hidden="true" focusable="false">
       <defs>
+        <clipPath id="orr-disk-clip">
+          <circle r="96" />
+        </clipPath>
+        <radialGradient id="orr-vignette" r="0.5">
+          <stop offset="0.62" stopColor="#070312" stopOpacity="0" />
+          <stop offset="0.9" stopColor="#070312" stopOpacity="0.55" />
+          <stop offset="1" stopColor="#070312" stopOpacity="0.9" />
+        </radialGradient>
         <radialGradient id="orr-corona" r="0.5">
           <stop offset="0.5" stopColor="#A78BFA" stopOpacity="0" />
           <stop offset="0.56" stopColor="#EDE4FF" stopOpacity="0.55" />
@@ -165,6 +175,11 @@ function Orrery() {
         <circle r="190" fill="url(#orr-corona)" className="orr__corona" />
       </g>
       <circle r="98" className="orr__disk" />
+      {/* портрет Анны — внутри «затмения» */}
+      <g clipPath="url(#orr-disk-clip)">
+        {photos.portrait && <image href={photos.portrait} x="-96" y="-96" width="192" height="192" preserveAspectRatio="xMidYMid slice" className="orr__photo" />}
+        <circle r="96" fill="url(#orr-vignette)" />
+      </g>
       <circle r="98" className="orr__rim" stroke="url(#orr-rim)" />
 
       <g data-depth="9">
@@ -254,7 +269,7 @@ export function Hero() {
           </svg>
           <span>{fullName}</span>
         </p>
-        <h1 id="hero-title" className="hero__title">
+        <h1 id="hero-title" className="hero__title" tabIndex={-1}>
           <span className="hero__line">
             <span className="hero-in" style={{ ["--d" as string]: 1 }}>
               Карта,
@@ -276,7 +291,7 @@ export function Hero() {
         </p>
         <div className="hero__actions hero-in" style={{ ["--d" as string]: 5 }}>
           {hasBooking && <Btn href="#zapis">Записаться на расчёт</Btn>}
-          <Btn href="#chislo" variant={hasBooking ? "ghost" : "primary"}>
+          <Btn href={pageHref("chislo")} variant={hasBooking ? "ghost" : "primary"}>
             Узнать своё число
           </Btn>
         </div>
@@ -284,7 +299,7 @@ export function Hero() {
           <SphereNav className="hero__spheres" />
         </div>
       </div>
-      <a href="#nebo" className="hero__cue hero-in" style={{ ["--d" as string]: 7 }}>
+      <a href={pageHref("karta")} className="hero__cue hero-in" style={{ ["--d" as string]: 7 }}>
         <span>Как это работает</span>
         <i aria-hidden="true" />
       </a>

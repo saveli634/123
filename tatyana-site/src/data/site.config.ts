@@ -4,7 +4,7 @@
  * как только будет заполнен хотя бы один канал записи.
  *
  * Заполнить можно здесь или переменными окружения при сборке (VITE_INSTAGRAM=... npm run build).
- * Портрет: положите файл в src/assets/portrait.jpg (или .webp/.png) — он подхватится сам.
+ * Фото Анны — в src/assets/photos (см. src/data/photos.ts).
  */
 
 const env = (key: string): string | null => {
@@ -18,7 +18,7 @@ export interface Price {
 }
 
 export const site = {
-  name: "Татьяна",
+  name: "Анна",
   /** {{SURNAME}} */
   surname: env("VITE_SURNAME"),
   /** {{CITY}} — например «Алматы» или «Алматы и онлайн» */
@@ -56,12 +56,3 @@ export const channels: Channel[] = (
 export const hasBooking = channels.length > 0;
 
 export const fullName = site.surname ? `${site.name} ${site.surname}` : site.name;
-
-const portraits = import.meta.glob("../assets/portrait.{jpg,jpeg,png,webp,avif}", {
-  eager: true,
-  query: "?url",
-  import: "default",
-}) as Record<string, string>;
-
-/** {{PORTRAIT}} */
-export const portrait: string | null = Object.values(portraits)[0] ?? null;

@@ -1,12 +1,14 @@
 // Сгенерировано scripts/poems.mjs из brief/content/stihi_istochnik.md — не редактировать вручную.
 export interface PoemLine { text: string; line: number }
-export interface Poem { id: string; heading: string; headingLine: number; reel: string; reelLine: number; stanzas: PoemLine[][] }
+export interface Poem { id: string; heading: string; headingLine: number; file: string; reel: string; reelLine: number; stanzas: PoemLine[][] }
 export const poems: Poem[] = [
   {
     "id": "stih-1",
     "heading": "Детский сад «Айналайн» (выпускной)",
     "headingLine": 3,
+    "file": "stihi_istochnik.md",
     "reel": "https://www.instagram.com/reel/DJ-vgJ1qQku/",
+    "reelLine": 4,
     "stanzas": [
       [
         {
@@ -156,14 +158,15 @@ export const poems: Poem[] = [
           "line": 45
         }
       ]
-    ],
-    "reelLine": 4
+    ]
   },
   {
     "id": "stih-2",
     "heading": "«С юбилеем, сынок»",
     "headingLine": 51,
+    "file": "stihi_istochnik.md",
     "reel": "https://www.instagram.com/reel/CsPoylEoZRB/",
+    "reelLine": 52,
     "stanzas": [
       [
         {
@@ -255,7 +258,162 @@ export const poems: Poem[] = [
           "line": 78
         }
       ]
-    ],
-    "reelLine": 52
+    ]
+  },
+  {
+    "id": "stih-3",
+    "heading": "«С 5 летием со дня нашего венчания, мой любимый»",
+    "headingLine": 3,
+    "file": "stihi_dop.md",
+    "reel": "",
+    "reelLine": 0,
+    "stanzas": [
+      [
+        {
+          "text": "С тобой прекрасен мир вокруг,",
+          "line": 6
+        },
+        {
+          "text": "Ведь ты мой дорогой супруг",
+          "line": 7
+        },
+        {
+          "text": "Самый надёжный, верный друг",
+          "line": 8
+        },
+        {
+          "text": "Меня согреваешь телом своих рук",
+          "line": 9
+        }
+      ],
+      [
+        {
+          "text": "Ты очень нужен мне всегда,",
+          "line": 11
+        },
+        {
+          "text": "Никто не разлучит нас никогда!!",
+          "line": 12
+        },
+        {
+          "text": "Муж мой ласковый и дорогой",
+          "line": 13
+        },
+        {
+          "text": "Всем сердцем я люблю тебя родной",
+          "line": 14
+        }
+      ],
+      [
+        {
+          "text": "Пусть дети наши счастливо растут,",
+          "line": 16
+        },
+        {
+          "text": "А в наших сердцах всегда цветы цветут",
+          "line": 17
+        }
+      ]
+    ]
+  },
+  {
+    "id": "stih-4",
+    "heading": "«С окончанием первого года учёбы»",
+    "headingLine": 21,
+    "file": "stihi_dop.md",
+    "reel": "",
+    "reelLine": 0,
+    "stanzas": [
+      [
+        {
+          "text": "С окончанием первого года учёбы",
+          "line": 23
+        },
+        {
+          "text": "Всех нас поздравляю!",
+          "line": 24
+        },
+        {
+          "text": "Интересных каникул всем деткам желаю",
+          "line": 25
+        },
+        {
+          "text": "Успехов в дальнейшей учёбе, труде!",
+          "line": 26
+        },
+        {
+          "text": "Лениться нельзя никогда и нигде!",
+          "line": 27
+        }
+      ],
+      [
+        {
+          "text": "Благодарю я всем сердцем нашу учительницу,",
+          "line": 29
+        },
+        {
+          "text": "Лучшую в мире, добрую школо- правительницу!",
+          "line": 30
+        },
+        {
+          "text": "Сауле Баубековна - женщина клад!",
+          "line": 31
+        },
+        {
+          "text": "Мы говорим, без всяких услад",
+          "line": 32
+        },
+        {
+          "text": "Всех обогреет,всех поймёт,",
+          "line": 33
+        },
+        {
+          "text": "До всех донесёт и в школу вернёт,",
+          "line": 34
+        },
+        {
+          "text": "Всех обучит, нужно- подскажет,",
+          "line": 35
+        },
+        {
+          "text": "Задания школы как нужно расскажет!",
+          "line": 36
+        },
+        {
+          "text": "С радостью детки вернуться к вам снова!",
+          "line": 37
+        }
+      ],
+      [
+        {
+          "text": "Ну а сейчас пожелать мы готовы:",
+          "line": 39
+        },
+        {
+          "text": "Школе успехов и процветания,",
+          "line": 40
+        },
+        {
+          "text": "Новых учебников, лёгких заданий!",
+          "line": 41
+        },
+        {
+          "text": "Гуманными быть , деток любить!",
+          "line": 42
+        },
+        {
+          "text": "Хороших людей из деток взрастить",
+          "line": 43
+        },
+        {
+          "text": "А мы вам, как можем, поможем,",
+          "line": 44
+        },
+        {
+          "text": "Лучшее в души, постараемся, вложим!",
+          "line": 45
+        }
+      ]
+    ]
   }
 ];

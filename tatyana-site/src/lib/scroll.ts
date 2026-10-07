@@ -38,7 +38,6 @@ export function initScroll() {
     lenis = new Lenis({
       lerp: 0.09,
       wheelMultiplier: 0.95,
-      anchors: { offset: -64 },
       prevent: (node) => !!(node as HTMLElement).closest?.("[data-lenis-prevent]"),
     });
     lenis.on("scroll", ScrollTrigger.update);
@@ -48,7 +47,21 @@ export function initScroll() {
     document.documentElement.classList.add("lenis");
   }
 
+  // якоря внутри страницы (#zapis) — плавно через Lenis; адреса страниц (#/karta) обрабатывает route.tsx
+  const onClick = (e: MouseEvent) => {
+    if (!lenis || e.defaultPrevented || e.button !== 0 || e.metaKey || e.ctrlKey) return;
+    const a = (e.target as HTMLElement).closest?.("a");
+    const href = a?.getAttribute("href");
+    if (!href || href[0] !== "#" || href[1] === "/" || href.length < 2) return;
+    const el = document.getElementById(decodeURIComponent(href.slice(1)));
+    if (!el) return;
+    e.preventDefault();
+    lenis.scrollTo(el, { offset: -64, duration: 1.3 });
+  };
+  document.addEventListener("click", onClick);
+
   return () => {
+    document.removeEventListener("click", onClick);
     window.removeEventListener("scroll", onScroll);
     if (tick) gsap.ticker.remove(tick);
     lenis?.destroy();
@@ -61,6 +74,19 @@ export function scrollVelocity() {
   if (lenis) return lenis.velocity;
   if (performance.now() - lastT > 120) velocity *= 0.9;
   return velocity;
+}
+
+/** Мгновенно наверх — при смене страницы в однофайловой версии */
+export function scrollTop() {
+  if (lenis) lenis.scrollTo(0, { immediate: true, force: true });
+  else {
+    // мгновенно, без плавной прокрутки из CSS (scroll-behavior: smooth)
+    const st = document.documentElement.style;
+    const prev = st.scrollBehavior;
+    st.scrollBehavior = "auto";
+    window.scrollTo(0, 0);
+    st.scrollBehavior = prev;
+  }
 }
 
 export function scrollToId(id: string) {

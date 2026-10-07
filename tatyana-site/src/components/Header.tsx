@@ -2,11 +2,23 @@ import { useEffect, useRef, useState } from "react";
 import { hasBooking, channels } from "@/data/site.config";
 import { stopScroll } from "@/lib/scroll";
 import { Sparkle } from "./glyphs";
-import { SPHERES } from "@/data/spheres";
+import { sphereOfPage } from "@/data/spheres";
+import { PAGES, pageHref, type PageId } from "@/data/pages";
+import { useRoute } from "@/lib/route";
+import { fullName } from "@/data/site.config";
 import { Planet } from "./Spheres";
 
-/** Навигация — четыре сферы (Карта · Число · Слово · Песня) */
-export const NAV = SPHERES.map((s) => ({ id: s.href.slice(1), label: s.label, sphere: s.id }));
+/** Навигация — страницы: четыре сферы и подарки */
+export const NAV: { id: PageId; label: string }[] = (["karta", "chislo", "stihi", "pesni", "podarki"] as PageId[]).map((id) => ({
+  id,
+  label: PAGES[id].nav,
+}));
+
+function NavMark({ id, size }: { id: PageId; size: "xs" | "sm" }) {
+  const s = sphereOfPage(id);
+  if (s) return <Planet id={s.id} className={`planet--${size}`} />;
+  return <Sparkle size={size === "xs" ? 11 : 16} className={size === "xs" ? "nav__spark" : "sheet__star"} />;
+}
 
 /** Тонкая полоса прогресса сверху — «орбита» с планетой на конце */
 function ScrollOrbit() {
@@ -102,20 +114,22 @@ export function Header() {
   }, [open]);
 
   const close = () => setOpen(false);
+  const route = useRoute();
+  const cur = (id: PageId) => (route === id ? { "aria-current": "page" as const } : {});
 
   return (
     <>
       <ScrollOrbit />
       <header className={`header${hidden && !open ? " is-hidden" : ""}${solid ? " is-solid" : ""}`}>
         <div className="header__inner wrap">
-          <a href="#top" className="logo" aria-label="Татьяна — в начало страницы">
+          <a href={pageHref("home")} className="logo" aria-label={`${fullName} — на главную`} {...cur("home")}>
             <Sparkle size={14} className="logo__star" />
-            <span>Татьяна</span>
+            <span>{fullName}</span>
           </a>
-          <nav className="nav" aria-label="Разделы">
+          <nav className="nav" aria-label="Страницы">
             {NAV.map((n) => (
-              <a key={n.sphere} href={`#${n.id}`} className="nav__link">
-                <Planet id={n.sphere} className="planet--xs" />
+              <a key={n.id} href={pageHref(n.id)} className="nav__link" {...cur(n.id)}>
+                <NavMark id={n.id} size="xs" />
                 {n.label}
               </a>
             ))}
@@ -151,17 +165,17 @@ export function Header() {
         aria-hidden={!open}
         data-lenis-prevent
       >
-        <nav className="sheet__nav" aria-label="Разделы">
+        <nav className="sheet__nav" aria-label="Страницы">
+          <a href={pageHref("home")} onClick={close} style={{ ["--i" as string]: 0 }} {...cur("home")}>
+            <Sparkle size={16} className="sheet__star" />
+            Главная
+          </a>
           {NAV.map((n, i) => (
-            <a key={n.sphere} href={`#${n.id}`} onClick={close} style={{ ["--i" as string]: i }}>
-              <Planet id={n.sphere} className="planet--sm" />
+            <a key={n.id} href={pageHref(n.id)} onClick={close} style={{ ["--i" as string]: i + 1 }} {...cur(n.id)}>
+              <NavMark id={n.id} size="sm" />
               {n.label}
             </a>
           ))}
-          <a href="#podarok" onClick={close} style={{ ["--i" as string]: NAV.length }}>
-            <Sparkle size={16} className="sheet__star" />
-            Подарок
-          </a>
           {hasBooking && (
             <a href="#zapis" onClick={close} style={{ ["--i" as string]: NAV.length + 1 }}>
               <Sparkle size={16} className="sheet__star" />

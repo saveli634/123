@@ -3,3 +3,20 @@ dist/
 dist-ssr/
 dist-single/
 dist-ssr-single/
+# исходники песен и автоматические расшифровки — личные; в git только сжатые копии (src/assets/audio)
+brief/content/pesni/*.mp3
+brief/content/pesni/*.m4a
+brief/content/pesni/*.wav
+brief/content/pesni/*.ogg
+brief/content/pesni/raspoznavanie/
+# страницы для хостинга генерирует scripts/pages.mjs из index.html
+/karta.html
+/chislo.html
+/stihi.html
+/pesni.html
+/podarki.html
+# личные материалы Анны (песни, фото) и собранный sait.html с ними — не публикуются в открытом репозитории;
+# без них проект собирается: фото не показываются, на странице «Песни» — список без плеера
+src/assets/audio/*.mp3
+src/assets/photos/
+/sait.html

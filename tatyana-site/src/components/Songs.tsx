@@ -1,7 +1,9 @@
 import { useEffect, useRef, useState } from "react";
 import { songs, hasSongs } from "@/data/songs";
+import { songs as allSongs } from "@/data/songs.generated";
+import { SPA } from "@/data/pages";
 import { motionOk } from "@/lib/motion";
-import { SphereEyebrow, SphereIcon } from "./Spheres";
+import { SphereIcon } from "./Spheres";
 
 const fmt = (s: number) => {
   if (!isFinite(s) || s < 0) s = 0;
@@ -17,9 +19,47 @@ type AnyWindow = Window & { webkitAudioContext?: typeof AudioContext };
  * проявляется построчно по ходу трека. Одновременно играет один трек; есть пауза, перемотка,
  * громкость и обычный <audio controls> как запасной вариант. Раздел скрыт, пока песен нет.
  */
+/** Название и стиль: «Маме · шансон» → ["Маме", "шансон"] */
+const split = (t: string) => {
+  const i = t.indexOf(" · ");
+  return i < 0 ? [t, ""] : [t.slice(0, i), t.slice(i + 3)];
+};
+
 export function Songs() {
-  if (!hasSongs) return null;
-  return <SongsInner />;
+  if (hasSongs) return <SongsInner />;
+  if (!allSongs.length) return null;
+  // в лёгкой однофайловой версии звука нет — показываем список песен и где их послушать
+  return (
+    <section className="songs section" aria-labelledby="songs-title">
+      <div className="wrap">
+        <h2 id="songs-title" className="sr-only">
+          Песни
+        </h2>
+        <div className="songs__offline rv">
+          <p className="songs__offline-note">
+            {SPA
+              ? "В этом файле звук не встроен, чтобы он оставался лёгким. Песни звучат на сайте — в версии для хостинга."
+              : "Записи песен скоро появятся здесь."}
+          </p>
+          <ol className="tracks">
+            {allSongs.map((s, i) => {
+              const [name, style] = split(s.title);
+              return (
+                <li key={s.id} className="tracks__item">
+                  <span className="tracks__n">{String(i + 1).padStart(2, "0")}</span>
+                  <span className="tracks__name">
+                    {name}
+                    {style && <span className="tracks__style">{style}</span>}
+                  </span>
+                  <span className="tracks__dur">{fmt(s.duration)}</span>
+                </li>
+              );
+            })}
+          </ol>
+        </div>
+      </div>
+    </section>
+  );
 }
 
 function SongsInner() {
@@ -125,13 +165,9 @@ function SongsInner() {
   return (
     <section id="pesni" className="songs section" aria-labelledby="songs-title">
       <div className="wrap">
-        <header className="songs__head rv">
-          <SphereEyebrow id="pesnya" />
-          <h2 id="songs-title" className="h2">
-            <em>Песни</em>
-          </h2>
-          <p className="songs__lead">Песни, которые я сочиняю, — здесь их можно послушать.</p>
-        </header>
+        <h2 id="songs-title" className="sr-only">
+          Песни
+        </h2>
 
         <div className="songs__grid songs__ui">
           <div className="songs__stagebox">
@@ -180,7 +216,10 @@ function SongsInner() {
                   <span className="splanet__body" aria-hidden="true">
                     <SphereIcon id="pesnya" size={22} />
                   </span>
-                  <span className="splanet__title">{s.title}</span>
+                  <span className="splanet__title">
+                    {split(s.title)[0]}
+                    {split(s.title)[1] && <span className="splanet__style">{split(s.title)[1]}</span>}
+                  </span>
                 </button>
               );
             })}
@@ -190,7 +229,8 @@ function SongsInner() {
           <div className="songs__panel">
             <p className="songs__now">
               <span className="songs__now-label">{cur < 0 ? "Первая песня" : playing ? "Сейчас звучит" : "На паузе"}</span>
-              <span className="songs__now-title">{song.title}</span>
+              <span className="songs__now-title">{split(song.title)[0]}</span>
+              {split(song.title)[1] && <span className="songs__now-style">{split(song.title)[1]}</span>}
             </p>
             <div className="songs__controls">
               <span className="songs__time" aria-hidden="true">
@@ -237,6 +277,31 @@ function SongsInner() {
                 style={{ ["--fill" as string]: `${vol * 100}%` }}
               />
             </label>
+            <ol className="tracks tracks--live">
+              {songs.map((s, i) => {
+                if (broken.includes(i)) return null;
+                const [name, style] = split(s.title);
+                const on = cur === i;
+                return (
+                  <li key={s.id} className={`tracks__item${on ? " is-current" : ""}`}>
+                    <button
+                      type="button"
+                      className="tracks__btn"
+                      onClick={() => play(i)}
+                      aria-label={on && playing ? `Пауза: ${s.title}` : `Слушать: ${s.title}`}
+                      aria-pressed={on && playing}
+                    >
+                      <span className="tracks__n">{on && playing ? "❚❚" : String(i + 1).padStart(2, "0")}</span>
+                      <span className="tracks__name">
+                        {name}
+                        {style && <span className="tracks__style">{style}</span>}
+                      </span>
+                      <span className="tracks__dur">{fmt(s.duration)}</span>
+                    </button>
+                  </li>
+                );
+              })}
+            </ol>
             {lines.length > 0 && (
               <div className="lyrics" key={song.id}>
                 {lines.map((x, i) => (

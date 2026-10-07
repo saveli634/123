@@ -18,6 +18,12 @@ const files = existsSync(SRC)
       .sort((a, b) => a.localeCompare(b, "ru", { numeric: true }))
   : [];
 
+// исходников нет (например, их не храним в git) — оставляем уже сжатые песни как есть
+if (!files.length && readdirSync(OUT).some((f) => /^song-\d+\.mp3$/.test(f))) {
+  console.log("в brief/content/pesni нет исходников — оставляю уже сжатые песни и список без изменений");
+  process.exit(0);
+}
+
 // старые сжатые файлы убираем, чтобы в сборку не попало лишнее
 for (const f of readdirSync(OUT)) if (/^song-\d+\.mp3$/.test(f)) rmSync(join(OUT, f));
 

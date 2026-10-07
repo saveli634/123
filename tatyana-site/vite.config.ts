@@ -4,6 +4,7 @@ import tailwindcss from "@tailwindcss/vite";
 import { viteSingleFile } from "vite-plugin-singlefile";
 import { fileURLToPath } from "node:url";
 import { readFileSync, readdirSync, statSync, existsSync } from "node:fs";
+import pages from "./src/data/pages.json";
 
 const src = (p: string) => fileURLToPath(new URL(p, import.meta.url));
 
@@ -16,7 +17,9 @@ const inlineHead = (): Plugin => ({
         'href="./favicon.svg"',
         `href="data:image/svg+xml,${encodeURIComponent(readFileSync(src("./public/favicon.svg"), "utf8"))}"`,
       )
-      .replace(/\s*<meta property="og:image[^>]*>/g, ""),
+      .replace(/\s*<meta property="og:image[^>]*>/g, "")
+      // все страницы в одном файле: переключение по #/karta (см. src/lib/route.tsx)
+      .replace('<html lang="ru">', '<html lang="ru" class="spa">'),
 });
 
 /** Сколько весят сжатые песни (для решения, встраивать ли их в sait.html) */
@@ -46,6 +49,10 @@ export default defineConfig(({ mode }) => {
     build: {
       target: ["es2017", "chrome70", "edge79", "firefox68", "safari12"],
       rollupOptions: {
+        // хостинг: отдельный HTML на каждую страницу (их создаёт scripts/pages.mjs)
+        ...(single
+          ? {}
+          : { input: Object.fromEntries(Object.keys(pages).map((id) => [id, src(id === "home" ? "./index.html" : `./${id}.html`)])) }),
         output: {
           // песни — в папку audio/ рядом с index.html, имена латиницей
           assetFileNames: (info: { name?: string; names?: string[] }) =>

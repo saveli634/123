@@ -2,10 +2,21 @@
 <html lang="ru">
   <head>
     <meta charset="UTF-8" />
+    <style>
+      html {
+        background: #070312;
+      }
+    </style>
     <script>
       (function () {
         var d = document.documentElement;
         d.classList.add("js");
+        // однофайловая версия: какая страница открыта (#/karta …) — до первой отрисовки, без мигания
+        if (d.classList.contains("spa")) {
+          var m = location.hash.match(/^#\/([a-z]+)/);
+          var ok = { karta: 1, chislo: 1, stihi: 1, pesni: 1, podarki: 1 };
+          d.setAttribute("data-route", m && ok[m[1]] ? m[1] : "home");
+        }
         // Интро — только при первом заходе в сессии и без «уменьшить движение»
         try {
           var reduce = window.matchMedia && matchMedia("(prefers-reduced-motion: reduce)").matches;
@@ -21,19 +32,16 @@
       })();
     </script>
     <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
-    <title>Татьяна — нумерология и натальная карта</title>
-    <meta
-      name="description"
-      content="Нумерологический расчёт по дате рождения и натальная карта: зачем мы родились на этой планете Земля, какие в нас заложены качества, таланты, способности, характер."
-    />
+    <title>Анна — нумерология и натальная карта</title>
+    <meta name="description" content="Нумерологический расчёт по дате рождения и натальная карта, стихи и авторские песни, написанные под личные истории." />
     <meta name="theme-color" content="#070312" />
     <meta name="color-scheme" content="dark" />
     <meta name="format-detection" content="telephone=no" />
     <meta property="og:type" content="website" />
     <meta property="og:locale" content="ru_RU" />
-    <meta property="og:site_name" content="Татьяна — карта неба" />
-    <meta property="og:title" content="Татьяна — нумерология и натальная карта" />
-    <meta property="og:description" content="Карта, которая объясняет, зачем вы здесь. Нумерология, натальная карта, стихи и песни." />
+    <meta property="og:site_name" content="Анна — карта неба" />
+    <meta property="og:title" content="Анна — нумерология и натальная карта" />
+    <meta property="og:description" content="Карта, которая объясняет, зачем вы здесь. Нумерология, натальная карта, стихи и авторские песни." />
     <meta property="og:image" content="./og-image.jpg" />
     <meta property="og:image:width" content="1200" />
     <meta property="og:image:height" content="630" />
@@ -55,7 +63,7 @@
           <circle cx="366" cy="92" r="2.8" style="--i: 6" />
         </g>
       </svg>
-      <div class="intro__name">Татьяна</div>
+      <div class="intro__name">Анна</div>
     </div>
     <div id="root"></div>
     <noscript>

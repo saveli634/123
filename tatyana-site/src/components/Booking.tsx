@@ -1,4 +1,5 @@
-import { channels, hasBooking, portrait, site, fullName } from "@/data/site.config";
+import { channels, hasBooking, site, fullName } from "@/data/site.config";
+import { photos } from "@/data/photos";
 import { Btn, Eyebrow } from "./ui";
 import { SPARKLE } from "./glyphs";
 
@@ -19,9 +20,9 @@ export function Booking() {
           <div className="book__eclipse" aria-hidden="true">
             <i />
           </div>
-          {portrait && (
+          {photos.portrait && (
             <figure className="book__portrait">
-              <img src={portrait} alt={`${fullName}`} width="320" height="320" loading="lazy" decoding="async" />
+              <img src={photos.portrait} alt={fullName} width="320" height="320" loading="lazy" decoding="async" />
             </figure>
           )}
           <Eyebrow>Запись</Eyebrow>

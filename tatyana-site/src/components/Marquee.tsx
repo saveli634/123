@@ -5,8 +5,8 @@ import { scrollVelocity } from "@/lib/scroll";
 import { SPARKLE } from "./glyphs";
 
 /** Бегущая лента «число · месяц · год · город · время»: скорость — от скорости прокрутки. */
-function Row({ big, reverse }: { big?: boolean; reverse?: boolean }) {
-  const words = [...marqueeWords, ...marqueeWords];
+function Row({ big, reverse, list }: { big?: boolean; reverse?: boolean; list: string[] }) {
+  const words = [...list, ...list];
   return (
     <div className={`marquee__row${big ? " marquee__row--big" : ""}`} data-dir={reverse ? -1 : 1}>
       {[0, 1].map((half) => (
@@ -25,7 +25,7 @@ function Row({ big, reverse }: { big?: boolean; reverse?: boolean }) {
   );
 }
 
-export function Marquee() {
+export function Marquee({ words = marqueeWords }: { words?: string[] }) {
   const ref = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -57,6 +57,7 @@ export function Marquee() {
     const io = new IntersectionObserver(([e]) => {
       cancelAnimationFrame(raf);
       if (e.isIntersecting) {
+        measure(); // страница могла быть скрыта (однофайловая версия)
         last = performance.now();
         raf = requestAnimationFrame(loop);
       }
@@ -73,8 +74,8 @@ export function Marquee() {
 
   return (
     <div ref={ref} className="marquee" aria-hidden="true">
-      <Row big />
-      <Row reverse />
+      <Row big list={words} />
+      <Row reverse list={words} />
     </div>
   );
 }

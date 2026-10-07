@@ -81,7 +81,7 @@ export function Gift() {
         <header className="gift__head rv">
           <AllSpheresEyebrow />
           <h2 id="gift-title" className="h2">
-            Подарок <em>на день рождения</em>
+            Как складывается <em>подарок</em>
           </h2>
         </header>
 

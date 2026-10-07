@@ -2,13 +2,14 @@ import { useEffect, useRef } from "react";
 import { poems } from "@/data/poems.generated";
 import { motionOk } from "@/lib/motion";
 import { Btn } from "./ui";
-import { SphereEyebrow } from "./Spheres";
 import { SPARKLE } from "./glyphs";
 
-/** Заголовки карточек (из brief/content/stihi_istochnik.md, строки 3 и 52) */
+/** Заголовки карточек (stihi_istochnik.md, строки 3 и 51; stihi_dop.md — заголовки стихов) */
 const TITLES: Record<string, { title: string; note?: string }> = {
   "stih-1": { title: "Детский сад «Айналайн»", note: "выпускной" },
   "stih-2": { title: "С юбилеем, сынок" },
+  "stih-3": { title: "С 5 летием со дня нашего венчания", note: "мужу" },
+  "stih-4": { title: "С окончанием первого года учёбы", note: "учительнице" },
 };
 
 /** Валик «свитка» сверху и снизу карточки */
@@ -58,22 +59,18 @@ export function Poems() {
   return (
     <section id="stihi" ref={root} className="poems section" aria-labelledby="poems-title">
       <div className="wrap">
-        <header className="poems__head rv">
-          <SphereEyebrow id="slovo">из моих роликов</SphereEyebrow>
-          <h2 id="poems-title" className="h2">
-            <em>Стихи</em>
-          </h2>
-          <p className="poems__lead">А ещё я пишу стихи. Два из них — в моих роликах в Instagram.</p>
-        </header>
+        <h2 id="poems-title" className="sr-only">
+          Стихи
+        </h2>
 
         <div className="poems__grid">
           {poems.map((p, idx) => {
             const t = TITLES[p.id];
             return (
-              <article key={p.id} className={`scroll rv${idx ? " scroll--alt" : ""}`} aria-labelledby={`${p.id}-t`}>
+              <article key={p.id} className={`scroll rv${idx % 2 ? " scroll--alt" : ""}`} aria-labelledby={`${p.id}-t`}>
                 <Roller />
                 <div className="scroll__paper">
-                  <p className="scroll__src">Из моих роликов</p>
+                  <p className="scroll__src">{p.reel ? "Из моих роликов" : "Из моего Instagram"}</p>
                   <h3 id={`${p.id}-t`} className="scroll__title">
                     {t.title}
                     {t.note && <span className="scroll__note">{t.note}</span>}
@@ -93,6 +90,7 @@ export function Poems() {
                       </p>
                     ))}
                   </div>
+                  {p.reel && (
                   <div className="scroll__foot">
                     <Btn
                       href={p.reel}
@@ -108,6 +106,7 @@ export function Poems() {
                       Смотреть ролик
                     </Btn>
                   </div>
+                  )}
                 </div>
                 <Roller bottom />
               </article>

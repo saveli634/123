@@ -3369,6 +3369,7 @@ html:not(.js) .privacy-static:target {
 /* ------------------------------------------------------------------ без скриптов (предпросмотр файла) */
 html:not(.js) .menu-btn,
 html:not(.js) .mobile-bar,
+html:not(.js) .works-nav .round-btn,
 html:not(.js) .menu {
   display: none;
 }

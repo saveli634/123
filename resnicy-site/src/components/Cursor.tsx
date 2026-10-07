@@ -11,20 +11,34 @@ export function Cursor() {
   const ring = useRef<HTMLDivElement>(null);
   const label = useRef<HTMLSpanElement>(null);
 
-  // телефон: мягкая вспышка под пальцем при касании (вместо курсора)
+  // телефон: мягкая вспышка под пальцем при касании (вместо курсора).
+  // На кнопках и ссылках — уже после нажатия (click): если что-то появляется до него, iPhone считает
+  // касание «наведением» и кнопку не нажимает. На остальном — когда палец отпущен.
   useEffect(() => {
     if (canHover() || !motionAllowed()) return;
-    const tap = (e: PointerEvent) => {
-      if (e.pointerType !== "touch") return;
+    const ACTIVE = "a, button, [role='slider'], input, label, summary";
+    const glow = (x: number, y: number) => {
       const g = document.createElement("span");
       g.className = "tap-glow";
-      g.style.left = `${e.clientX}px`;
-      g.style.top = `${e.clientY}px`;
+      g.style.left = `${x}px`;
+      g.style.top = `${y}px`;
       document.body.appendChild(g);
       window.setTimeout(() => g.remove(), 900);
     };
-    window.addEventListener("pointerdown", tap, { passive: true });
-    return () => window.removeEventListener("pointerdown", tap);
+    const up = (e: PointerEvent) => {
+      if (e.pointerType !== "touch" || (e.target as Element | null)?.closest?.(ACTIVE)) return;
+      glow(e.clientX, e.clientY);
+    };
+    const click = (e: MouseEvent) => {
+      // detail 0 — нажатие с клавиатуры, координат нет
+      if (e.detail && (e.target as Element | null)?.closest?.(ACTIVE)) glow(e.clientX, e.clientY);
+    };
+    window.addEventListener("pointerup", up, { passive: true });
+    window.addEventListener("click", click, { passive: true });
+    return () => {
+      window.removeEventListener("pointerup", up);
+      window.removeEventListener("click", click);
+    };
   }, []);
 
   useEffect(() => {

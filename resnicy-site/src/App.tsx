@@ -16,9 +16,11 @@ import { Footer } from "@/components/Footer";
 import { MobileBar } from "@/components/MobileBar";
 import { Cursor } from "@/components/Cursor";
 import { useReveal } from "@/lib/reveal";
+import { useExternalLinks } from "@/lib/links";
 
 export default function App() {
   useReveal();
+  useExternalLinks();
   return (
     <>
       <BrandDefs />

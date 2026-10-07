@@ -127,7 +127,7 @@ export function Header() {
             <span>{site.city}</span>
             <div className="menu-channels">
               {bookingChannels().map((c) => (
-                <a key={c.id} href={c.href} className="menu-channel" {...(c.id !== "phone" ? { target: "_blank", rel: "noopener noreferrer" } : {})}>
+                <a key={c.id} href={c.href} className="menu-channel" {...(c.id !== "phone" ? { rel: "noopener noreferrer", "data-ext": "" } : {})}>
                   <ChannelIcon id={c.id} />
                   {c.label}
                 </a>

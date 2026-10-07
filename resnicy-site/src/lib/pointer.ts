@@ -54,12 +54,14 @@ export function useTilt<T extends HTMLElement>(ref: RefObject<T | null>, max = 9
       ry(0);
     };
 
-    // телефон: карточка наклоняется под пальцем, пока его ведут по ней
+    // телефон: карточка наклоняется под пальцем, пока его ведут по ней.
+    // Касание кнопки или ссылки карточку не трогает, а блик (смена прозрачности) — только когда палец ведут:
+    // iPhone принимает появление чего-либо в момент касания за «наведение» и не нажимает кнопку.
     if (!canHover()) {
       const touch = (e: TouchEvent) => {
         const t = e.touches[0];
-        if (!t) return;
-        el.classList.add("is-hover");
+        if (!t || (e.target as Element | null)?.closest?.("a, button")) return;
+        if (e.type === "touchmove") el.classList.add("is-hover");
         tilt(t.clientX, t.clientY);
       };
       el.addEventListener("touchstart", touch, { passive: true });

@@ -14,7 +14,7 @@ interface LinkProps {
   shine?: boolean;
 }
 
-/** Кнопка-ссылка с магнитом. Якоря (#...) прокручиваются плавно, внешние ссылки — в новой вкладке. */
+/** Кнопка-ссылка с магнитом. Якоря (#...) прокручиваются плавно, внешние ссылки — см. useExternalLinks. */
 export function MagLink({ href, children, variant = "solid", className = "", external, icon, shine }: LinkProps) {
   const ref = useRef<HTMLAnchorElement>(null);
   useMagnetic(ref);
@@ -24,7 +24,7 @@ export function MagLink({ href, children, variant = "solid", className = "", ext
       ref={ref}
       href={href}
       className={`btn btn--${variant} ${shine ? "btn--shine" : ""} ${className}`}
-      {...(external ? { target: "_blank", rel: "noopener noreferrer" } : {})}
+      {...(external ? { rel: "noopener noreferrer", "data-ext": "" } : {})}
       onClick={
         isHash
           ? (e) => {

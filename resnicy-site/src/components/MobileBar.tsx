@@ -35,7 +35,7 @@ export function MobileBar() {
     // до запуска скриптов панель спрятана: на первом экране свои кнопки
     <div className="mobile-bar is-hidden" ref={bar}>
       {main && main.id !== "phone" && (
-        <a className="mobile-bar-main" href={main.href} target="_blank" rel="noopener noreferrer">
+        <a className="mobile-bar-main" href={main.href} rel="noopener noreferrer" data-ext="">
           Записаться
         </a>
       )}

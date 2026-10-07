@@ -1,6 +1,7 @@
 import { useEffect, useRef } from "react";
 import { Split } from "./Split";
 import { ScrollTrigger, motionStarted } from "@/lib/motion";
+import { ReasonArt } from "./Art";
 
 /**
  * «Почему ко мне» — шесть причин из её поста. Карточки при прокрутке складываются в стопку
@@ -29,13 +30,13 @@ function Odometer({ value, label }: { value: string; label: string }) {
   );
 }
 
-const REASONS: { text: string; counter?: { value: string; label: string } }[] = [
-  { text: "Ты будешь тратить меньше времени на сборы" },
+const REASONS: { text: string; counter?: { value: string; label: string }; art?: string }[] = [
+  { text: "Ты будешь тратить меньше времени на сборы", art: "time" },
   { text: "Процедура занимает всего 1 час", counter: { value: "60", label: "минут" } },
-  { text: "Можно тереть глаза и пользоваться мицеллярной водой" },
+  { text: "Можно тереть глаза и пользоваться мицеллярной водой", art: "drop" },
   { text: "Эффект сохраняется в течение месяца", counter: { value: "1", label: "месяц" } },
-  { text: "Можно пользоваться тушью — эффект будет ещё больше" },
-  { text: "Со мной можно посплетничать и поболтать" },
+  { text: "Можно пользоваться тушью — эффект будет ещё больше", art: "mascara" },
+  { text: "Со мной можно посплетничать и поболтать", art: "chat" },
 ];
 
 export function Reasons() {
@@ -82,6 +83,7 @@ export function Reasons() {
                   <span aria-hidden="true"> / 06</span>
                 </span>
                 {r.counter && <Odometer {...r.counter} />}
+                {r.art && <ReasonArt name={r.art} />}
                 <p className="reason-text">{r.text}</p>
               </div>
             </li>

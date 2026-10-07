@@ -4,6 +4,7 @@ import { ChannelIcon, MagLink } from "./Buttons";
 import { scrollToHash, stopScroll } from "@/lib/motion";
 import { bookingChannels, site } from "@/site.config";
 import { useMinskTime } from "@/lib/time";
+import { HAS_REVIEWS } from "./Reviews";
 
 export const NAV = [
   { href: "#do-posle", label: "До/после" },
@@ -11,6 +12,7 @@ export const NAV = [
   { href: "#process", label: "Процедура" },
   { href: "#pochemu", label: "Почему я" },
   { href: "#raboty", label: "Работы" },
+  ...(HAS_REVIEWS ? [{ href: "#otzyvy", label: "Отзывы" }] : []),
 ];
 
 export function Header() {

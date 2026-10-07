@@ -34,33 +34,55 @@ export function useMagnetic<T extends HTMLElement>(ref: RefObject<T | null>, str
 export function useTilt<T extends HTMLElement>(ref: RefObject<T | null>, max = 9) {
   useEffect(() => {
     const el = ref.current;
-    if (!el || !canHover() || !motionAllowed()) return;
+    if (!el || !motionAllowed()) return;
     gsap.set(el, { transformPerspective: 900 });
     const rx = gsap.quickTo(el, "rotationX", { duration: 0.6, ease: "power3.out" });
     const ry = gsap.quickTo(el, "rotationY", { duration: 0.6, ease: "power3.out" });
-    const move = (e: PointerEvent) => {
+    const tilt = (x: number, y: number) => {
       const r = el.getBoundingClientRect();
-      const px = (e.clientX - r.left) / r.width;
-      const py = (e.clientY - r.top) / r.height;
+      const px = Math.min(1, Math.max(0, (x - r.left) / r.width));
+      const py = Math.min(1, Math.max(0, (y - r.top) / r.height));
       rx((0.5 - py) * max);
       ry((px - 0.5) * max * 1.2);
       el.style.setProperty("--mx", `${(px * 100).toFixed(1)}%`);
       el.style.setProperty("--my", `${(py * 100).toFixed(1)}%`);
       el.style.setProperty("--angle", `${Math.round(px * 180 + py * 90)}deg`);
     };
-    const enter = () => el.classList.add("is-hover");
-    const leave = () => {
+    const reset = () => {
       el.classList.remove("is-hover");
       rx(0);
       ry(0);
     };
+
+    // телефон: карточка наклоняется под пальцем, пока его ведут по ней
+    if (!canHover()) {
+      const touch = (e: TouchEvent) => {
+        const t = e.touches[0];
+        if (!t) return;
+        el.classList.add("is-hover");
+        tilt(t.clientX, t.clientY);
+      };
+      el.addEventListener("touchstart", touch, { passive: true });
+      el.addEventListener("touchmove", touch, { passive: true });
+      el.addEventListener("touchend", reset);
+      el.addEventListener("touchcancel", reset);
+      return () => {
+        el.removeEventListener("touchstart", touch);
+        el.removeEventListener("touchmove", touch);
+        el.removeEventListener("touchend", reset);
+        el.removeEventListener("touchcancel", reset);
+      };
+    }
+
+    const move = (e: PointerEvent) => tilt(e.clientX, e.clientY);
+    const enter = () => el.classList.add("is-hover");
     el.addEventListener("pointerenter", enter);
     el.addEventListener("pointermove", move);
-    el.addEventListener("pointerleave", leave);
+    el.addEventListener("pointerleave", reset);
     return () => {
       el.removeEventListener("pointerenter", enter);
       el.removeEventListener("pointermove", move);
-      el.removeEventListener("pointerleave", leave);
+      el.removeEventListener("pointerleave", reset);
     };
   }, [ref, max]);
 }

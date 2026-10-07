@@ -3,21 +3,22 @@
   <head>
     <meta charset="UTF-8" />
     <script>
-      // .js — скрипты есть: элементы можно прятать до появления на экране.
-      // .play-intro — показать интро (первый заход в сессии и без «уменьшения движения»).
-      // Если за 2 с приложение не запустилось, оба класса снимаются и всё видно статично.
+      // .js — скрипты работают: элементы ниже первого экрана можно прятать до появления.
+      // .intro-skip — интро уже видели в этой вкладке (или включено «уменьшить движение»).
+      // Интро и появление первого экрана идут на чистом CSS — работают и в предпросмотре файла без скриптов.
+      // Если скрипт сайта упал или не запустился за 5 с — снимаем .js, и всё видно без анимаций появления.
       (function () {
         var d = document.documentElement;
         d.classList.add("js");
         try {
-          if (!window.matchMedia("(prefers-reduced-motion: reduce)").matches && !sessionStorage.getItem("intro-seen")) {
-            d.classList.add("play-intro");
-            sessionStorage.setItem("intro-seen", "1");
-          }
+          if (window.matchMedia("(prefers-reduced-motion: reduce)").matches || sessionStorage.getItem("intro-seen")) d.classList.add("intro-skip");
+          else sessionStorage.setItem("intro-seen", "1");
         } catch (e) {}
-        setTimeout(function () {
-          if (!window.__ready) d.classList.remove("js", "play-intro");
-        }, 2000);
+        var fail = function () {
+          if (!window.__ready) d.classList.remove("js");
+        };
+        window.addEventListener("error", fail);
+        setTimeout(fail, 5000);
       })();
     </script>
     <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />

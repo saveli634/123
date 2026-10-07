@@ -3,6 +3,7 @@ import { Split } from "./Split";
 import { ScrollTrigger, motionStarted } from "@/lib/motion";
 import { clamp } from "@/lib/env";
 import { Arrow, MagLink } from "./Buttons";
+import { StepArt } from "./Art";
 
 /** Шаги — строго по её посту «Как проходит процесс ламинирования ресниц?». */
 const STEPS = [
@@ -143,6 +144,7 @@ export function Process() {
               {STEPS.map((s, i) => (
                 <li className="step" key={s.title}>
                   <span className="step-num">{String(i + 1).padStart(2, "0")}</span>
+                  <StepArt step={i} />
                   <div>
                     <h3 className="step-title">{s.title}</h3>
                     <p className="step-text">{s.text}</p>

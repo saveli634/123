@@ -2,6 +2,7 @@ import { useEffect, useRef } from "react";
 import { Photo } from "./Photo";
 import { Arrow, MagLink } from "./Buttons";
 import { Silk } from "./Silk";
+import { Aurora } from "./Aurora";
 import { ScrollTrigger, motionStarted } from "@/lib/motion";
 import { clamp, easeInOut, mix, smooth } from "@/lib/env";
 import { site } from "@/site.config";
@@ -90,7 +91,8 @@ export function Hero() {
       clip(A, cx + d);
       clip(B, cx - d);
       if (photo.current)
-        photo.current.style.transform = `translate3d(${(cx - W / 2).toFixed(1)}px,${(cy - H / 2).toFixed(1)}px,0) scale(${mix(s0, 1.02, e).toFixed(4)})`;
+        // фото увеличивается чуть быстрее, чем растёт вырез, — края экрана всегда закрыты
+        photo.current.style.transform = `translate3d(${(cx - W / 2).toFixed(1)}px,${(cy - H / 2).toFixed(1)}px,0) scale(${mix(s0, 1.02, easeInOut(smooth(0, 0.46, p))).toFixed(4)})`;
       if (outline.current) {
         outline.current.setAttribute("d", almondPath(cx, cy, w * 1.07));
         outline.current.style.opacity = String(clamp(1 - e * 4));
@@ -154,6 +156,7 @@ export function Hero() {
     <section className="hero" id="top" ref={section}>
       <div className="hero-sticky">
         <div className="hero-bg" aria-hidden="true">
+          <Aurora />
           <Silk className="hero-silk" />
         </div>
 

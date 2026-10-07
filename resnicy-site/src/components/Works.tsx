@@ -145,6 +145,27 @@ export function Works() {
     };
   }, []);
 
+  // телефон: при первом появлении галерея чуть сдвигается и возвращается — подсказка, что её листают пальцем
+  useEffect(() => {
+    const el = scroller.current;
+    if (!el || canHover() || !motionAllowed() || !("IntersectionObserver" in window)) return;
+    const io = new IntersectionObserver(
+      ([e]) => {
+        if (!e.isIntersecting) return;
+        io.disconnect();
+        el.classList.add("is-gliding");
+        const from = el.scrollLeft;
+        gsap
+          .timeline({ delay: 0.5, onComplete: () => el.classList.remove("is-gliding") })
+          .to(el, { scrollLeft: from + Math.min(120, el.clientWidth * 0.28), duration: 0.7, ease: "power2.inOut" })
+          .to(el, { scrollLeft: from, duration: 0.8, ease: "power3.inOut" });
+      },
+      { threshold: 0.6 },
+    );
+    io.observe(el);
+    return () => io.disconnect();
+  }, []);
+
   // ролик: источник подключается только в браузере; играет, пока виден
   useEffect(() => {
     const v = video.current;

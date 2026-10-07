@@ -1,6 +1,8 @@
 import { BrandMark } from "./Brand";
 import { Silk } from "./Silk";
+import { Aurora } from "./Aurora";
 import { Split } from "./Split";
+import { HAS_REVIEWS } from "./Reviews";
 import { ChannelIcon, MagLink } from "./Buttons";
 import { bookingChannels, site } from "@/site.config";
 
@@ -10,12 +12,13 @@ export function Booking() {
   return (
     <section className="booking section" id="zapis" aria-labelledby="booking-title">
       <div className="booking-bg" aria-hidden="true">
+        <Aurora />
         <Silk className="booking-silk" mood={0.85} />
         <BrandMark decorative className="booking-watermark" />
       </div>
       <div className="container booking-inner">
         <p className="eyebrow" data-reveal>
-          <span className="eyebrow-num">07</span>Запись
+          <span className="eyebrow-num">{HAS_REVIEWS ? "08" : "07"}</span>Запись
         </p>
         <Split as="h2" id="booking-title" className="booking-title" text="Запишись *на реснички*" />
         <p className="booking-lead" data-reveal>

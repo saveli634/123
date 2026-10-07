@@ -18,6 +18,8 @@ export function Silk({ className = "", mood = 1 }: { className?: string; mood?: 
     if (!silk) return;
     silk.setScale(isLowPower() ? 0.34 : 0.5);
     el.classList.add("is-live");
+    // живой шёлк закрывает CSS-«сияние» под ним — его анимацию можно не считать
+    el.parentElement?.classList.add("has-silk");
 
     // без видеоускорения и при «уменьшить движение» — один статичный кадр
     const animate = motionAllowed() && !silk.software;
@@ -28,6 +30,7 @@ export function Silk({ className = "", mood = 1 }: { className?: string; mood?: 
     let skip = false;
     const t0 = performance.now();
 
+    let touchedAt = -1e9;
     const loop = (now: number) => {
       frame = requestAnimationFrame(loop);
       // на слабых устройствах — каждый второй кадр
@@ -36,7 +39,8 @@ export function Silk({ className = "", mood = 1 }: { className?: string; mood?: 
         if (skip) return;
       }
       const t = (now - t0) / 1000;
-      if (!hover) silk.pointer(0.5 + Math.sin(t * 0.21) * 0.28, 0.45 + Math.cos(t * 0.17) * 0.22);
+      // на телефоне точка притяжения плавает сама, а после касания — тянется за пальцем
+      if (!hover && now - touchedAt > 2500) silk.pointer(0.5 + Math.sin(t * 0.21) * 0.28, 0.45 + Math.cos(t * 0.17) * 0.22);
       silk.draw(t + 12);
       if (last) reportFrame(now - last);
       last = now;
@@ -71,7 +75,19 @@ export function Silk({ className = "", mood = 1 }: { className?: string; mood?: 
       const r = el.getBoundingClientRect();
       silk.pointer((e.clientX - r.left) / r.width, (e.clientY - r.top) / r.height);
     };
+    const touch = (e: TouchEvent) => {
+      const tt = e.touches[0];
+      if (!tt) return;
+      const r = el.getBoundingClientRect();
+      if (tt.clientY < r.top || tt.clientY > r.bottom) return;
+      touchedAt = performance.now();
+      silk.pointer((tt.clientX - r.left) / r.width, (tt.clientY - r.top) / r.height);
+    };
     if (hover) window.addEventListener("pointermove", move, { passive: true });
+    else {
+      window.addEventListener("touchstart", touch, { passive: true });
+      window.addEventListener("touchmove", touch, { passive: true });
+    }
     const unLow = onLowPower(() => {
       silk.setScale(0.34);
       if (!animate) silk.draw(12); // смена размера холста стирает кадр
@@ -79,11 +95,14 @@ export function Silk({ className = "", mood = 1 }: { className?: string; mood?: 
     silk.draw(12); // первый кадр сразу (и единственный при «уменьшить движение»)
 
     return () => {
+      el.parentElement?.classList.remove("has-silk");
       stop();
       if (!idle) window.clearTimeout(idleId);
       io.disconnect();
       ro?.disconnect();
       window.removeEventListener("pointermove", move);
+      window.removeEventListener("touchstart", touch);
+      window.removeEventListener("touchmove", touch);
       unLow();
     };
   }, [mood]);

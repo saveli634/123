@@ -11,6 +11,7 @@ import { Process } from "@/components/Process";
 import { Reasons } from "@/components/Reasons";
 import { Works } from "@/components/Works";
 import { Booking } from "@/components/Booking";
+import { Reviews } from "@/components/Reviews";
 import { Footer } from "@/components/Footer";
 import { MobileBar } from "@/components/MobileBar";
 import { Cursor } from "@/components/Cursor";
@@ -36,6 +37,7 @@ export default function App() {
         <Process />
         <Reasons />
         <Works />
+        <Reviews />
         <Booking />
       </main>
       <Footer />

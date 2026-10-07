@@ -35,6 +35,8 @@ function Card({ num, title, meta, children, link, photo }: CardProps) {
 
   return (
     <div className="svc-wrap" data-reveal>
+      {/* покачивание на телефоне — на обёртке, наклон под пальцем/курсором — на самой карточке */}
+      <div className="svc-sway">
       <article className="svc" ref={ref}>
         <span className="svc-holo" aria-hidden="true" />
         <span className="svc-sheen" aria-hidden="true" />
@@ -57,6 +59,7 @@ function Card({ num, title, meta, children, link, photo }: CardProps) {
           </MagLink>
         </div>
       </article>
+      </div>
     </div>
   );
 }

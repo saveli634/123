@@ -99,14 +99,15 @@ def main():
         "selfie": [800, 1210],
         "poster": [480],
     }
-    single_w = {"hero": 1080, "before": 1000, "after": 1000, "violet": 880, "selfie": 1000, "poster": 400}
+    # в однофайловой версии — родное разрешение (на телефонах с плотным экраном фото должны быть чёткими)
+    single_w = {"hero": 1440, "before": 1238, "after": 1238, "violet": 880, "selfie": 1210, "poster": 480}
 
     meta = {}
     css = "/* Сгенерировано scripts/build_media.py — фото для однофайловой сборки */\n"
     single_total = 0
     for name, im in photos.items():
         files = save_webp(im, name, widths[name])
-        rule, size = single_css(im, name, single_w[name])
+        rule, size = single_css(im, name, single_w[name], quality=78)
         css += rule
         single_total += size
         meta[name] = {
@@ -115,6 +116,30 @@ def main():
             "files": [{"w": w, "file": f} for w, f, _ in files],
         }
         print(f"{name:7s} {im.width}x{im.height}  " + ", ".join(f"{f} {s // 1024}K" for _, f, s in files))
+
+    # Отзывы: скриншоты из assets-src/reviews/ (по алфавиту). В blur.json можно указать, что замазать
+    # (имена, аватарки): {"файл.png": [[x0, y0, x1, y1], ...]} — координаты в пикселях исходного скриншота.
+    for old in OUT.glob("review*.webp"):
+        old.unlink()
+    rdir = SRC / "reviews"
+    blur = json.loads((rdir / "blur.json").read_text()) if (rdir / "blur.json").exists() else {}
+    reviews = []
+    if rdir.exists():
+        shots = sorted(p for p in rdir.iterdir() if p.suffix.lower() in (".png", ".jpg", ".jpeg", ".webp"))
+        for i, path in enumerate(shots, 1):
+            im = Image.open(path).convert("RGB")
+            for box in blur.get(path.name, []):
+                region = im.crop(tuple(box)).filter(ImageFilter.GaussianBlur(22))
+                im.paste(region, tuple(box[:2]))
+            name = f"review{i}"
+            files = save_webp(im, name, [480, 960])
+            rule, size = single_css(im, name, 720, quality=74)
+            css += rule
+            single_total += size
+            meta[name] = {"w": im.width, "h": im.height, "files": [{"w": w, "file": f} for w, f, _ in files]}
+            reviews.append(name)
+            print(f"{name:7s} {path.name} {im.width}x{im.height}  " + ", ".join(f"{f} {s // 1024}K" for _, f, s in files))
+    (ROOT / "src" / "content" / "reviews.generated.json").write_text(json.dumps(reviews))
 
     (SINGLE / "images.css").write_text(css)
     print(f"single-img/images.css: {single_total // 1024}K до base64")

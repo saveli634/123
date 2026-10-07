@@ -2,7 +2,7 @@ import { useEffect, useRef } from "react";
 import { Split } from "./Split";
 import { ScrollTrigger, motionStarted } from "@/lib/motion";
 import { LiftRenderer } from "@/lib/liftRenderer";
-import { IRIS, LASHES_FULL, LOWER, bez, bezTangent, lashOutline, lashPoint, lashPose, lids, makeLashes, sceneState } from "@/lib/lashes";
+import { IRIS, LASHES_FULL, LOWER, bez, bezTangent, lashOutline, lashPoint, lashPose, lids, makeLashes, rollerOutline, sceneState } from "@/lib/lashes";
 import { isLowPower, onLowPower, reportFrame } from "@/lib/perf";
 
 const STAGES = ["Реснички как есть", "Выкладываю на валик", "Поднимаю"];
@@ -112,7 +112,7 @@ export function LiftScene() {
             {STAGES.map((s, i) => (
               <li key={s}>
                 <span className="lift-stage-num">{String(i + 1).padStart(2, "0")}</span>
-                {s}
+                <span className="lift-stage-label">{s}</span>
               </li>
             ))}
           </ol>
@@ -132,11 +132,24 @@ export function LiftScene() {
 
 const f = (n: number) => (Math.round(n * 10) / 10).toString();
 
-/** Статичная SVG-картинка итогового состояния (та же геометрия, что и в canvas). */
+/**
+ * SVG-версия сцены (та же геометрия, что и в canvas) — для режима без скриптов и «уменьшить движение».
+ * Без скриптов она оживает на чистом CSS: ресницы поворачиваются от корня вверх, глаз раскрывается,
+ * появляются валик и блики (при прокрутке — где браузер это умеет, иначе — по кругу во времени).
+ */
 function LiftStatic() {
-  const s = sceneState(1);
+  const end = sceneState(1);
+  const start = sceneState(0);
   const { upper, lower } = lids(1);
-  const lashes = makeLashes(LASHES_FULL).map((l) => lashPose(l, s, upper));
+  const closed = lids(0).upper;
+  const lashes = makeLashes(LASHES_FULL).map((l) => {
+    const q = lashPose(l, end, upper);
+    const q0 = lashPose(l, start, closed);
+    // поворот из «лежат вниз» в «подняты»: левые ресницы проходят через внешнюю сторону по часовой, правые — против
+    const deg = ((q0.angle - q.angle) * 180) / Math.PI;
+    const rot = l.u < 0.5 ? deg - 360 : deg;
+    return { q, rot };
+  });
   const cubic = (b: typeof upper) => `M${f(b[0][0])} ${f(b[0][1])}C${b.slice(1).flatMap((p) => p.map(f)).join(" ")}`;
   const eye = `${cubic(upper)}C${f(lower[2][0])} ${f(lower[2][1])} ${f(lower[1][0])} ${f(lower[1][1])} ${f(lower[0][0])} ${f(lower[0][1])}Z`;
   const lowerLashes = LOWER.map((l) => {
@@ -146,6 +159,14 @@ function LiftStatic() {
     const e = [x + Math.cos(a + l.lean * 0.5) * l.len, y + Math.sin(a + l.lean * 0.5) * l.len];
     return `M${f(x)} ${f(y)}Q${f(c[0])} ${f(c[1])} ${f(e[0])} ${f(e[1])}`;
   }).join("");
+  const roller = rollerOutline();
+  const rollerD =
+    `M${roller.inner.map((p) => `${f(p[0])} ${f(p[1])}`).join("L")}` +
+    `L${roller.outer
+      .slice()
+      .reverse()
+      .map((p) => `${f(p[0])} ${f(p[1])}`)
+      .join("L")}Z`;
   return (
     <svg className="lift-static" viewBox="-665 -650 1330 930" role="img" aria-label="Рисунок: глаз с поднятыми и подкрученными ресницами">
       <defs>
@@ -161,30 +182,53 @@ function LiftStatic() {
           <stop offset="0.5" stopColor="#8E5BFF" stopOpacity="0.35" />
           <stop offset="1" stopColor="#8E5BFF" stopOpacity="0" />
         </radialGradient>
+        <linearGradient id="ls-roller" x1="0" y1="1" x2="0" y2="0">
+          <stop offset="0" stopColor="#D9C9FF" stopOpacity="0.32" />
+          <stop offset="0.6" stopColor="#8E5BFF" stopOpacity="0.14" />
+          <stop offset="1" stopColor="#F4D6DF" stopOpacity="0.1" />
+        </linearGradient>
         <clipPath id="ls-eye">
           <path d={eye} />
         </clipPath>
       </defs>
-      <g clipPath="url(#ls-eye)">
-        <path d={eye} fill="rgba(247,243,250,0.09)" />
-        <circle cx={IRIS.cx} cy={IRIS.cy} r={IRIS.r} fill="url(#ls-iris)" />
-        <circle cx={IRIS.cx} cy={IRIS.cy} r={IRIS.pupil} fill="#07040B" />
-        <ellipse cx={IRIS.cx - 58} cy={IRIS.cy - 62} rx="24" ry="18" fill="rgba(255,255,255,0.9)" />
+      <path className="ls-roller" d={rollerD} fill="url(#ls-roller)" stroke="rgba(217,201,255,0.5)" strokeWidth="2" />
+      <g className="ls-eye">
+        <g clipPath="url(#ls-eye)">
+          <path d={eye} fill="rgba(247,243,250,0.1)" />
+          <circle cx={IRIS.cx} cy={IRIS.cy} r={IRIS.r} fill="url(#ls-iris)" />
+          <circle cx={IRIS.cx} cy={IRIS.cy} r={IRIS.pupil} fill="#07040B" />
+          <ellipse cx={IRIS.cx - 58} cy={IRIS.cy - 62} rx="24" ry="18" fill="rgba(255,255,255,0.9)" />
+        </g>
       </g>
-      <path d={lowerLashes} fill="none" stroke="rgba(217,201,255,0.55)" strokeWidth="2" strokeLinecap="round" />
-      <path d={cubic(lower)} fill="none" stroke="rgba(217,201,255,0.6)" strokeWidth="2.4" />
+      <g className="ls-low">
+        <path d={lowerLashes} fill="none" stroke="rgba(217,201,255,0.55)" strokeWidth="2" strokeLinecap="round" />
+        <path d={cubic(lower)} fill="none" stroke="rgba(217,201,255,0.6)" strokeWidth="2.4" />
+      </g>
       <path d={cubic(upper)} fill="none" stroke="rgba(142,91,255,0.22)" strokeWidth="16" />
       <path d={cubic(upper)} fill="none" stroke="#F7F3FA" strokeWidth="3.4" />
-      {lashes.map((q, i) => {
+      {lashes.map(({ q, rot }, i) => {
+        // контур — относительно корня: поворачиваем ресницу вокруг её корня
+        const [rx, ry] = q.root;
         const pts = lashOutline(q, 10);
-        let d = `M${f(pts[0])} ${f(pts[1])}`;
-        for (let j = 2; j < pts.length; j += 2) d += `L${f(pts[j])} ${f(pts[j + 1])}`;
-        return <path key={i} d={d + "Z"} fill={i % 3 === 0 ? "#E4D8FD" : "#F7F3FA"} />;
+        let d = `M${f(pts[0] - rx)} ${f(pts[1] - ry)}`;
+        for (let j = 2; j < pts.length; j += 2) d += `L${f(pts[j] - rx)} ${f(pts[j + 1] - ry)}`;
+        return (
+          <g key={i} transform={`translate(${f(rx)} ${f(ry)})`}>
+            <path
+              className="ls-lash"
+              d={d + "Z"}
+              fill={i % 3 === 0 ? "#E4D8FD" : "#F7F3FA"}
+              style={{ "--rot": `${rot.toFixed(1)}deg` } as React.CSSProperties}
+            />
+          </g>
+        );
       })}
-      {lashes.map((q, i) => {
-        const [x, y] = lashPoint(q, 1);
-        return <circle key={i} cx={f(x)} cy={f(y)} r={22 + q.glint * 12} fill="url(#ls-glint)" opacity={Math.max(0.35, q.glint)} />;
-      })}
+      <g className="ls-glints">
+        {lashes.map(({ q }, i) => {
+          const [x, y] = lashPoint(q, 1);
+          return <circle key={i} cx={f(x)} cy={f(y)} r={22 + q.glint * 12} fill="url(#ls-glint)" opacity={Math.max(0.35, q.glint)} />;
+        })}
+      </g>
     </svg>
   );
 }

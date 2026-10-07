@@ -3,13 +3,29 @@ import { gsap } from "@/lib/motion";
 import { canHover, motionAllowed } from "@/lib/env";
 
 /**
- * Фирменный курсор (только мышь/тачпад): точка и кольцо с запаздыванием.
+ * Фирменный курсор (мышь/тачпад): точка и кольцо с запаздыванием. На телефоне — вспышка под пальцем.
  * Над ссылками и кнопками кольцо растёт; у элементов с data-cursor показывает подпись («тяни», «листай»).
  */
 export function Cursor() {
   const dot = useRef<HTMLDivElement>(null);
   const ring = useRef<HTMLDivElement>(null);
   const label = useRef<HTMLSpanElement>(null);
+
+  // телефон: мягкая вспышка под пальцем при касании (вместо курсора)
+  useEffect(() => {
+    if (canHover() || !motionAllowed()) return;
+    const tap = (e: PointerEvent) => {
+      if (e.pointerType !== "touch") return;
+      const g = document.createElement("span");
+      g.className = "tap-glow";
+      g.style.left = `${e.clientX}px`;
+      g.style.top = `${e.clientY}px`;
+      document.body.appendChild(g);
+      window.setTimeout(() => g.remove(), 900);
+    };
+    window.addEventListener("pointerdown", tap, { passive: true });
+    return () => window.removeEventListener("pointerdown", tap);
+  }, []);
 
   useEffect(() => {
     if (!canHover() || !motionAllowed() || !dot.current || !ring.current) return;

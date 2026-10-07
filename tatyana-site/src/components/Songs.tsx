@@ -3,6 +3,7 @@ import { songs, hasSongs } from "@/data/songs";
 import { songs as allSongs } from "@/data/songs.generated";
 import { SPA } from "@/data/pages";
 import { motionOk } from "@/lib/motion";
+import { audioUrl, isInline } from "@/lib/audio-url";
 import { SphereIcon } from "./Spheres";
 
 const fmt = (s: number) => {
@@ -69,6 +70,7 @@ function SongsInner() {
   const [dur, setDur] = useState(0);
   const [vol, setVol] = useState(1);
   const [broken, setBroken] = useState<number[]>([]);
+  const [plainOpen, setPlainOpen] = useState(false);
   const audio = useRef<HTMLAudioElement>(null);
   const stage = useRef<HTMLDivElement>(null);
   const plain = useRef<HTMLDetailsElement>(null);
@@ -144,7 +146,7 @@ function SongsInner() {
       return;
     }
     if (i !== cur) {
-      a.src = songs[i].url;
+      a.src = audioUrl(songs[i].url);
       setCur(i);
       setTime(0);
       setDur(songs[i].duration);
@@ -314,13 +316,14 @@ function SongsInner() {
           </div>
         </div>
 
-        <details ref={plain} className="songs__plain" open>
+        <details ref={plain} className="songs__plain" open onToggle={(e) => setPlainOpen(e.currentTarget.open)}>
           <summary>Обычный плеер</summary>
           <ul>
             {songs.map((s) => (
               <li key={s.id}>
                 <span>{s.title}</span>
-                <audio controls preload="none" src={s.url} />
+                {/* встроенные в sait.html песни распаковываются, только когда раскрыт этот список */}
+                <audio controls preload="none" src={isInline(s.url) ? (plainOpen ? audioUrl(s.url) || undefined : undefined) : s.url} />
               </li>
             ))}
           </ul>

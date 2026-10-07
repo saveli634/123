@@ -10,7 +10,7 @@
     "poems": "node scripts/poems.mjs",
     "fonts": "node scripts/fonts.mjs",
     "build": "node scripts/pages.mjs && tsc -p tsconfig.json && vite build && vite build --ssr src/entry-server.tsx --outDir dist-ssr && node scripts/prerender.mjs dist dist-ssr && node scripts/compat.mjs dist && node scripts/inline-css.mjs dist",
-    "build:single": "vite build --mode single && vite build --mode single --ssr src/entry-server.tsx --outDir dist-ssr-single && node scripts/prerender.mjs dist-single dist-ssr-single && node scripts/compat.mjs dist-single/index.html && node scripts/copy-single.mjs",
+    "build:single": "vite build --mode single && vite build --mode single --ssr src/entry-server.tsx --outDir dist-ssr-single && node scripts/prerender.mjs dist-single dist-ssr-single && node scripts/compat.mjs dist-single/index.html && node scripts/embed-audio.mjs dist-single/index.html && node scripts/copy-single.mjs",
     "build:all": "npm run build && npm run build:single",
     "preview": "vite preview",
     "songs": "node scripts/songs.mjs",

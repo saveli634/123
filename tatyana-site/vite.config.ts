@@ -3,7 +3,7 @@ import react from "@vitejs/plugin-react";
 import tailwindcss from "@tailwindcss/vite";
 import { viteSingleFile } from "vite-plugin-singlefile";
 import { fileURLToPath } from "node:url";
-import { readFileSync, readdirSync, statSync, existsSync } from "node:fs";
+import { readFileSync, readdirSync, existsSync } from "node:fs";
 import pages from "./src/data/pages.json";
 
 const src = (p: string) => fileURLToPath(new URL(p, import.meta.url));
@@ -22,26 +22,27 @@ const inlineHead = (): Plugin => ({
       .replace('<html lang="ru">', '<html lang="ru" class="spa">'),
 });
 
-/** Сколько весят сжатые песни (для решения, встраивать ли их в sait.html) */
-function audioBytes() {
+/** Какие сжатые песни есть (src/assets/audio/song-N.mp3) */
+function audioFiles() {
   const dir = src("./src/assets/audio");
-  if (!existsSync(dir)) return 0;
-  return readdirSync(dir)
-    .filter((f) => /^song-\d+\.mp3$/.test(f))
-    .reduce((s, f) => s + statSync(`${dir}/${f}`).size, 0);
+  return existsSync(dir) ? readdirSync(dir).filter((f) => /^song-\d+\.mp3$/.test(f)) : [];
 }
-const EMBED_LIMIT = 2 * 1024 * 1024;
 
 export default defineConfig(({ mode }) => {
   const single = mode === "single";
-  const embedAudio = !single || audioBytes() <= EMBED_LIMIT;
+  // sait.html: песни встраиваются в конец файла облегчёнными копиями (scripts/embed-audio.mjs),
+  // а плеер достаёт их по нажатию «Слушать» (src/lib/audio-url.ts)
+  const inlineSongs = single ? audioFiles() : [];
   return {
     base: "./",
     publicDir: single ? false : "public",
     plugins: [react(), tailwindcss(), ...(single ? [viteSingleFile(), inlineHead()] : [])],
+    define: { __INLINE_SONGS__: JSON.stringify(inlineSongs) },
     resolve: {
       alias: {
-        "@/data/songs-media": src(embedAudio ? "./src/data/songs-media.ts" : "./src/data/songs-media.none.ts"),
+        "@/data/songs-media": src(
+          !single ? "./src/data/songs-media.ts" : inlineSongs.length ? "./src/data/songs-media.inline.ts" : "./src/data/songs-media.none.ts",
+        ),
         "@": src("./src"),
       },
     },
